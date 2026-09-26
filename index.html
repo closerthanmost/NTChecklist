@@ -1010,7 +1010,7 @@
       });
     }
 
-    if (auth) {
+if (auth) {
       auth.onAuthStateChanged(user => {
         currentUser = user;
         renderAuthUI();
@@ -1020,19 +1020,27 @@
           db.collection("users").doc(user.uid).get()
             .then(doc => {
               if (doc.exists && doc.data().checklist) {
-                // Merge cloud data with any local progress
-                userData = { ...userData, ...doc.data().checklist };
-                saveState();
+                userData = doc.data().checklist;
               } else {
-                // First sign-in: push existing local records to user's cloud doc
-                saveState();
+                userData = {};
               }
+              try {
+                localStorage.setItem(LOCAL_KEY, JSON.stringify(userData));
+              } catch(e) {}
               renderSites();
               updateStats();
             })
             .catch(err => {
               console.error("Error reading Firestore:", err);
             });
+        } else {
+          // When signed out or on refresh while logged out: clear state completely
+          userData = {};
+          try {
+            localStorage.removeItem(LOCAL_KEY);
+          } catch(e) {}
+          renderSites();
+          updateStats();
         }
       });
     }
