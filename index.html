@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
   <title>National Trust Checklist — England &amp; Wales</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -301,7 +302,7 @@
 
     .hidden { display: none !important; }
 
-    /* Site Card & Image */
+    /* Site Card & Authentic Photos */
     .site-card {
       border: 1px solid var(--nt-border);
       background: #fff;
@@ -331,10 +332,23 @@
 
     .site-thumb-wrap {
       width: 100%;
-      height: 165px;
-      background-color: #e5e7eb;
-      overflow: hidden;
+      height: 175px;
+      background-color: #e2e8f0;
       position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .site-thumb-wrap::before {
+      content: attr(data-placeholder);
+      position: absolute;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 0 1rem;
     }
 
     .site-thumb {
@@ -342,10 +356,17 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      transition: transform 0.3s ease;
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
-    .site-card:hover .site-thumb {
+    .site-thumb.loaded {
+      opacity: 1;
+    }
+
+    .site-card:hover .site-thumb.loaded {
       transform: scale(1.04);
     }
 
@@ -386,8 +407,8 @@
       font-weight: 600;
       color: var(--nt-green);
       background: #ecfdf5;
-      border: 1px solid rgba(10, 61, 36, 0.2);
-      padding: 0.45rem 0.75rem;
+      border: 1px solid rgba(10, 61, 36, 0.25);
+      padding: 0.45rem 0.8rem;
       border-radius: 6px;
       text-decoration: none;
       margin-bottom: 0.8rem;
@@ -550,425 +571,383 @@
     // 2. DATASET (230+ National Trust Sites)
     // ----------------------------------------------------
     const RAW_DATA = [
-      { county: "Bedfordshire", name: "Dunstable Downs and Whipsnade Estate", category: "Countryside" },
-      { county: "Bedfordshire", name: "Whipsnade Tree Cathedral", category: "Cathedral" },
-      { county: "Bedfordshire", name: "Willington Dovecote and Stables", category: "Historic Property" },
-      { county: "Berkshire", name: "Ashdown House", category: "Historic House" },
-      { county: "Berkshire", name: "Basildon Park", category: "Historic House" },
-      { county: "Bristol", name: "Blaise Hamlet", category: "Historic Property" },
-      { county: "Bristol", name: "Westbury College Gatehouse", category: "Historic Property" },
-      { county: "Buckinghamshire", name: "Ascott", category: "Historic House" },
-      { county: "Buckinghamshire", name: "Boarstall Duck Decoy", category: "Historic Property" },
-      { county: "Buckinghamshire", name: "Boarstall Tower", category: "Historic Property" },
-      { county: "Buckinghamshire", name: "Buckingham Chantry Chapel", category: "Church" },
-      { county: "Buckinghamshire", name: "Claydon House", category: "Historic House" },
-      { county: "Buckinghamshire", name: "Cliveden", category: "Garden" },
-      { county: "Buckinghamshire", name: "Dorneywood Garden", category: "Garden" },
-      { county: "Buckinghamshire", name: "King's Head", category: "Historic Property" },
-      { county: "Buckinghamshire", name: "Long Crendon Courthouse", category: "Historic Property" },
-      { county: "Buckinghamshire", name: "Pitstone Windmill", category: "Historic Property" },
-      { county: "Buckinghamshire", name: "Stowe Landscape Gardens", category: "Garden" },
-      { county: "Buckinghamshire", name: "Waddesdon Manor", category: "Historic House" },
-      { county: "Buckinghamshire", name: "West Wycombe Park", category: "Historic House" },
-      { county: "Cambridgeshire", name: "Anglesey Abbey", category: "Historic House" },
-      { county: "Cambridgeshire", name: "Houghton Mill", category: "Historic Property" },
-      { county: "Cambridgeshire", name: "Octavia Hill Birthplace Museum", category: "Museum" },
-      { county: "Cambridgeshire", name: "Peckover House", category: "Historic House" },
-      { county: "Cambridgeshire", name: "Ramsey Abbey Gatehouse", category: "Abbey" },
-      { county: "Cambridgeshire", name: "Wicken Fen", category: "Countryside" },
-      { county: "Cambridgeshire", name: "Wimpole Hall", category: "Historic House" },
-      { county: "Cheshire", name: "Alderley Edge", category: "Countryside" },
-      { county: "Cheshire", name: "Dunham Massey", category: "Historic House" },
-      { county: "Cheshire", name: "Hare Hill Garden", category: "Garden" },
-      { county: "Cheshire", name: "Little Moreton Hall", category: "Historic House" },
-      { county: "Cheshire", name: "Lyme Park", category: "Historic House" },
-      { county: "Cheshire", name: "Nether Alderley Mill", category: "Historic Property" },
-      { county: "Cheshire", name: "Quarry Bank Mill", category: "Historic Property" },
-      { county: "Cheshire", name: "Tatton Park", category: "Historic House" },
-      { county: "Cleveland", name: "Ormesby Hall", category: "Historic Property" },
-      { county: "Clwyd", name: "Chirk Castle", category: "Castle" },
-      { county: "Clwyd", name: "Erddig House", category: "Historic House" },
-      { county: "Cornwall", name: "Antony House", category: "Historic House" },
-      { county: "Cornwall", name: "Bedruthan Steps", category: "Countryside" },
-      { county: "Cornwall", name: "Cotehele", category: "Historic House" },
-      { county: "Cornwall", name: "Cotehele Mill", category: "Historic Property" },
-      { county: "Cornwall", name: "East Pool Mine", category: "Historic Property" },
-      { county: "Cornwall", name: "Glendurgan Gardens", category: "Garden" },
-      { county: "Cornwall", name: "Godolphin", category: "Historic House" },
-      { county: "Cornwall", name: "Lanhydrock", category: "Historic House" },
-      { county: "Cornwall", name: "Lantic Bay", category: "Countryside" },
-      { county: "Cornwall", name: "Lawrence House Museum", category: "Museum" },
-      { county: "Cornwall", name: "Levant Mine", category: "Historic Property" },
-      { county: "Cornwall", name: "Tintagel Old Post Office", category: "Historic Property" },
-      { county: "Cornwall", name: "Trelissick Garden", category: "Garden" },
-      { county: "Cornwall", name: "Trengwainton Garden", category: "Garden" },
-      { county: "Cornwall", name: "Trerice", category: "Historic House" },
-      { county: "Cornwall", name: "Wheal Coates Tin Mine", category: "Historic Property" },
-      { county: "Cornwall", name: "Willapark and Forrabury Stitches", category: "Countryside" },
-      { county: "Cumbria", name: "Acorn Bank", category: "Garden" },
-      { county: "Cumbria", name: "Beatrix Potter Gallery", category: "Museum" },
-      { county: "Cumbria", name: "Borrowdale", category: "Countryside" },
-      { county: "Cumbria", name: "Bridge House", category: "Historic Property" },
-      { county: "Cumbria", name: "Buttermere Lake", category: "Countryside" },
-      { county: "Cumbria", name: "Cartmel Priory Gatehouse", category: "Abbey" },
-      { county: "Cumbria", name: "Claife Viewing Station", category: "Historic Property" },
-      { county: "Cumbria", name: "Dalton Castle", category: "Castle" },
-      { county: "Cumbria", name: "Derwent Island House", category: "Historic Property" },
-      { county: "Cumbria", name: "Fell Foot Park", category: "Countryside" },
-      { county: "Cumbria", name: "Force Crag Mine", category: "Family" },
-      { county: "Cumbria", name: "High Force Waterfall", category: "Countryside" },
-      { county: "Cumbria", name: "Hill Top", category: "Historic Property" },
-      { county: "Cumbria", name: "Scale Force Waterfall", category: "Countryside" },
-      { county: "Cumbria", name: "Sizergh Castle", category: "Historic House" },
-      { county: "Cumbria", name: "Stagshaw Garden", category: "Garden" },
-      { county: "Cumbria", name: "Steam Yacht Gondola", category: "Family" },
-      { county: "Cumbria", name: "Stickle Tarn Walk", category: "Countryside" },
-      { county: "Cumbria", name: "Townend", category: "Historic House" },
-      { county: "Cumbria", name: "Wordsworth House", category: "Historic Property" },
-      { county: "Cumbria", name: "Wray Castle", category: "Historic House" },
-      { county: "Derbyshire", name: "Calke Abbey", category: "Historic House" },
-      { county: "Derbyshire", name: "Hardwick Hall", category: "Historic House" },
-      { county: "Derbyshire", name: "Kedleston Hall", category: "Historic House" },
-      { county: "Derbyshire", name: "Old Manor", category: "Historic Property" },
-      { county: "Derbyshire", name: "Stainsby Mill", category: "Historic Property" },
-      { county: "Derbyshire", name: "Sudbury Hall", category: "Historic House" },
-      { county: "Derbyshire", name: "Winster Market House", category: "Historic Property" },
-      { county: "Devon", name: "A La Ronde", category: "Historic House" },
-      { county: "Devon", name: "Arlington Court", category: "Historic House" },
-      { county: "Devon", name: "Bradley Manor House", category: "Historic House" },
-      { county: "Devon", name: "Branscombe", category: "Historic Property" },
-      { county: "Devon", name: "Buckland Abbey", category: "Historic House" },
-      { county: "Devon", name: "Budlake Old Post Office Room", category: "Historic Property" },
-      { county: "Devon", name: "Castle Drogo", category: "Historic House" },
-      { county: "Devon", name: "Clyston Mill", category: "Historic Property" },
-      { county: "Devon", name: "Coleton Fishacre House and Garden", category: "Historic House" },
-      { county: "Devon", name: "Compton Castle", category: "Historic House" },
-      { county: "Devon", name: "Finch Foundry", category: "Historic Property" },
-      { county: "Devon", name: "Fingle Bridge", category: "Historic Property" },
-      { county: "Devon", name: "Gallants Bower Fort", category: "Historic Property" },
-      { county: "Devon", name: "Greenway", category: "Historic House" },
-      { county: "Devon", name: "Hembury Castle Hillfort", category: "Prehistoric" },
-      { county: "Devon", name: "Killerton", category: "Historic House" },
-      { county: "Devon", name: "Killerton Chapel", category: "Church" },
-      { county: "Devon", name: "Knightshayes Court", category: "Historic House" },
-      { county: "Devon", name: "Loughwood Meeting House", category: "Historic Property" },
-      { county: "Devon", name: "Lundy", category: "Countryside" },
-      { county: "Devon", name: "Lydford Gorge", category: "Countryside" },
-      { county: "Devon", name: "Marker's Cottage", category: "Historic Property" },
-      { county: "Devon", name: "Overbeck's Museum and Garden", category: "Museum" },
-      { county: "Devon", name: "Parke", category: "Countryside" },
-      { county: "Devon", name: "Saltram", category: "Historic House" },
-      { county: "Devon", name: "Shute Barton", category: "Historic Property" },
-      { county: "Dorset", name: "Badbury Rings", category: "Prehistoric" },
-      { county: "Dorset", name: "Brownsea Island", category: "Countryside" },
-      { county: "Dorset", name: "Clouds Hill", category: "Historic Property" },
-      { county: "Dorset", name: "Corfe Castle", category: "Castle" },
-      { county: "Dorset", name: "Hardy's Cottage", category: "Historic Property" },
-      { county: "Dorset", name: "Kingston Lacy", category: "Historic House" },
-      { county: "Dorset", name: "Max Gate", category: "Historic Property" },
-      { county: "Dorset", name: "White Mill", category: "Historic Property" },
-      { county: "Dyfed", name: "Bosherston Lakes (Lily Ponds)", category: "Garden" },
-      { county: "Dyfed", name: "Colby Woodland Garden", category: "Garden" },
-      { county: "Dyfed", name: "Dinefwr Park", category: "Garden" },
-      { county: "Dyfed", name: "Dolaucothi Gold Mines", category: "Roman" },
-      { county: "Dyfed", name: "Llanerchaeron", category: "Historic House" },
-      { county: "Dyfed", name: "Newton House", category: "Historic House" },
-      { county: "Dyfed", name: "Paxtons Tower", category: "Historic Property" },
-      { county: "Dyfed", name: "Stackpole Court & Walled Gardens", category: "Garden" },
-      { county: "Dyfed", name: "Stackpole Estate", category: "Garden" },
-      { county: "Dyfed", name: "Tudor Merchant's House", category: "Historic House" },
-      { county: "East Sussex", name: "Alfriston Clergy House", category: "Historic Property" },
-      { county: "East Sussex", name: "Bateman's", category: "Historic House" },
-      { county: "East Sussex", name: "Bodiam Castle", category: "Castle" },
-      { county: "East Sussex", name: "Lamb House", category: "Historic Property" },
-      { county: "East Sussex", name: "Monk's House", category: "Historic Property" },
-      { county: "East Sussex", name: "Sheffield Park", category: "Garden" },
-      { county: "Essex", name: "Bourne Mill", category: "Historic Property" },
-      { county: "Essex", name: "Coggeshall Grange Barn", category: "Historic Property" },
-      { county: "Essex", name: "Paycockes", category: "Historic Property" },
-      { county: "Essex", name: "Rayleigh Mount", category: "Castle" },
-      { county: "Glamorgan", name: "Aberdulais Tin Mine and Waterfall", category: "Historic Property" },
-      { county: "Glamorgan", name: "Dyffryn Gardens and Arboretum", category: "Garden" },
-      { county: "Gloucestershire", name: "Ashleworth Tithe Barn", category: "Historic Property" },
-      { county: "Gloucestershire", name: "Chedworth Roman Villa", category: "Roman" },
-      { county: "Gloucestershire", name: "Chipping Campden Market Hall", category: "Historic Property" },
-      { county: "Gloucestershire", name: "Dyrham Park", category: "Historic House" },
-      { county: "Gloucestershire", name: "Hidcote Manor Gardens", category: "Garden" },
-      { county: "Gloucestershire", name: "Horton Court", category: "Historic Property" },
-      { county: "Gloucestershire", name: "Lodge Park", category: "Historic House" },
-      { county: "Gloucestershire", name: "Newark Park", category: "Historic House" },
-      { county: "Gloucestershire", name: "Westbury Court Garden", category: "Garden" },
-      { county: "Greater London", name: "2 Willow Road", category: "Historic Property" },
-      { county: "Greater London", name: "Carlyle's House", category: "Historic Property" },
-      { county: "Greater London", name: "Eastbury Manor House", category: "Historic Property" },
-      { county: "Greater London", name: "Fenton House", category: "Historic Property" },
-      { county: "Greater London", name: "George Inn, London", category: "Historic Property" },
-      { county: "Greater London", name: "Ham House", category: "Historic House" },
-      { county: "Greater London", name: "Morden Hall Park", category: "Garden" },
-      { county: "Greater London", name: "Osterley Park", category: "Historic House" },
-      { county: "Greater London", name: "Rainham Hall", category: "Historic Property" },
-      { county: "Greater London", name: "Red House", category: "Historic House" },
-      { county: "Greater London", name: "Sutton House", category: "Historic House" },
-      { county: "Gwent", name: "The Kymin", category: "Historic Property" },
-      { county: "Gwent", name: "Tredegar House", category: "Historic House" },
-      { county: "Gwynedd", name: "Aberconwy House", category: "Historic House" },
-      { county: "Gwynedd", name: "Bodnant Garden", category: "Garden" },
-      { county: "Gwynedd", name: "Conwy Suspension Bridge", category: "Historic Property" },
-      { county: "Gwynedd", name: "Penrhyn Castle", category: "Historic House" },
-      { county: "Gwynedd", name: "Plas Newydd", category: "Historic House" },
-      { county: "Gwynedd", name: "Plas-yn-Rhiw", category: "Historic House" },
-      { county: "Gwynedd", name: "Porth Oer (Whistling Sands)", category: "Countryside" },
-      { county: "Gwynedd", name: "Ty Mawr Wybrnant", category: "Historic House" },
-      { county: "Hampshire", name: "Hinton Ampner House & Garden", category: "Garden" },
-      { county: "Hampshire", name: "Mottisfont Abbey", category: "Historic House" },
-      { county: "Hampshire", name: "Sandham Memorial Chapel", category: "Church" },
-      { county: "Hampshire", name: "The Vyne", category: "Historic House" },
-      { county: "Hampshire", name: "West Green House Garden", category: "Garden" },
-      { county: "Hampshire", name: "Winchester City Mill", category: "Museum" },
-      { county: "Herefordshire", name: "Berrington Hall", category: "Historic House" },
-      { county: "Herefordshire", name: "Brockhampton Estate", category: "Historic Property" },
-      { county: "Herefordshire", name: "Croft Castle", category: "Historic House" },
-      { county: "Herefordshire", name: "Cwmmau Farmhouse", category: "Historic Property" },
-      { county: "Herefordshire", name: "The Weir Garden", category: "Garden" },
-      { county: "Hertfordshire", name: "Ashridge Estate", category: "Countryside" },
-      { county: "Hertfordshire", name: "Shaw's Corner", category: "Historic Property" },
-      { county: "Hertfordshire", name: "Stocks Farm Dovecote", category: "Historic Property" },
-      { county: "Isle of Wight", name: "Bembridge Fort", category: "Historic Property" },
-      { county: "Isle of Wight", name: "Bembridge Windmill", category: "Historic Property" },
-      { county: "Isle of Wight", name: "Mottistone Manor Garden", category: "Garden" },
-      { county: "Isle of Wight", name: "Needles Old Battery", category: "Historic Property" },
-      { county: "Isle of Wight", name: "Newtown Old Town Hall", category: "Historic Property" },
-      { county: "Kent", name: "Chartwell", category: "Historic House" },
-      { county: "Kent", name: "Cobham Mausoleum", category: "Historic Property" },
-      { county: "Kent", name: "Coldrum Longbarrow", category: "Prehistoric" },
-      { county: "Kent", name: "Emmetts Garden", category: "Garden" },
-      { county: "Kent", name: "Ightham Mote", category: "Historic House" },
-      { county: "Kent", name: "Knole House", category: "Historic House" },
-      { county: "Kent", name: "Old Soar Manor", category: "Historic House" },
-      { county: "Kent", name: "Owletts", category: "Historic Property" },
-      { county: "Kent", name: "Quebec House", category: "Historic Property" },
-      { county: "Kent", name: "Scotney Castle", category: "Castle" },
-      { county: "Kent", name: "Smallhythe Place", category: "Historic Property" },
-      { county: "Kent", name: "South Foreland Lighthouse", category: "Historic Property" },
-      { county: "Kent", name: "St John's Jerusalem", category: "Church" },
-      { county: "Kent", name: "Stoneacre", category: "Historic House" },
-      { county: "Kent", name: "White Cliffs of Dover", category: "Countryside" },
-      { county: "Lancashire", name: "Arnside and Silverdale", category: "Countryside" },
-      { county: "Lancashire", name: "Gawthorpe Hall", category: "Historic House" },
-      { county: "Lancashire", name: "Heysham, St Patrick's Chapel", category: "Church" },
-      { county: "Lancashire", name: "Rufford Hall", category: "Historic Property" },
-      { county: "Leicestershire", name: "Staunton Harold Church", category: "Church" },
-      { county: "Leicestershire", name: "Stoneywell", category: "Historic Property" },
-      { county: "Lincolnshire", name: "Belton House", category: "Historic House" },
-      { county: "Lincolnshire", name: "Grantham House", category: "Historic Property" },
-      { county: "Lincolnshire", name: "Gunby Hall", category: "Historic House" },
-      { county: "Lincolnshire", name: "Monksthorpe Chapel", category: "Church" },
-      { county: "Lincolnshire", name: "Tattershall Castle", category: "Historic House" },
-      { county: "Lincolnshire", name: "Woolsthorpe Manor", category: "Historic Property" },
-      { county: "Merseyside", name: "20 Forthlin Road", category: "Historic Property" },
-      { county: "Merseyside", name: "Mendips", category: "Historic Property" },
-      { county: "Merseyside", name: "Speke Hall", category: "Historic House" },
-      { county: "Merseyside", name: "The Hardman's House", category: "Historic Property" },
-      { county: "Norfolk", name: "Blickling Hall", category: "Historic House" },
-      { county: "Norfolk", name: "Brancaster Estate", category: "Countryside" },
-      { county: "Norfolk", name: "Burnham Overy Staithe Windmill", category: "Historic Property" },
-      { county: "Norfolk", name: "Elizabethan House Museum", category: "Historic Property" },
-      { county: "Norfolk", name: "Felbrigg Hall", category: "Historic House" },
-      { county: "Norfolk", name: "Horsey Windpump", category: "Historic Property" },
-      { county: "Norfolk", name: "Oxburgh Hall", category: "Historic House" },
-      { county: "Norfolk", name: "Sheringham Park", category: "Countryside" },
-      { county: "Norfolk", name: "St George's Guildhall", category: "Historic Property" },
-      { county: "Northamptonshire", name: "Canons Ashby", category: "Historic House" },
-      { county: "Northamptonshire", name: "Canons Ashby Priory", category: "Church" },
-      { county: "Northamptonshire", name: "Lyveden New Bield", category: "Historic House" },
-      { county: "Northamptonshire", name: "Priest's House", category: "Historic Property" },
-      { county: "Northumberland", name: "Allen Banks & Staward Gorge", category: "Countryside" },
-      { county: "Northumberland", name: "Bellister Castle", category: "Castle" },
-      { county: "Northumberland", name: "Cherryburn", category: "Historic Property" },
-      { county: "Northumberland", name: "Cragside", category: "Historic House" },
-      { county: "Northumberland", name: "Dunstanburgh Castle", category: "Castle" },
-      { county: "Northumberland", name: "Farne Islands", category: "Countryside" },
-      { county: "Northumberland", name: "George Stephenson's Birthplace", category: "Historic Property" },
-      { county: "Northumberland", name: "Holystone Lady's Well", category: "Church" },
-      { county: "Northumberland", name: "Lindisfarne Castle", category: "Castle" },
-      { county: "Northumberland", name: "Seaton Delaval Hall", category: "Historic House" },
-      { county: "Northumberland", name: "Wallington Hall", category: "Historic House" },
-      { county: "Nottinghamshire", name: "Clumber Park", category: "Countryside" },
-      { county: "Nottinghamshire", name: "Mr Straw's House", category: "Historic Property" },
-      { county: "Nottinghamshire", name: "Southwell Workhouse", category: "Historic Property" },
-      { county: "Oxfordshire", name: "Buscot Old Parsonage", category: "Historic Property" },
-      { county: "Oxfordshire", name: "Buscot Park", category: "Historic House" },
-      { county: "Oxfordshire", name: "Chastleton House", category: "Historic House" },
-      { county: "Oxfordshire", name: "Great Coxwell Barn", category: "Historic Property" },
-      { county: "Oxfordshire", name: "Greys Court", category: "Garden" },
-      { county: "Oxfordshire", name: "Nuffield Place", category: "Historic House" },
-      { county: "Oxfordshire", name: "Priory Cottages", category: "Historic Property" },
-      { county: "Powys", name: "Powis Castle", category: "Castle" },
-      { county: "Shropshire", name: "Attingham Park", category: "Historic House" },
-      { county: "Shropshire", name: "Benthall Hall", category: "Historic House" },
-      { county: "Shropshire", name: "Cronkhill House, Attingham Park", category: "Historic House" },
-      { county: "Shropshire", name: "Dudmaston Hall", category: "Historic House" },
-      { county: "Shropshire", name: "Shrewsbury Town Walls Tower", category: "Historic Property" },
-      { county: "Shropshire", name: "Sunnycroft", category: "Historic Property" },
-      { county: "Shropshire", name: "Wilderhope Manor", category: "Historic Property" },
-      { county: "Somerset", name: "Bath Assembly Rooms", category: "Historic Property" },
-      { county: "Somerset", name: "Brean Down Fort", category: "Historic Property" },
-      { county: "Somerset", name: "Bruton Dovecote", category: "Historic Property" },
-      { county: "Somerset", name: "Coleridge Cottage", category: "Historic Property" },
-      { county: "Somerset", name: "Dunster Castle", category: "Castle" },
-      { county: "Somerset", name: "Dunster Working Watermill", category: "Historic Property" },
-      { county: "Somerset", name: "Fyne Court", category: "Garden" },
-      { county: "Somerset", name: "Glastonbury Tor", category: "Countryside" },
-      { county: "Somerset", name: "King John's Hunting Lodge", category: "Museum" },
-      { county: "Somerset", name: "Lytes Cary Manor", category: "Historic House" },
-      { county: "Somerset", name: "Martock Treasurer's House", category: "Historic Property" },
-      { county: "Somerset", name: "Montacute House", category: "Historic House" },
-      { county: "Somerset", name: "Muchelney Priest's House", category: "Historic Property" },
-      { county: "Somerset", name: "Prior Park Landscape Garden", category: "Garden" },
-      { county: "Somerset", name: "Stembridge Windmill", category: "Historic Property" },
-      { county: "Somerset", name: "Stoke-sub-Hamdon Priory", category: "Abbey" },
-      { county: "Somerset", name: "Tintinhull Garden", category: "Garden" },
-      { county: "Somerset", name: "Tyntesfield", category: "Historic House" },
-      { county: "Somerset", name: "Wellington Monument", category: "Historic Property" },
-      { county: "Staffordshire", name: "Biddulph Grange Garden", category: "Garden" },
-      { county: "Staffordshire", name: "Ilam Park and Hall", category: "Countryside" },
-      { county: "Staffordshire", name: "Moseley Old Hall", category: "Historic Property" },
-      { county: "Staffordshire", name: "Shugborough", category: "Historic House" },
-      { county: "Staffordshire", name: "Wall Roman Site (Letocetum Baths and Museum)", category: "Roman" },
-      { county: "Suffolk", name: "Flatford Bridge Cottage", category: "Historic Property" },
-      { county: "Suffolk", name: "Ickworth", category: "Historic House" },
-      { county: "Suffolk", name: "Lavenham Guildhall", category: "Historic Property" },
-      { county: "Suffolk", name: "Orford Ness National Nature Reserve", category: "Countryside" },
-      { county: "Suffolk", name: "Theatre Royal, Bury St Edmunds", category: "Historic Property" },
-      { county: "Suffolk", name: "Thorington Hall", category: "Historic Property" },
-      { county: "Surrey", name: "Box Hill", category: "Garden" },
-      { county: "Surrey", name: "Clandon Park", category: "Historic House" },
-      { county: "Surrey", name: "Dapdune Wharf", category: "Historic Property" },
-      { county: "Surrey", name: "Hatchlands Park", category: "Historic House" },
-      { county: "Surrey", name: "Leith Hill Tower and Place", category: "Historic Property" },
-      { county: "Surrey", name: "Oakhurst Cottage", category: "Historic Property" },
-      { county: "Surrey", name: "Polesden Lacey", category: "Historic House" },
-      { county: "Surrey", name: "Reigate Fort", category: "Historic Property" },
-      { county: "Surrey", name: "Runnymede", category: "Garden" },
-      { county: "Surrey", name: "Shalford Mill", category: "Historic Property" },
-      { county: "Surrey", name: "The Homewood", category: "Historic Property" },
-      { county: "Surrey", name: "Winkworth Arboretum", category: "Garden" },
-      { county: "Tyne and Wear", name: "Gibside", category: "Garden" },
-      { county: "Tyne and Wear", name: "Souter Lighthouse", category: "Historic Property" },
-      { county: "Tyne and Wear", name: "Washington Old Hall", category: "Historic Property" },
-      { county: "Warwickshire", name: "Baddesley Clinton", category: "Historic House" },
-      { county: "Warwickshire", name: "Charlecote Park", category: "Historic House" },
-      { county: "Warwickshire", name: "Coughton Court", category: "Historic House" },
-      { county: "Warwickshire", name: "Farnborough Hall", category: "Historic House" },
-      { county: "Warwickshire", name: "Kinwarton Dovecote", category: "Historic Property" },
-      { county: "Warwickshire", name: "Packwood House", category: "Historic House" },
-      { county: "Warwickshire", name: "Upton House", category: "Historic House" },
-      { county: "West Midlands", name: "Birmingham Back to Backs", category: "Historic Property" },
-      { county: "West Midlands", name: "Wightwick Manor", category: "Historic Property" },
-      { county: "West Sussex", name: "Cissbury Ring", category: "Prehistoric" },
-      { county: "West Sussex", name: "Nymans", category: "Garden" },
-      { county: "West Sussex", name: "Petworth House", category: "Historic House" },
-      { county: "West Sussex", name: "Saddlescombe Farm", category: "Countryside" },
-      { county: "West Sussex", name: "Standen", category: "Historic House" },
-      { county: "West Sussex", name: "Uppark", category: "Historic House" },
-      { county: "Wiltshire", name: "Avebury Manor and Garden", category: "Historic House" },
-      { county: "Wiltshire", name: "Avebury Stone Circle", category: "Prehistoric" },
-      { county: "Wiltshire", name: "Calstone & Cherhill Downs", category: "Countryside" },
-      { county: "Wiltshire", name: "Cherhill White Horse", category: "Countryside" },
-      { county: "Wiltshire", name: "Cley Hill Hillfort", category: "Prehistoric" },
-      { county: "Wiltshire", name: "Figsbury Ring", category: "Prehistoric" },
-      { county: "Wiltshire", name: "Fox Talbot Museum", category: "Museum" },
-      { county: "Wiltshire", name: "Great Chalfield Manor", category: "Historic Property" },
-      { county: "Wiltshire", name: "Lacock Abbey", category: "Historic House" },
-      { county: "Wiltshire", name: "Lacock Tithe Barn", category: "Historic Property" },
-      { county: "Wiltshire", name: "Lansdowne Monument", category: "Historic Property" },
-      { county: "Wiltshire", name: "Little Clarendon", category: "Historic Property" },
-      { county: "Wiltshire", name: "Mompesson House", category: "Historic House" },
-      { county: "Wiltshire", name: "Oldbury Castle Hillfort", category: "Prehistoric" },
-      { county: "Wiltshire", name: "Philipps House and Dinton Park", category: "Historic House" },
-      { county: "Wiltshire", name: "Stonehenge Landscape", category: "Prehistoric" },
-      { county: "Wiltshire", name: "Stourhead", category: "Garden" },
-      { county: "Wiltshire", name: "The Coombes", category: "Countryside" },
-      { county: "Wiltshire", name: "The Courts Garden", category: "Garden" },
-      { county: "Wiltshire", name: "Westwood Manor", category: "Historic Property" },
-      { county: "Worcestershire", name: "Croome Park", category: "Garden" },
-      { county: "Worcestershire", name: "Edward Elgar Birthplace Museum", category: "Museum" },
-      { county: "Worcestershire", name: "Fleece Inn", category: "Historic Property" },
-      { county: "Worcestershire", name: "Hanbury Hall", category: "Historic House" },
-      { county: "Worcestershire", name: "Hawford Dovecote", category: "Historic Property" },
-      { county: "Worcestershire", name: "Middle Littleton Tithe Barn", category: "Historic Property" },
-      { county: "Worcestershire", name: "Rosedene", category: "Historic Property" },
-      { county: "Worcestershire", name: "The Greyfriars", category: "Historic Property" },
-      { county: "Worcestershire", name: "Wichenford Dovecote", category: "Historic Property" },
-      { county: "Yorkshire", name: "Beningbrough Hall", category: "Historic House" },
-      { county: "Yorkshire", name: "Braithwaite Hall", category: "Historic Property" },
-      { county: "Yorkshire", name: "Brimham Rocks", category: "Countryside" },
-      { county: "Yorkshire", name: "East Riddlesden Hall", category: "Historic House" },
-      { county: "Yorkshire", name: "Fountains Abbey", category: "Abbey" },
-      { county: "Yorkshire", name: "Gibson's Mill", category: "Historic Property" },
-      { county: "Yorkshire", name: "Goddards House & Garden", category: "Historic House" },
-      { county: "Yorkshire", name: "Hardcastle Crags", category: "Countryside" },
-      { county: "Yorkshire", name: "Hudswell Woods", category: "Countryside" },
-      { county: "Yorkshire", name: "Maister House", category: "Historic Property" },
-      { county: "Yorkshire", name: "Moulton Hall", category: "Historic Property" },
-      { county: "Yorkshire", name: "Nostell Priory", category: "Historic House" },
-      { county: "Yorkshire", name: "Nunnington Hall", category: "Historic Property" },
-      { county: "Yorkshire", name: "Rievaulx Terrace and Temples", category: "Garden" },
-      { county: "Yorkshire", name: "Roseberry Topping", category: "Countryside" },
-      { county: "Yorkshire", name: "Studley Royal Water Garden", category: "Garden" },
-      { county: "Yorkshire", name: "The Bridestones", category: "Countryside" },
-      { county: "Yorkshire", name: "Treasurers House", category: "Historic Property" }
+      { county: "Bedfordshire", name: "Dunstable Downs and Whipsnade Estate", category: "Countryside", wiki: "Dunstable Downs" },
+      { county: "Bedfordshire", name: "Whipsnade Tree Cathedral", category: "Cathedral", wiki: "Whipsnade Tree Cathedral" },
+      { county: "Bedfordshire", name: "Willington Dovecote and Stables", category: "Historic Property", wiki: "Willington Dovecote and Stables" },
+      { county: "Berkshire", name: "Ashdown House", category: "Historic House", wiki: "Ashdown House, Berkshire" },
+      { county: "Berkshire", name: "Basildon Park", category: "Historic House", wiki: "Basildon Park" },
+      { county: "Bristol", name: "Blaise Hamlet", category: "Historic Property", wiki: "Blaise Hamlet" },
+      { county: "Bristol", name: "Westbury College Gatehouse", category: "Historic Property", wiki: "Westbury College" },
+      { county: "Buckinghamshire", name: "Ascott", category: "Historic House", wiki: "Ascott House" },
+      { county: "Buckinghamshire", name: "Boarstall Duck Decoy", category: "Historic Property", wiki: "Boarstall Duck Decoy" },
+      { county: "Buckinghamshire", name: "Boarstall Tower", category: "Historic Property", wiki: "Boarstall Tower" },
+      { county: "Buckinghamshire", name: "Buckingham Chantry Chapel", category: "Church", wiki: "Buckingham Chantry Chapel" },
+      { county: "Buckinghamshire", name: "Claydon House", category: "Historic House", wiki: "Claydon House" },
+      { county: "Buckinghamshire", name: "Cliveden", category: "Garden", wiki: "Cliveden" },
+      { county: "Buckinghamshire", name: "Dorneywood Garden", category: "Garden", wiki: "Dorneywood" },
+      { county: "Buckinghamshire", name: "King's Head", category: "Historic Property", wiki: "The King's Head, Aylesbury" },
+      { county: "Buckinghamshire", name: "Long Crendon Courthouse", category: "Historic Property", wiki: "Long Crendon Courthouse" },
+      { county: "Buckinghamshire", name: "Pitstone Windmill", category: "Historic Property", wiki: "Pitstone Windmill" },
+      { county: "Buckinghamshire", name: "Stowe Landscape Gardens", category: "Garden", wiki: "Stowe House" },
+      { county: "Buckinghamshire", name: "Waddesdon Manor", category: "Historic House", wiki: "Waddesdon Manor" },
+      { county: "Buckinghamshire", name: "West Wycombe Park", category: "Historic House", wiki: "West Wycombe Park" },
+      { county: "Cambridgeshire", name: "Anglesey Abbey", category: "Historic House", wiki: "Anglesey Abbey" },
+      { county: "Cambridgeshire", name: "Houghton Mill", category: "Historic Property", wiki: "Houghton Mill" },
+      { county: "Cambridgeshire", name: "Octavia Hill Birthplace Museum", category: "Museum", wiki: "Octavia Hill Birthplace House" },
+      { county: "Cambridgeshire", name: "Peckover House", category: "Historic House", wiki: "Peckover House and Garden" },
+      { county: "Cambridgeshire", name: "Ramsey Abbey Gatehouse", category: "Abbey", wiki: "Ramsey Abbey" },
+      { county: "Cambridgeshire", name: "Wicken Fen", category: "Countryside", wiki: "Wicken Fen" },
+      { county: "Cambridgeshire", name: "Wimpole Hall", category: "Historic House", wiki: "Wimpole Estate" },
+      { county: "Cheshire", name: "Alderley Edge", category: "Countryside", wiki: "Alderley Edge" },
+      { county: "Cheshire", name: "Dunham Massey", category: "Historic House", wiki: "Dunham Massey" },
+      { county: "Cheshire", name: "Hare Hill Garden", category: "Garden", wiki: "Hare Hill" },
+      { county: "Cheshire", name: "Little Moreton Hall", category: "Historic House", wiki: "Little Moreton Hall" },
+      { county: "Cheshire", name: "Lyme Park", category: "Historic House", wiki: "Lyme Park" },
+      { county: "Cheshire", name: "Nether Alderley Mill", category: "Historic Property", wiki: "Nether Alderley Mill" },
+      { county: "Cheshire", name: "Quarry Bank Mill", category: "Historic Property", wiki: "Quarry Bank Mill" },
+      { county: "Cheshire", name: "Tatton Park", category: "Historic House", wiki: "Tatton Park" },
+      { county: "Cleveland", name: "Ormesby Hall", category: "Historic Property", wiki: "Ormesby Hall" },
+      { county: "Clwyd", name: "Chirk Castle", category: "Castle", wiki: "Chirk Castle" },
+      { county: "Clwyd", name: "Erddig House", category: "Historic House", wiki: "Erddig" },
+      { county: "Cornwall", name: "Antony House", category: "Historic House", wiki: "Antony House" },
+      { county: "Cornwall", name: "Bedruthan Steps", category: "Countryside", wiki: "Bedruthan Steps" },
+      { county: "Cornwall", name: "Cotehele", category: "Historic House", wiki: "Cotehele" },
+      { county: "Cornwall", name: "Cotehele Mill", category: "Historic Property", wiki: "Cotehele Mill" },
+      { county: "Cornwall", name: "East Pool Mine", category: "Historic Property", wiki: "East Pool Mine" },
+      { county: "Cornwall", name: "Glendurgan Gardens", category: "Garden", wiki: "Glendurgan Garden" },
+      { county: "Cornwall", name: "Godolphin", category: "Historic House", wiki: "Godolphin Estate" },
+      { county: "Cornwall", name: "Lanhydrock", category: "Historic House", wiki: "Lanhydrock" },
+      { county: "Cornwall", name: "Lantic Bay", category: "Countryside", wiki: "Lantic Bay" },
+      { county: "Cornwall", name: "Lawrence House Museum", category: "Museum", wiki: "Lawrence House, Launceston" },
+      { county: "Cornwall", name: "Levant Mine", category: "Historic Property", wiki: "Levant Mine and Beam Engine" },
+      { county: "Cornwall", name: "Tintagel Old Post Office", category: "Historic Property", wiki: "Tintagel Old Post Office" },
+      { county: "Cornwall", name: "Trelissick Garden", category: "Garden", wiki: "Trelissick Garden" },
+      { county: "Cornwall", name: "Trengwainton Garden", category: "Garden", wiki: "Trengwainton Garden" },
+      { county: "Cornwall", name: "Trerice", category: "Historic House", wiki: "Trerice" },
+      { county: "Cornwall", name: "Wheal Coates Tin Mine", category: "Historic Property", wiki: "Wheal Coates" },
+      { county: "Cornwall", name: "Willapark and Forrabury Stitches", category: "Countryside", wiki: "Willapark" },
+      { county: "Cumbria", name: "Acorn Bank", category: "Garden", wiki: "Acorn Bank" },
+      { county: "Cumbria", name: "Beatrix Potter Gallery", category: "Museum", wiki: "Beatrix Potter Gallery" },
+      { county: "Cumbria", name: "Borrowdale", category: "Countryside", wiki: "Borrowdale" },
+      { county: "Cumbria", name: "Bridge House", category: "Historic Property", wiki: "Bridge House, Ambleside" },
+      { county: "Cumbria", name: "Buttermere Lake", category: "Countryside", wiki: "Buttermere" },
+      { county: "Cumbria", name: "Cartmel Priory Gatehouse", category: "Abbey", wiki: "Cartmel Priory Gatehouse" },
+      { county: "Cumbria", name: "Claife Viewing Station", category: "Historic Property", wiki: "Claife Viewing Station" },
+      { county: "Cumbria", name: "Dalton Castle", category: "Castle", wiki: "Dalton Castle" },
+      { county: "Cumbria", name: "Derwent Island House", category: "Historic Property", wiki: "Derwent Island House" },
+      { county: "Cumbria", name: "Fell Foot Park", category: "Countryside", wiki: "Fell Foot Park" },
+      { county: "Cumbria", name: "Force Crag Mine", category: "Family", wiki: "Force Crag Mine" },
+      { county: "Cumbria", name: "High Force Waterfall", category: "Countryside", wiki: "High Force" },
+      { county: "Cumbria", name: "Hill Top", category: "Historic Property", wiki: "Hill Top, Cumbria" },
+      { county: "Cumbria", name: "Scale Force Waterfall", category: "Countryside", wiki: "Scale Force" },
+      { county: "Cumbria", name: "Sizergh Castle", category: "Historic House", wiki: "Sizergh Castle" },
+      { county: "Cumbria", name: "Stagshaw Garden", category: "Garden", wiki: "Stagshaw Garden" },
+      { county: "Cumbria", name: "Steam Yacht Gondola", category: "Family", wiki: "SY Gondola" },
+      { county: "Cumbria", name: "Stickle Tarn Walk", category: "Countryside", wiki: "Stickle Tarn" },
+      { county: "Cumbria", name: "Townend", category: "Historic House", wiki: "Townend" },
+      { county: "Cumbria", name: "Wordsworth House", category: "Historic Property", wiki: "Wordsworth House" },
+      { county: "Cumbria", name: "Wray Castle", category: "Historic House", wiki: "Wray Castle" },
+      { county: "Derbyshire", name: "Calke Abbey", category: "Historic House", wiki: "Calke Abbey" },
+      { county: "Derbyshire", name: "Hardwick Hall", category: "Historic House", wiki: "Hardwick Hall" },
+      { county: "Derbyshire", name: "Kedleston Hall", category: "Historic House", wiki: "Kedleston Hall" },
+      { county: "Derbyshire", name: "Old Manor", category: "Historic Property", wiki: "Norbury Manor" },
+      { county: "Derbyshire", name: "Stainsby Mill", category: "Historic Property", wiki: "Stainsby Mill" },
+      { county: "Derbyshire", name: "Sudbury Hall", category: "Historic House", wiki: "Sudbury Hall" },
+      { county: "Derbyshire", name: "Winster Market House", category: "Historic Property", wiki: "Winster Market House" },
+      { county: "Devon", name: "A La Ronde", category: "Historic House", wiki: "A La Ronde" },
+      { county: "Devon", name: "Arlington Court", category: "Historic House", wiki: "Arlington Court" },
+      { county: "Devon", name: "Bradley Manor House", category: "Historic House", wiki: "Bradley Manor" },
+      { county: "Devon", name: "Branscombe", category: "Historic Property", wiki: "Branscombe" },
+      { county: "Devon", name: "Buckland Abbey", category: "Historic House", wiki: "Buckland Abbey" },
+      { county: "Devon", name: "Budlake Old Post Office Room", category: "Historic Property", wiki: "Budlake" },
+      { county: "Devon", name: "Castle Drogo", category: "Historic House", wiki: "Castle Drogo" },
+      { county: "Devon", name: "Clyston Mill", category: "Historic Property", wiki: "Clyston Mill" },
+      { county: "Devon", name: "Coleton Fishacre House and Garden", category: "Historic House", wiki: "Coleton Fishacre" },
+      { county: "Devon", name: "Compton Castle", category: "Historic House", wiki: "Compton Castle" },
+      { county: "Devon", name: "Finch Foundry", category: "Historic Property", wiki: "Finch Foundry" },
+      { county: "Devon", name: "Fingle Bridge", category: "Historic Property", wiki: "Fingle Bridge" },
+      { county: "Devon", name: "Gallants Bower Fort", category: "Historic Property", wiki: "Gallants Bower" },
+      { county: "Devon", name: "Greenway", category: "Historic House", wiki: "Greenway Estate" },
+      { county: "Devon", name: "Hembury Castle Hillfort", category: "Prehistoric", wiki: "Hembury" },
+      { county: "Devon", name: "Killerton", category: "Historic House", wiki: "Killerton" },
+      { county: "Devon", name: "Killerton Chapel", category: "Church", wiki: "Killerton Chapel" },
+      { county: "Devon", name: "Knightshayes Court", category: "Historic House", wiki: "Knightshayes Court" },
+      { county: "Devon", name: "Loughwood Meeting House", category: "Historic Property", wiki: "Loughwood Meetinghouse" },
+      { county: "Devon", name: "Lundy", category: "Countryside", wiki: "Lundy" },
+      { county: "Devon", name: "Lydford Gorge", category: "Countryside", wiki: "Lydford Gorge" },
+      { county: "Devon", name: "Marker's Cottage", category: "Historic Property", wiki: "Broadclyst" },
+      { county: "Devon", name: "Overbeck's Museum and Garden", category: "Museum", wiki: "Overbeck's" },
+      { county: "Devon", name: "Parke", category: "Countryside", wiki: "Parke, Bovey Tracey" },
+      { county: "Devon", name: "Saltram", category: "Historic House", wiki: "Saltram House" },
+      { county: "Devon", name: "Shute Barton", category: "Historic Property", wiki: "Shute Barton" },
+      { county: "Dorset", name: "Badbury Rings", category: "Prehistoric", wiki: "Badbury Rings" },
+      { county: "Dorset", name: "Brownsea Island", category: "Countryside", wiki: "Brownsea Island" },
+      { county: "Dorset", name: "Clouds Hill", category: "Historic Property", wiki: "Clouds Hill" },
+      { county: "Dorset", name: "Corfe Castle", category: "Castle", wiki: "Corfe Castle" },
+      { county: "Dorset", name: "Hardy's Cottage", category: "Historic Property", wiki: "Hardy's Cottage" },
+      { county: "Dorset", name: "Kingston Lacy", category: "Historic House", wiki: "Kingston Lacy" },
+      { county: "Dorset", name: "Max Gate", category: "Historic Property", wiki: "Max Gate" },
+      { county: "Dorset", name: "White Mill", category: "Historic Property", wiki: "White Mill, Sturminster Marshall" },
+      { county: "Dyfed", name: "Bosherston Lakes (Lily Ponds)", category: "Garden", wiki: "Bosherston Lakes" },
+      { county: "Dyfed", name: "Colby Woodland Garden", category: "Garden", wiki: "Colby Woodland Garden" },
+      { county: "Dyfed", name: "Dinefwr Park", category: "Garden", wiki: "Dinefwr Castle" },
+      { county: "Dyfed", name: "Dolaucothi Gold Mines", category: "Roman", wiki: "Dolaucothi Gold Mines" },
+      { county: "Dyfed", name: "Llanerchaeron", category: "Historic House", wiki: "Llanerchaeron" },
+      { county: "Dyfed", name: "Newton House", category: "Historic House", wiki: "Newton House, Dinefwr" },
+      { county: "Dyfed", name: "Paxtons Tower", category: "Historic Property", wiki: "Paxton's Tower" },
+      { county: "Dyfed", name: "Stackpole Court & Walled Gardens", category: "Garden", wiki: "Stackpole Estate" },
+      { county: "Dyfed", name: "Stackpole Estate", category: "Garden", wiki: "Stackpole Estate" },
+      { county: "Dyfed", name: "Tudor Merchant's House", category: "Historic House", wiki: "Tudor Merchant's House" },
+      { county: "East Sussex", name: "Alfriston Clergy House", category: "Historic Property", wiki: "Alfriston Clergy House" },
+      { county: "East Sussex", name: "Bateman's", category: "Historic House", wiki: "Bateman's" },
+      { county: "East Sussex", name: "Bodiam Castle", category: "Castle", wiki: "Bodiam Castle" },
+      { county: "East Sussex", name: "Lamb House", category: "Historic Property", wiki: "Lamb House" },
+      { county: "East Sussex", name: "Monk's House", category: "Historic Property", wiki: "Monk's House" },
+      { county: "East Sussex", name: "Sheffield Park", category: "Garden", wiki: "Sheffield Park Garden" },
+      { county: "Essex", name: "Bourne Mill", category: "Historic Property", wiki: "Bourne Mill, Colchester" },
+      { county: "Essex", name: "Coggeshall Grange Barn", category: "Historic Property", wiki: "Grange Barn" },
+      { county: "Essex", name: "Paycockes", category: "Historic Property", wiki: "Paycocke's" },
+      { county: "Essex", name: "Rayleigh Mount", category: "Castle", wiki: "Rayleigh Mount" },
+      { county: "Glamorgan", name: "Aberdulais Tin Mine and Waterfall", category: "Historic Property", wiki: "Aberdulais Falls" },
+      { county: "Glamorgan", name: "Dyffryn Gardens and Arboretum", category: "Garden", wiki: "Dyffryn Gardens" },
+      { county: "Gloucestershire", name: "Ashleworth Tithe Barn", category: "Historic Property", wiki: "Ashleworth Tithe Barn" },
+      { county: "Gloucestershire", name: "Chedworth Roman Villa", category: "Roman", wiki: "Chedworth Roman Villa" },
+      { county: "Gloucestershire", name: "Chipping Campden Market Hall", category: "Historic Property", wiki: "Market Hall, Chipping Campden" },
+      { county: "Gloucestershire", name: "Dyrham Park", category: "Historic House", wiki: "Dyrham Park" },
+      { county: "Gloucestershire", name: "Hidcote Manor Gardens", category: "Garden", wiki: "Hidcote Manor Garden" },
+      { county: "Gloucestershire", name: "Horton Court", category: "Historic Property", wiki: "Horton Court" },
+      { county: "Gloucestershire", name: "Lodge Park", category: "Historic House", wiki: "Sherborne Estate" },
+      { county: "Gloucestershire", name: "Newark Park", category: "Historic House", wiki: "Newark Park" },
+      { county: "Gloucestershire", name: "Westbury Court Garden", category: "Garden", wiki: "Westbury Court Garden" },
+      { county: "Greater London", name: "2 Willow Road", category: "Historic Property", wiki: "2 Willow Road" },
+      { county: "Greater London", name: "Carlyle's House", category: "Historic Property", wiki: "Carlyle's House" },
+      { county: "Greater London", name: "Eastbury Manor House", category: "Historic Property", wiki: "Eastbury Manor House" },
+      { county: "Greater London", name: "Fenton House", category: "Historic Property", wiki: "Fenton House" },
+      { county: "Greater London", name: "George Inn, London", category: "Historic Property", wiki: "The George Inn, Southwark" },
+      { county: "Greater London", name: "Ham House", category: "Historic House", wiki: "Ham House" },
+      { county: "Greater London", name: "Morden Hall Park", category: "Garden", wiki: "Morden Hall Park" },
+      { county: "Greater London", name: "Osterley Park", category: "Historic House", wiki: "Osterley Park" },
+      { county: "Greater London", name: "Rainham Hall", category: "Historic Property", wiki: "Rainham Hall" },
+      { county: "Greater London", name: "Red House", category: "Historic House", wiki: "Red House, Bexleyheath" },
+      { county: "Greater London", name: "Sutton House", category: "Historic House", wiki: "Sutton House, London" },
+      { county: "Gwent", name: "The Kymin", category: "Historic Property", wiki: "The Kymin" },
+      { county: "Gwent", name: "Tredegar House", category: "Historic House", wiki: "Tredegar House" },
+      { county: "Gwynedd", name: "Aberconwy House", category: "Historic House", wiki: "Aberconwy House" },
+      { county: "Gwynedd", name: "Bodnant Garden", category: "Garden", wiki: "Bodnant Garden" },
+      { county: "Gwynedd", name: "Conwy Suspension Bridge", category: "Historic Property", wiki: "Conwy Suspension Bridge" },
+      { county: "Gwynedd", name: "Penrhyn Castle", category: "Historic House", wiki: "Penrhyn Castle" },
+      { county: "Gwynedd", name: "Plas Newydd", category: "Historic House", wiki: "Plas Newydd, Anglesey" },
+      { county: "Gwynedd", name: "Plas-yn-Rhiw", category: "Historic House", wiki: "Plas yn Rhiw" },
+      { county: "Gwynedd", name: "Porth Oer (Whistling Sands)", category: "Countryside", wiki: "Porth Oer" },
+      { county: "Gwynedd", name: "Ty Mawr Wybrnant", category: "Historic House", wiki: "Tŷ Mawr Wybrnant" },
+      { county: "Hampshire", name: "Hinton Ampner House & Garden", category: "Garden", wiki: "Hinton Ampner" },
+      { county: "Hampshire", name: "Mottisfont Abbey", category: "Historic House", wiki: "Mottisfont" },
+      { county: "Hampshire", name: "Sandham Memorial Chapel", category: "Church", wiki: "Sandham Memorial Chapel" },
+      { county: "Hampshire", name: "The Vyne", category: "Historic House", wiki: "The Vyne" },
+      { county: "Hampshire", name: "West Green House Garden", category: "Garden", wiki: "West Green House" },
+      { county: "Hampshire", name: "Winchester City Mill", category: "Museum", wiki: "Winchester City Mill" },
+      { county: "Herefordshire", name: "Berrington Hall", category: "Historic House", wiki: "Berrington Hall" },
+      { county: "Herefordshire", name: "Brockhampton Estate", category: "Historic Property", wiki: "Lower Brockhampton" },
+      { county: "Herefordshire", name: "Croft Castle", category: "Historic House", wiki: "Croft Castle" },
+      { county: "Herefordshire", name: "Cwmmau Farmhouse", category: "Historic Property", wiki: "Cwmmau Farmhouse" },
+      { county: "Herefordshire", name: "The Weir Garden", category: "Garden", wiki: "The Weir Garden" },
+      { county: "Hertfordshire", name: "Ashridge Estate", category: "Countryside", wiki: "Ashridge" },
+      { county: "Hertfordshire", name: "Shaw's Corner", category: "Historic Property", wiki: "Shaw's Corner" },
+      { county: "Hertfordshire", name: "Stocks Farm Dovecote", category: "Historic Property", wiki: "Stocks Farm Dovecote" },
+      { county: "Isle of Wight", name: "Bembridge Fort", category: "Historic Property", wiki: "Bembridge Fort" },
+      { county: "Isle of Wight", name: "Bembridge Windmill", category: "Historic Property", wiki: "Bembridge Windmill" },
+      { county: "Isle of Wight", name: "Mottistone Manor Garden", category: "Garden", wiki: "Mottistone Manor" },
+      { county: "Isle of Wight", name: "Needles Old Battery", category: "Historic Property", wiki: "Needles Old Battery" },
+      { county: "Isle of Wight", name: "Newtown Old Town Hall", category: "Historic Property", wiki: "Newtown Old Town Hall" },
+      { county: "Kent", name: "Chartwell", category: "Historic House", wiki: "Chartwell" },
+      { county: "Kent", name: "Cobham Mausoleum", category: "Historic Property", wiki: "Darnley Mausoleum" },
+      { county: "Kent", name: "Coldrum Longbarrow", category: "Prehistoric", wiki: "Coldrum Long Barrow" },
+      { county: "Kent", name: "Emmetts Garden", category: "Garden", wiki: "Emmetts Garden" },
+      { county: "Kent", name: "Ightham Mote", category: "Historic House", wiki: "Ightham Mote" },
+      { county: "Kent", name: "Knole House", category: "Historic House", wiki: "Knole" },
+      { county: "Kent", name: "Old Soar Manor", category: "Historic House", wiki: "Old Soar Manor" },
+      { county: "Kent", name: "Owletts", category: "Historic Property", wiki: "Owletts" },
+      { county: "Kent", name: "Quebec House", category: "Historic Property", wiki: "Quebec House" },
+      { county: "Kent", name: "Scotney Castle", category: "Castle", wiki: "Scotney Castle" },
+      { county: "Kent", name: "Smallhythe Place", category: "Historic Property", wiki: "Smallhythe Place" },
+      { county: "Kent", name: "South Foreland Lighthouse", category: "Historic Property", wiki: "South Foreland Lighthouse" },
+      { county: "Kent", name: "St John's Jerusalem", category: "Church", wiki: "St John's Jerusalem, Sutton-at-Hone" },
+      { county: "Kent", name: "Stoneacre", category: "Historic House", wiki: "Stoneacre" },
+      { county: "Kent", name: "White Cliffs of Dover", category: "Countryside", wiki: "White Cliffs of Dover" },
+      { county: "Lancashire", name: "Arnside and Silverdale", category: "Countryside", wiki: "Arnside and Silverdale" },
+      { county: "Lancashire", name: "Gawthorpe Hall", category: "Historic House", wiki: "Gawthorpe Hall" },
+      { county: "Lancashire", name: "Heysham, St Patrick's Chapel", category: "Church", wiki: "St Patrick's Chapel, Heysham" },
+      { county: "Lancashire", name: "Rufford Hall", category: "Historic Property", wiki: "Rufford Old Hall" },
+      { county: "Leicestershire", name: "Staunton Harold Church", category: "Church", wiki: "Staunton Harold Church" },
+      { county: "Leicestershire", name: "Stoneywell", category: "Historic Property", wiki: "Stoneywell" },
+      { county: "Lincolnshire", name: "Belton House", category: "Historic House", wiki: "Belton House" },
+      { county: "Lincolnshire", name: "Grantham House", category: "Historic Property", wiki: "Grantham House" },
+      { county: "Lincolnshire", name: "Gunby Hall", category: "Historic House", wiki: "Gunby Hall" },
+      { county: "Lincolnshire", name: "Monksthorpe Chapel", category: "Church", wiki: "Monksthorpe Chapel" },
+      { county: "Lincolnshire", name: "Tattershall Castle", category: "Historic House", wiki: "Tattershall Castle" },
+      { county: "Lincolnshire", name: "Woolsthorpe Manor", category: "Historic Property", wiki: "Woolsthorpe Manor" },
+      { county: "Merseyside", name: "20 Forthlin Road", category: "Historic Property", wiki: "20 Forthlin Road" },
+      { county: "Merseyside", name: "Mendips", category: "Historic Property", wiki: "251 Menlove Avenue" },
+      { county: "Merseyside", name: "Speke Hall", category: "Historic House", wiki: "Speke Hall" },
+      { county: "Merseyside", name: "The Hardman's House", category: "Historic Property", wiki: "The Hardmans' House" },
+      { county: "Norfolk", name: "Blickling Hall", category: "Historic House", wiki: "Blickling Hall" },
+      { county: "Norfolk", name: "Brancaster Estate", category: "Countryside", wiki: "Brancaster" },
+      { county: "Norfolk", name: "Burnham Overy Staithe Windmill", category: "Historic Property", wiki: "Burnham Overy Staithe Windmill" },
+      { county: "Norfolk", name: "Elizabethan House Museum", category: "Historic Property", wiki: "Elizabethan House Museum" },
+      { county: "Norfolk", name: "Felbrigg Hall", category: "Historic House", wiki: "Felbrigg Hall" },
+      { county: "Norfolk", name: "Horsey Windpump", category: "Historic Property", wiki: "Horsey Windpump" },
+      { county: "Norfolk", name: "Oxburgh Hall", category: "Historic House", wiki: "Oxburgh Hall" },
+      { county: "Norfolk", name: "Sheringham Park", category: "Countryside", wiki: "Sheringham Park" },
+      { county: "Norfolk", name: "St George's Guildhall", category: "Historic Property", wiki: "St George's Guildhall" },
+      { county: "Northamptonshire", name: "Canons Ashby", category: "Historic House", wiki: "Canons Ashby House" },
+      { county: "Northamptonshire", name: "Canons Ashby Priory", category: "Church", wiki: "Canons Ashby Priory" },
+      { county: "Northamptonshire", name: "Lyveden New Bield", category: "Historic House", wiki: "Lyveden New Bield" },
+      { county: "Northamptonshire", name: "Priest's House", category: "Historic Property", wiki: "Easton on the Hill" },
+      { county: "Northumberland", name: "Allen Banks & Staward Gorge", category: "Countryside", wiki: "Allen Banks and Staward Gorge" },
+      { county: "Northumberland", name: "Bellister Castle", category: "Castle", wiki: "Bellister Castle" },
+      { county: "Northumberland", name: "Cherryburn", category: "Historic Property", wiki: "Cherryburn" },
+      { county: "Northumberland", name: "Cragside", category: "Historic House", wiki: "Cragside" },
+      { county: "Northumberland", name: "Dunstanburgh Castle", category: "Castle", wiki: "Dunstanburgh Castle" },
+      { county: "Northumberland", name: "Farne Islands", category: "Countryside", wiki: "Farne Islands" },
+      { county: "Northumberland", name: "George Stephenson's Birthplace", category: "Historic Property", wiki: "George Stephenson's Birthplace" },
+      { county: "Northumberland", name: "Holystone Lady's Well", category: "Church", wiki: "Holystone, Northumberland" },
+      { county: "Northumberland", name: "Lindisfarne Castle", category: "Castle", wiki: "Lindisfarne Castle" },
+      { county: "Northumberland", name: "Seaton Delaval Hall", category: "Historic House", wiki: "Seaton Delaval Hall" },
+      { county: "Northumberland", name: "Wallington Hall", category: "Historic House", wiki: "Wallington, Northumberland" },
+      { county: "Nottinghamshire", name: "Clumber Park", category: "Countryside", wiki: "Clumber Park" },
+      { county: "Nottinghamshire", name: "Mr Straw's House", category: "Historic Property", wiki: "Mr Straw's House" },
+      { county: "Nottinghamshire", name: "Southwell Workhouse", category: "Historic Property", wiki: "The Workhouse, Southwell" },
+      { county: "Oxfordshire", name: "Buscot Old Parsonage", category: "Historic Property", wiki: "Buscot Old Parsonage" },
+      { county: "Oxfordshire", name: "Buscot Park", category: "Historic House", wiki: "Buscot Park" },
+      { county: "Oxfordshire", name: "Chastleton House", category: "Historic House", wiki: "Chastleton House" },
+      { county: "Oxfordshire", name: "Great Coxwell Barn", category: "Historic Property", wiki: "Great Coxwell Barn" },
+      { county: "Oxfordshire", name: "Greys Court", category: "Garden", wiki: "Greys Court" },
+      { county: "Oxfordshire", name: "Nuffield Place", category: "Historic House", wiki: "Nuffield Place" },
+      { county: "Oxfordshire", name: "Priory Cottages", category: "Historic Property", wiki: "Steventon, Oxfordshire" },
+      { county: "Powys", name: "Powis Castle", category: "Castle", wiki: "Powis Castle" },
+      { county: "Shropshire", name: "Attingham Park", category: "Historic House", wiki: "Attingham Park" },
+      { county: "Shropshire", name: "Benthall Hall", category: "Historic House", wiki: "Benthall Hall" },
+      { county: "Shropshire", name: "Cronkhill House, Attingham Park", category: "Historic House", wiki: "Cronkhill" },
+      { county: "Shropshire", name: "Dudmaston Hall", category: "Historic House", wiki: "Dudmaston Hall" },
+      { county: "Shropshire", name: "Shrewsbury Town Walls Tower", category: "Historic Property", wiki: "Town Walls Tower" },
+      { county: "Shropshire", name: "Sunnycroft", category: "Historic Property", wiki: "Sunnycroft" },
+      { county: "Shropshire", name: "Wilderhope Manor", category: "Historic Property", wiki: "Wilderhope Manor" },
+      { county: "Somerset", name: "Bath Assembly Rooms", category: "Historic Property", wiki: "Bath Assembly Rooms" },
+      { county: "Somerset", name: "Brean Down Fort", category: "Historic Property", wiki: "Brean Down Fort" },
+      { county: "Somerset", name: "Bruton Dovecote", category: "Historic Property", wiki: "Bruton Dovecote" },
+      { county: "Somerset", name: "Coleridge Cottage", category: "Historic Property", wiki: "Coleridge Cottage" },
+      { county: "Somerset", name: "Dunster Castle", category: "Castle", wiki: "Dunster Castle" },
+      { county: "Somerset", name: "Dunster Working Watermill", category: "Historic Property", wiki: "Dunster Working Watermill" },
+      { county: "Somerset", name: "Fyne Court", category: "Garden", wiki: "Fyne Court" },
+      { county: "Somerset", name: "Glastonbury Tor", category: "Countryside", wiki: "Glastonbury Tor" },
+      { county: "Somerset", name: "King John's Hunting Lodge", category: "Museum", wiki: "King John's Hunting Lodge, Axbridge" },
+      { county: "Somerset", name: "Lytes Cary Manor", category: "Historic House", wiki: "Lytes Cary" },
+      { county: "Somerset", name: "Martock Treasurer's House", category: "Historic Property", wiki: "Treasurer's House, Martock" },
+      { county: "Somerset", name: "Montacute House", category: "Historic House", wiki: "Montacute House" },
+      { county: "Somerset", name: "Muchelney Priest's House", category: "Historic Property", wiki: "Priest's House, Muchelney" },
+      { county: "Somerset", name: "Prior Park Landscape Garden", category: "Garden", wiki: "Prior Park Landscape Garden" },
+      { county: "Somerset", name: "Stembridge Windmill", category: "Historic Property", wiki: "Stembridge Mill, High Ham" },
+      { county: "Somerset", name: "Stoke-sub-Hamdon Priory", category: "Abbey", wiki: "Stoke-sub-Hamdon Priory" },
+      { county: "Somerset", name: "Tintinhull Garden", category: "Garden", wiki: "Tintinhull Garden" },
+      { county: "Somerset", name: "Tyntesfield", category: "Historic House", wiki: "Tyntesfield" },
+      { county: "Somerset", name: "Wellington Monument", category: "Historic Property", wiki: "Wellington Monument, Somerset" },
+      { county: "Staffordshire", name: "Biddulph Grange Garden", category: "Garden", wiki: "Biddulph Grange" },
+      { county: "Staffordshire", name: "Ilam Park and Hall", category: "Countryside", wiki: "Ilam Hall" },
+      { county: "Staffordshire", name: "Moseley Old Hall", category: "Historic Property", wiki: "Moseley Old Hall" },
+      { county: "Staffordshire", name: "Shugborough", category: "Historic House", wiki: "Shugborough Hall" },
+      { county: "Staffordshire", name: "Wall Roman Site (Letocetum Baths and Museum)", category: "Roman", wiki: "Letocetum" },
+      { county: "Suffolk", name: "Flatford Bridge Cottage", category: "Historic Property", wiki: "Bridge Cottage, Flatford" },
+      { county: "Suffolk", name: "Ickworth", category: "Historic House", wiki: "Ickworth House" },
+      { county: "Suffolk", name: "Lavenham Guildhall", category: "Historic Property", wiki: "Lavenham Guildhall" },
+      { county: "Suffolk", name: "Orford Ness National Nature Reserve", category: "Countryside", wiki: "Orford Ness" },
+      { county: "Suffolk", name: "Theatre Royal, Bury St Edmunds", category: "Historic Property", wiki: "Theatre Royal, Bury St Edmunds" },
+      { county: "Suffolk", name: "Thorington Hall", category: "Historic Property", wiki: "Thorington Hall" },
+      { county: "Surrey", name: "Box Hill", category: "Garden", wiki: "Box Hill, Surrey" },
+      { county: "Surrey", name: "Clandon Park", category: "Historic House", wiki: "Clandon Park" },
+      { county: "Surrey", name: "Dapdune Wharf", category: "Historic Property", wiki: "Dapdune Wharf" },
+      { county: "Surrey", name: "Hatchlands Park", category: "Historic House", wiki: "Hatchlands Park" },
+      { county: "Surrey", name: "Leith Hill Tower and Place", category: "Historic Property", wiki: "Leith Hill" },
+      { county: "Surrey", name: "Oakhurst Cottage", category: "Historic Property", wiki: "Oakhurst Cottage" },
+      { county: "Surrey", name: "Polesden Lacey", category: "Historic House", wiki: "Polesden Lacey" },
+      { county: "Surrey", name: "Reigate Fort", category: "Historic Property", wiki: "Reigate Fort" },
+      { county: "Surrey", name: "Runnymede", category: "Garden", wiki: "Runnymede" },
+      { county: "Surrey", name: "Shalford Mill", category: "Historic Property", wiki: "Shalford Mill" },
+      { county: "Surrey", name: "The Homewood", category: "Historic Property", wiki: "The Homewood" },
+      { county: "Surrey", name: "Winkworth Arboretum", category: "Garden", wiki: "Winkworth Arboretum" },
+      { county: "Tyne and Wear", name: "Gibside", category: "Garden", wiki: "Gibside" },
+      { county: "Tyne and Wear", name: "Souter Lighthouse", category: "Historic Property", wiki: "Souter Lighthouse" },
+      { county: "Tyne and Wear", name: "Washington Old Hall", category: "Historic Property", wiki: "Washington Old Hall" },
+      { county: "Warwickshire", name: "Baddesley Clinton", category: "Historic House", wiki: "Baddesley Clinton" },
+      { county: "Warwickshire", name: "Charlecote Park", category: "Historic House", wiki: "Charlecote Park" },
+      { county: "Warwickshire", name: "Coughton Court", category: "Historic House", wiki: "Coughton Court" },
+      { county: "Warwickshire", name: "Farnborough Hall", category: "Historic House", wiki: "Farnborough Hall" },
+      { county: "Warwickshire", name: "Kinwarton Dovecote", category: "Historic Property", wiki: "Kinwarton Dovecote" },
+      { county: "Warwickshire", name: "Packwood House", category: "Historic House", wiki: "Packwood House" },
+      { county: "Warwickshire", name: "Upton House", category: "Historic House", wiki: "Upton House, Warwickshire" },
+      { county: "West Midlands", name: "Birmingham Back to Backs", category: "Historic Property", wiki: "Birmingham Back to Backs" },
+      { county: "West Midlands", name: "Wightwick Manor", category: "Historic Property", wiki: "Wightwick Manor" },
+      { county: "West Sussex", name: "Cissbury Ring", category: "Prehistoric", wiki: "Cissbury Ring" },
+      { county: "West Sussex", name: "Nymans", category: "Garden", wiki: "Nymans" },
+      { county: "West Sussex", name: "Petworth House", category: "Historic House", wiki: "Petworth House" },
+      { county: "West Sussex", name: "Saddlescombe Farm", category: "Countryside", wiki: "Saddlescombe" },
+      { county: "West Sussex", name: "Standen", category: "Historic House", wiki: "Standen" },
+      { county: "West Sussex", name: "Uppark", category: "Historic House", wiki: "Uppark" },
+      { county: "Wiltshire", name: "Avebury Manor and Garden", category: "Historic House", wiki: "Avebury Manor and Garden" },
+      { county: "Wiltshire", name: "Avebury Stone Circle", category: "Prehistoric", wiki: "Avebury" },
+      { county: "Wiltshire", name: "Calstone & Cherhill Downs", category: "Countryside", wiki: "Cherhill Down" },
+      { county: "Wiltshire", name: "Cherhill White Horse", category: "Countryside", wiki: "Cherhill White Horse" },
+      { county: "Wiltshire", name: "Cley Hill Hillfort", category: "Prehistoric", wiki: "Cley Hill" },
+      { county: "Wiltshire", name: "Figsbury Ring", category: "Prehistoric", wiki: "Figsbury Ring" },
+      { county: "Wiltshire", name: "Fox Talbot Museum", category: "Museum", wiki: "Lacock Abbey" },
+      { county: "Wiltshire", name: "Great Chalfield Manor", category: "Historic Property", wiki: "Great Chalfield Manor" },
+      { county: "Wiltshire", name: "Lacock Abbey", category: "Historic House", wiki: "Lacock Abbey" },
+      { county: "Wiltshire", name: "Lacock Tithe Barn", category: "Historic Property", wiki: "Lacock" },
+      { county: "Wiltshire", name: "Lansdowne Monument", category: "Historic Property", wiki: "Lansdowne Monument" },
+      { county: "Wiltshire", name: "Little Clarendon", category: "Historic Property", wiki: "Little Clarendon" },
+      { county: "Wiltshire", name: "Mompesson House", category: "Historic House", wiki: "Mompesson House" },
+      { county: "Wiltshire", name: "Oldbury Castle Hillfort", category: "Prehistoric", wiki: "Oldbury Castle" },
+      { county: "Wiltshire", name: "Philipps House and Dinton Park", category: "Historic House", wiki: "Philipps House" },
+      { county: "Wiltshire", name: "Stonehenge Landscape", category: "Prehistoric", wiki: "Stonehenge" },
+      { county: "Wiltshire", name: "Stourhead", category: "Garden", wiki: "Stourhead" },
+      { county: "Wiltshire", name: "The Coombes", category: "Countryside", wiki: "Hinton Charterhouse" },
+      { county: "Wiltshire", name: "The Courts Garden", category: "Garden", wiki: "The Courts Garden" },
+      { county: "Wiltshire", name: "Westwood Manor", category: "Historic Property", wiki: "Westwood Manor" },
+      { county: "Worcestershire", name: "Croome Park", category: "Garden", wiki: "Croome Court" },
+      { county: "Worcestershire", name: "Edward Elgar Birthplace Museum", category: "Museum", wiki: "The Firs, Lower Broadheath" },
+      { county: "Worcestershire", name: "Fleece Inn", category: "Historic Property", wiki: "The Fleece Inn" },
+      { county: "Worcestershire", name: "Hanbury Hall", category: "Historic House", wiki: "Hanbury Hall" },
+      { county: "Worcestershire", name: "Hawford Dovecote", category: "Historic Property", wiki: "Hawford Dovecote" },
+      { county: "Worcestershire", name: "Middle Littleton Tithe Barn", category: "Historic Property", wiki: "Middle Littleton Tithe Barn" },
+      { county: "Worcestershire", name: "Rosedene", category: "Historic Property", wiki: "Rosedene, Dodford" },
+      { county: "Worcestershire", name: "The Greyfriars", category: "Historic Property", wiki: "The Greyfriars, Worcester" },
+      { county: "Worcestershire", name: "Wichenford Dovecote", category: "Historic Property", wiki: "Wichenford Dovecote" },
+      { county: "Yorkshire", name: "Beningbrough Hall", category: "Historic House", wiki: "Beningbrough Hall" },
+      { county: "Yorkshire", name: "Braithwaite Hall", category: "Historic Property", wiki: "Braithwaite Hall" },
+      { county: "Yorkshire", name: "Brimham Rocks", category: "Countryside", wiki: "Brimham Rocks" },
+      { county: "Yorkshire", name: "East Riddlesden Hall", category: "Historic House", wiki: "East Riddlesden Hall" },
+      { county: "Yorkshire", name: "Fountains Abbey", category: "Abbey", wiki: "Fountains Abbey" },
+      { county: "Yorkshire", name: "Gibson's Mill", category: "Historic Property", wiki: "Gibson Mill" },
+      { county: "Yorkshire", name: "Goddards House & Garden", category: "Historic House", wiki: "Goddards House and Garden" },
+      { county: "Yorkshire", name: "Hardcastle Crags", category: "Countryside", wiki: "Hardcastle Crags" },
+      { county: "Yorkshire", name: "Hudswell Woods", category: "Countryside", wiki: "Richmond, North Yorkshire" },
+      { county: "Yorkshire", name: "Maister House", category: "Historic Property", wiki: "Maister House" },
+      { county: "Yorkshire", name: "Moulton Hall", category: "Historic Property", wiki: "Moulton, North Yorkshire" },
+      { county: "Yorkshire", name: "Nostell Priory", category: "Historic House", wiki: "Nostell Priory" },
+      { county: "Yorkshire", name: "Nunnington Hall", category: "Historic Property", wiki: "Nunnington Hall" },
+      { county: "Yorkshire", name: "Rievaulx Terrace and Temples", category: "Garden", wiki: "Rievaulx Terrace & Temples" },
+      { county: "Yorkshire", name: "Roseberry Topping", category: "Countryside", wiki: "Roseberry Topping" },
+      { county: "Yorkshire", name: "Studley Royal Water Garden", category: "Garden", wiki: "Studley Royal Park" },
+      { county: "Yorkshire", name: "The Bridestones", category: "Countryside", wiki: "Bridestones" },
+      { county: "Yorkshire", name: "Treasurers House", category: "Historic Property", wiki: "Treasurer's House, York" }
     ];
 
     function generateId(site) {
       return (site.county + "_" + site.name).toLowerCase().replace(/[^a-z0-9]/g, "_");
     }
 
-    // Proxy images through wsrv.nl to prevent Wikipedia hotlink / 403 Forbidden blocks
-    function getPhoto(site) {
-      const n = site.name.toLowerCase();
-      const c = site.category.toLowerCase();
-
-      // Specific known landmarks
-      if (n.includes("bodiam")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/6/69/Bodiam_Castle_from_SE_angle.jpg/640px-Bodiam_Castle_from_SE_angle.jpg";
-      if (n.includes("corfe")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Corfe_Castle_from_West_Hill.jpg/640px-Corfe_Castle_from_West_Hill.jpg";
-      if (n.includes("fountains abbey")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/5/53/Fountains_Abbey_from_the_south_west.jpg/640px-Fountains_Abbey_from_the_south_west.jpg";
-      if (n.includes("stourhead")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/5/54/Stourhead_Garden.jpg/640px-Stourhead_Garden.jpg";
-      if (n.includes("cliveden")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cliveden_House_Parterre.jpg/640px-Cliveden_House_Parterre.jpg";
-      if (n.includes("quarry bank")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Quarry_Bank_Mill_Styal.jpg/640px-Quarry_Bank_Mill_Styal.jpg";
-      if (n.includes("dover") || n.includes("white cliffs")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/c/cd/White_Cliffs_of_Dover_2020.jpg/640px-White_Cliffs_of_Dover_2020.jpg";
-      if (n.includes("avebury")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/7/74/Avebury_Cove_Stones.jpg/640px-Avebury_Cove_Stones.jpg";
-      if (n.includes("wicken fen")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/3/30/Wicken_Fen_Nature_Reserve.jpg/640px-Wicken_Fen_Nature_Reserve.jpg";
-      if (n.includes("anglesey abbey")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Anglesey_Abbey_House.jpg/640px-Anglesey_Abbey_House.jpg";
-      if (n.includes("wimpole")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Wimpole_Hall_Arrington.jpg/640px-Wimpole_Hall_Arrington.jpg";
-      if (n.includes("houghton mill")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Houghton_Mill_Cambridgeshire.jpg/640px-Houghton_Mill_Cambridgeshire.jpg";
-      if (n.includes("powis")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Powis_Castle_Terraces.jpg/640px-Powis_Castle_Terraces.jpg";
-      if (n.includes("penrhyn")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Penrhyn_Castle_Gwynedd.jpg/640px-Penrhyn_Castle_Gwynedd.jpg";
-      if (n.includes("bodnant")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Bodnant_Garden_Terrace.jpg/640px-Bodnant_Garden_Terrace.jpg";
-      if (n.includes("dunster")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Dunster_Castle_Somerset.jpg/640px-Dunster_Castle_Somerset.jpg";
-      if (n.includes("tyntesfield")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/5/57/Tyntesfield_House_Somerset.jpg/640px-Tyntesfield_House_Somerset.jpg";
-      if (n.includes("cragside")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/5/57/Cragside_House_Northumberland.jpg/640px-Cragside_House_Northumberland.jpg";
-      if (n.includes("hardwick")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Hardwick_Hall_Derbyshire.jpg/640px-Hardwick_Hall_Derbyshire.jpg";
-      if (n.includes("calke")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/9/91/Calke_Abbey_Derbyshire.jpg/640px-Calke_Abbey_Derbyshire.jpg";
-      if (n.includes("knole")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/2/23/Knole_House_Sevenoaks.jpg/640px-Knole_House_Sevenoaks.jpg";
-      if (n.includes("chartwell")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Chartwell_House_Kent.jpg/640px-Chartwell_House_Kent.jpg";
-
-      // General Category fallbacks (Served via high-performance CDN, never throttled)
-      if (c.includes("castle")) return "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310?auto=format&fit=crop&w=640&q=80";
-      if (c.includes("garden")) return "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=640&q=80";
-      if (c.includes("countryside") || n.includes("downs") || n.includes("fen") || n.includes("rocks") || n.includes("crags")) return "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=640&q=80";
-      if (c.includes("church") || c.includes("cathedral") || c.includes("abbey") || c.includes("priory")) return "https://images.unsplash.com/photo-1548625361-16eb16ce3999?auto=format&fit=crop&w=640&q=80";
-      if (c.includes("roman") || c.includes("prehistoric")) return "https://images.unsplash.com/photo-1508873696983-2df5703bc20d?auto=format&fit=crop&w=640&q=80";
-      if (n.includes("mill") || n.includes("foundry") || n.includes("mine") || n.includes("windpump") || n.includes("windmill")) return "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=640&q=80";
-      
-      // Default: Classic English heritage estate
-      return "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=640&q=80";
-    }
-
     const sites = RAW_DATA.map(item => ({
       ...item,
-      id: generateId(item),
-      photo: getPhoto(item)
+      id: generateId(item)
     }));
 
     // ----------------------------------------------------
@@ -1105,7 +1084,81 @@
     }
 
     // ----------------------------------------------------
-    // 5. RENDERING & UI
+    // 5. BATCH WIKIPEDIA IMAGE LOADER & CACHE
+    // ----------------------------------------------------
+    const PHOTO_CACHE_KEY = "nt_property_photos_v1";
+    let photoCache = {};
+    try {
+      const stored = localStorage.getItem(PHOTO_CACHE_KEY);
+      if (stored) photoCache = JSON.parse(stored);
+    } catch(e) {}
+
+    function savePhotoCache() {
+      try {
+        localStorage.setItem(PHOTO_CACHE_KEY, JSON.stringify(photoCache));
+      } catch(e) {}
+    }
+
+    function applyImageToElement(siteId, url) {
+      const img = document.getElementById(`img_${siteId}`);
+      if (img) {
+        img.src = url;
+        img.onload = () => img.classList.add("loaded");
+      }
+    }
+
+    // Load authentic images in batches of 40 titles
+    function loadAllPropertyPhotos() {
+      const needed = sites.filter(s => !photoCache[s.id]);
+      if (needed.length === 0) return;
+
+      const BATCH_SIZE = 40;
+      for (let i = 0; i < needed.length; i += BATCH_SIZE) {
+        const chunk = needed.slice(i, i + BATCH_SIZE);
+        const titles = chunk.map(s => encodeURIComponent(s.wiki || s.name)).join("|");
+        const url = `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&pithumbsize=600&redirects=1&format=json&origin=*&titles=${titles}`;
+
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.query && data.query.pages) {
+              const pages = data.query.pages;
+              const titleToImg = {};
+              
+              Object.values(pages).forEach(p => {
+                if (p.thumbnail && p.thumbnail.source) {
+                  titleToImg[p.title.toLowerCase()] = p.thumbnail.source;
+                }
+              });
+
+              if (data.query.redirects) {
+                data.query.redirects.forEach(r => {
+                  if (titleToImg[r.to.toLowerCase()]) {
+                    titleToImg[r.from.toLowerCase()] = titleToImg[r.to.toLowerCase()];
+                  }
+                });
+              }
+
+              chunk.forEach(s => {
+                const targetKey = (s.wiki || s.name).toLowerCase();
+                const matchedImg = titleToImg[targetKey];
+                if (matchedImg) {
+                  photoCache[s.id] = matchedImg;
+                  applyImageToElement(s.id, matchedImg);
+                }
+              });
+
+              savePhotoCache();
+            }
+          })
+          .catch(err => {
+            console.warn("Batch load skipped for chunk:", err);
+          });
+      }
+    }
+
+    // ----------------------------------------------------
+    // 6. RENDERING & UI
     // ----------------------------------------------------
     function updateStats() {
       const total = sites.length;
@@ -1223,13 +1276,14 @@
           const isVisited = status === "visited";
           const isWishlist = status === "wishlist";
 
-          // Direct National Trust Website Link (Stripped of parentheses)
+          // Direct National Trust Website Link
           const cleanName = site.name.replace(/\(.*?\)/g, "").trim();
           const ntSearchUrl = `https://www.nationaltrust.org.uk/search?query=${encodeURIComponent(cleanName)}`;
+          const cachedImg = photoCache[site.id];
 
           card.innerHTML = `
-            <div class="site-thumb-wrap">
-              <img class="site-thumb" src="${site.photo}" alt="${site.name}" loading="lazy">
+            <div class="site-thumb-wrap" data-placeholder="${site.name}">
+              <img id="img_${site.id}" class="site-thumb ${cachedImg ? 'loaded' : ''}" src="${cachedImg || ''}" alt="${site.name}" loading="lazy">
             </div>
             <div class="site-card-body">
               <div>
@@ -1237,7 +1291,7 @@
                 <span class="site-category">${site.category}</span>
                 <div>
                   <a href="${ntSearchUrl}" target="_blank" rel="noopener noreferrer" class="nt-button">
-                    🌐 National Trust Page &rarr;
+                    🌐 View on National Trust &rarr;
                   </a>
                 </div>
                 ${isVisited && u.date ? `<div class="site-date-badge">✓ Visited: ${u.date}</div>` : ""}
@@ -1265,6 +1319,9 @@
         groupEl.appendChild(contentEl);
         container.appendChild(groupEl);
       });
+
+      // Trigger photo loading after cards are in the DOM
+      loadAllPropertyPhotos();
     }
 
     // Card Button Delegation
