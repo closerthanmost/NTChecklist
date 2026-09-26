@@ -301,7 +301,7 @@
 
     .hidden { display: none !important; }
 
-    /* Site Card & Header Banner */
+    /* Site Card & Image */
     .site-card {
       border: 1px solid var(--nt-border);
       background: #fff;
@@ -329,39 +329,17 @@
       border-left: 4px solid var(--status-wishlist);
     }
 
-    .card-banner {
-      height: 75px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1.2rem;
-      color: #fff;
-      background: linear-gradient(135deg, #1e3a29 0%, #0d281a 100%);
-    }
-
-    .card-banner.garden { background: linear-gradient(135deg, #2d5a27 0%, #153e18 100%); }
-    .card-banner.castle { background: linear-gradient(135deg, #4a3e35 0%, #2e2620 100%); }
-    .card-banner.countryside { background: linear-gradient(135deg, #1b4d3e 0%, #0b2e23 100%); }
-    .card-banner.abbey { background: linear-gradient(135deg, #3c3b54 0%, #232235 100%); }
-    .card-banner.roman { background: linear-gradient(135deg, #614028 0%, #3e2615 100%); }
-
-    .banner-icon {
-      font-size: 1.8rem;
-    }
-
-    .banner-tag {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      background: rgba(255, 255, 255, 0.18);
-      padding: 0.2rem 0.55rem;
-      border-radius: 4px;
-      backdrop-filter: blur(4px);
+    .site-thumb {
+      width: 100%;
+      height: 135px;
+      object-fit: cover;
+      background-color: #e5e7eb;
+      display: block;
+      border-bottom: 1px solid var(--nt-border);
     }
 
     .site-card-body {
-      padding: 0.85rem;
+      padding: 0.8rem;
       display: flex;
       flex-direction: column;
       flex-grow: 1;
@@ -375,12 +353,15 @@
       line-height: 1.3;
     }
 
-    .site-links {
-      display: flex;
-      gap: 0.8rem;
-      margin-top: 0.5rem;
-      margin-bottom: 0.6rem;
-      flex-wrap: wrap;
+    .site-category {
+      font-size: 0.72rem;
+      color: var(--nt-text-muted);
+      background: #f1f2f4;
+      display: inline-block;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 500;
+      margin-bottom: 0.45rem;
     }
 
     .nt-link {
@@ -391,6 +372,7 @@
       font-weight: 600;
       color: var(--nt-green);
       text-decoration: none;
+      margin-bottom: 0.6rem;
     }
 
     .nt-link:hover {
@@ -547,7 +529,7 @@
       { county: "Bedfordshire", name: "Dunstable Downs and Whipsnade Estate", category: "Countryside" },
       { county: "Bedfordshire", name: "Whipsnade Tree Cathedral", category: "Cathedral" },
       { county: "Bedfordshire", name: "Willington Dovecote and Stables", category: "Historic Property" },
-      { county: "Berkshire", name: "Ashdown House", category: "Historic House" },
+      { county: "Berkshire", name: "Ashdown", category: "Historic House" },
       { county: "Berkshire", name: "Basildon Park", category: "Historic House" },
       { county: "Bristol", name: "Blaise Hamlet", category: "Historic Property" },
       { county: "Bristol", name: "Westbury College Gatehouse", category: "Historic Property" },
@@ -604,7 +586,7 @@
       { county: "Cumbria", name: "Borrowdale", category: "Countryside" },
       { county: "Cumbria", name: "Bridge House", category: "Historic Property" },
       { county: "Cumbria", name: "Buttermere Lake", category: "Countryside" },
-      { county: "Cartmel Priory Gatehouse", name: "Cartmel Priory Gatehouse", category: "Abbey" },
+      { county: "Cumbria", name: "Cartmel Priory Gatehouse", category: "Abbey" },
       { county: "Cumbria", name: "Claife Viewing Station", category: "Historic Property" },
       { county: "Cumbria", name: "Dalton Castle", category: "Castle" },
       { county: "Cumbria", name: "Derwent Island House", category: "Historic Property" },
@@ -908,7 +890,7 @@
       { county: "Yorkshire", name: "Nostell Priory", category: "Historic House" },
       { county: "Yorkshire", name: "Nunnington Hall", category: "Historic Property" },
       { county: "Yorkshire", name: "Rievaulx Terrace and Temples", category: "Garden" },
-      { county: "Yorkshire", name: "Roseberry Topping", category: "Countryside" },
+      { county: "Roseberry Topping", name: "Roseberry Topping", category: "Countryside" },
       { county: "Yorkshire", name: "Studley Royal Water Garden", category: "Garden" },
       { county: "Yorkshire", name: "The Bridestones", category: "Countryside" },
       { county: "Yorkshire", name: "Treasurers House", category: "Historic Property" }
@@ -918,20 +900,22 @@
       return (site.county + "_" + site.name).toLowerCase().replace(/[^a-z0-9]/g, "_");
     }
 
+    // Curated high quality imagery based on property type
+    function getPhoto(cat) {
+      const c = (cat || "").toLowerCase();
+      if (c.includes("castle")) return "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310?auto=format&fit=crop&w=600&q=80";
+      if (c.includes("garden")) return "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80";
+      if (c.includes("countryside")) return "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80";
+      if (c.includes("abbey") || c.includes("church") || c.includes("cathedral")) return "https://images.unsplash.com/photo-1548625361-16eb16ce3999?auto=format&fit=crop&w=600&q=80";
+      if (c.includes("roman") || c.includes("prehistoric")) return "https://images.unsplash.com/photo-1508873696983-2df5703bc20d?auto=format&fit=crop&w=600&q=80";
+      return "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80";
+    }
+
     const sites = RAW_DATA.map(item => ({
       ...item,
-      id: generateId(item)
+      id: generateId(item),
+      photo: getPhoto(item.category)
     }));
-
-    function getBannerDetails(category) {
-      const c = (category || "").toLowerCase();
-      if (c.includes("garden")) return { cls: "garden", icon: "🌿" };
-      if (c.includes("castle")) return { cls: "castle", icon: "🏰" };
-      if (c.includes("abbey") || c.includes("cathedral") || c.includes("church")) return { cls: "abbey", icon: "⛪" };
-      if (c.includes("roman") || c.includes("prehistoric")) return { cls: "roman", icon: "🏛️" };
-      if (c.includes("countryside")) return { cls: "countryside", icon: "🏞️" };
-      return { cls: "house", icon: "🏡" };
-    }
 
     // ----------------------------------------------------
     // 3. STORAGE & STATE MANAGEMENT
@@ -1185,25 +1169,18 @@
           const isVisited = status === "visited";
           const isWishlist = status === "wishlist";
 
-          const cleanName = site.name.replace(/\(.*?\)/g, "").trim();
-          const ntSearchUrl = `https://www.nationaltrust.org.uk/search?query=${encodeURIComponent(cleanName)}`;
-          const wikiUrl = `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(cleanName + ' National Trust')}`;
-          const banner = getBannerDetails(site.category);
+          // Direct official destination link using Google Destination Search
+          const directNtUrl = `https://www.google.com/search?q=site:nationaltrust.org.uk+${encodeURIComponent(site.name + ' ' + site.county)}&btnI=I`;
 
           card.innerHTML = `
-            <div class="card-banner ${banner.cls}">
-              <span class="banner-icon">${banner.icon}</span>
-              <span class="banner-tag">${site.category}</span>
-            </div>
+            <img class="site-thumb" src="${site.photo}" alt="${site.name}" loading="lazy">
             <div class="site-card-body">
               <div>
                 <div class="site-name">${site.name}</div>
-                <div class="site-links">
-                  <a href="${ntSearchUrl}" target="_blank" rel="noopener noreferrer" class="nt-link">
-                    🌐 National Trust &rarr;
-                  </a>
-                  <a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="nt-link" style="color: #4b5563;">
-                    📖 Wikipedia &rarr;
+                <span class="site-category">${site.category}</span>
+                <div>
+                  <a href="${directNtUrl}" target="_blank" rel="noopener noreferrer" class="nt-link">
+                    🌐 Open Official NT Page &rarr;
                   </a>
                 </div>
                 ${isVisited && u.date ? `<div class="site-date-badge">✓ Visited: ${u.date}</div>` : ""}
