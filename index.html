@@ -3,523 +3,515 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Heritage Tracker — National Trust Checklist &amp; Journal</title>
-  
+  <title>National Trust Checklist — England &amp; Wales</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            heritage: {
-              50: '#f4f7f4',
-              100: '#e5ece6',
-              200: '#c7dbcd',
-              600: '#1b5e3a',
-              700: '#114a2c',
-              800: '#0a3d24',
-              900: '#062617',
-              gold: '#c99e32',
-              'gold-light': '#fdf8ec',
-              cream: '#f7f6f0',
-              parchment: '#f0ede1'
-            }
-          },
-          fontFamily: {
-            cinzel: ['Cinzel', 'Georgia', 'serif'],
-            serif: ['Playfair Display', 'Georgia', 'serif'],
-            sans: ['Inter', 'system-ui', 'sans-serif']
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Standard Firebase SDKs (Compat v10) -->
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
 
   <style>
+    :root {
+      --nt-green: #0a3d24;
+      --nt-dark-green: #062617;
+      --nt-gold: #c99e32;
+      --nt-cream: #f7f6f0;
+      --nt-card-bg: #ffffff;
+      --nt-text-main: #1f2937;
+      --nt-text-muted: #6b7280;
+      --nt-border: #e5e7eb;
+      --status-visited: #15803d;
+      --status-wishlist: #b45309;
+      --radius: 8px;
+      --shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background-color: #f7f6f0;
-      color: #1f2937;
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--nt-cream);
+      color: var(--nt-text-main);
+      line-height: 1.5;
+      padding-bottom: 60px;
     }
-    .custom-scroll::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+
+    header {
+      background: linear-gradient(135deg, var(--nt-dark-green) 0%, var(--nt-green) 100%);
+      color: #fff;
+      padding: 2rem 1.5rem;
+      border-bottom: 4px solid var(--nt-gold);
     }
-    .custom-scroll::-webkit-scrollbar-track {
-      background: #eeebe2;
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
     }
-    .custom-scroll::-webkit-scrollbar-thumb {
-      background: #c7dbcd;
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 2.1rem;
+      letter-spacing: 0.5px;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 0.2rem;
+    }
+
+    /* Auth Box */
+    .auth-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 0.5rem 0.9rem;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .auth-user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: #fff;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid var(--nt-gold);
+    }
+
+    .btn-auth {
+      background: #fff;
+      color: var(--nt-dark-green);
+      border: none;
+      padding: 0.45rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.15s ease;
+    }
+
+    .btn-auth:hover {
+      background: var(--nt-cream);
+    }
+
+    /* Progress Tracker */
+    .progress-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .progress-bar-track {
+      background: rgba(0, 0, 0, 0.3);
+      height: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--nt-gold);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .stat-pills {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.9);
+      flex-wrap: wrap;
+    }
+
+    .stat-pill strong {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* Main Container & Controls */
+    main {
+      max-width: 1200px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+
+    .sync-status {
+      display: inline-block;
+      font-size: 0.8rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .sync-status.online {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .controls-panel {
+      background: #fff;
+      padding: 1.25rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .controls-panel { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 550px) {
+      .controls-panel { grid-template-columns: 1fr; }
+    }
+
+    .control-field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--nt-text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    input[type="search"], select {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--nt-border);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      background: #fff;
+    }
+
+    .backup-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--nt-green);
+      border: 1px solid var(--nt-green);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: var(--nt-green);
+      color: #fff;
+    }
+
+    /* County Accordion */
+    .county-group {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
+      border: 1px solid var(--nt-border);
+      overflow: hidden;
+    }
+
+    .county-header {
+      padding: 0.9rem 1.25rem;
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .county-header:hover {
+      background: #fdfdfa;
+    }
+
+    .county-header.open {
+      border-bottom: 1px solid var(--nt-border);
+      background: #fafaf5;
+    }
+
+    .county-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .county-name {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--nt-green);
+    }
+
+    .county-counter {
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: #eef2ea;
+      color: var(--nt-green);
+      padding: 0.2rem 0.55rem;
       border-radius: 999px;
     }
-    .custom-scroll::-webkit-scrollbar-thumb:hover {
-      background: #0a3d24;
+
+    .chevron {
+      transition: transform 0.2s ease;
+      font-size: 0.8rem;
+      color: var(--nt-text-muted);
     }
+
+    .open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .county-content {
+      padding: 1rem 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Site Card */
     .site-card {
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      border: 1px solid var(--nt-border);
+      background: #fff;
+      padding: 0.75rem;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    .site-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px -4px rgba(10, 61, 36, 0.08);
+
+    .site-card.visited {
+      background-color: #f6fbf8;
+      border-left: 4px solid var(--status-visited);
+    }
+
+    .site-card.wishlist {
+      background-color: #fdfaf5;
+      border-left: 4px solid var(--status-wishlist);
+    }
+
+    .site-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      line-height: 1.3;
+    }
+
+    .site-category {
+      font-size: 0.75rem;
+      color: var(--nt-text-muted);
+      background: #f1f2f4;
+      display: inline-block;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .site-actions {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+
+    .status-btn {
+      flex: 1;
+      padding: 0.35rem 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 4px;
+      border: 1px solid var(--nt-border);
+      background: #fdfdfd;
+      color: var(--nt-text-muted);
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .status-btn.active-visited {
+      background: var(--status-visited);
+      color: #fff;
+      border-color: var(--status-visited);
+    }
+
+    .status-btn.active-wishlist {
+      background: var(--status-wishlist);
+      color: #fff;
+      border-color: var(--status-wishlist);
+    }
+
+    .site-date-badge {
+      font-size: 0.7rem;
+      color: var(--status-visited);
+      font-weight: 600;
+      margin-top: 0.3rem;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-heritage-gold/20 selection:text-heritage-900 custom-scroll">
+<body>
 
-  <header class="sticky top-0 z-40 bg-gradient-to-r from-heritage-900 via-heritage-800 to-heritage-900 text-white border-b-2 border-heritage-gold shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
-      
-      <!-- Brand Logo & Title -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-heritage-700/80 border border-heritage-gold/50 flex items-center justify-center text-heritage-gold shadow-inner">
-          <i data-lucide="trees" class="w-5 h-5"></i>
-        </div>
+  <header>
+    <div class="header-inner">
+      <div class="top-bar">
         <div>
-          <span class="text-[10px] uppercase tracking-widest text-heritage-gold font-semibold block">England &amp; Wales Properties</span>
-          <h1 class="text-lg sm:text-xl font-cinzel font-bold text-white tracking-wide">
-            National Trust Journal
-          </h1>
+          <h1>National Trust Checklist</h1>
+          <p class="subtitle">Personal heritage log across England and Wales</p>
+        </div>
+        <div class="auth-container" id="authBox">
+          <button class="btn-auth" id="loginBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
+            Sign in with Google
+          </button>
         </div>
       </div>
 
-      <!-- Cloud Sync & Auth Controls -->
-      <div class="flex items-center gap-2 sm:gap-3">
-        
-        <!-- Status indicator -->
-        <div id="sync-status" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-black/30 border border-white/10 text-stone-300">
-          <span id="sync-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-          <span id="sync-text">Guest Mode (Local)</span>
+      <div class="progress-box">
+        <div class="progress-header">
+          <span>Overall Visited Progress</span>
+          <span id="progressPercent">0%</span>
         </div>
-
-        <!-- Auth button container -->
-        <div id="auth-unauthenticated" class="flex items-center gap-2">
-          <button id="btn-open-auth" class="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-md bg-heritage-gold hover:bg-[#b58b29] text-heritage-900 transition shadow-sm">
-            <i data-lucide="log-in" class="w-4 h-4"></i>
-            <span>Sign In to Save</span>
-          </button>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progressBar"></div>
         </div>
-
-        <div id="auth-authenticated" class="hidden flex items-center gap-2.5">
-          <div class="flex items-center gap-2 bg-heritage-700/60 pl-2 pr-3 py-1 rounded-full border border-heritage-gold/30">
-            <div id="user-avatar" class="w-6 h-6 rounded-full bg-heritage-gold text-heritage-900 flex items-center justify-center text-xs font-bold uppercase">
-              U
-            </div>
-            <span id="user-display-name" class="text-xs font-medium text-white max-w-[120px] sm:max-w-[160px] truncate">User</span>
-          </div>
-
-          <button id="btn-sign-out" class="p-1.5 sm:px-2.5 sm:py-1 rounded-md text-xs font-medium bg-red-950/40 hover:bg-red-900/60 border border-red-500/30 text-red-200 transition" title="Sign Out">
-            <span class="hidden sm:inline">Sign Out</span>
-            <i data-lucide="log-out" class="w-4 h-4 sm:hidden"></i>
-          </button>
+        <div class="stat-pills">
+          <div class="stat-pill"><strong id="statVisited">0</strong> Visited</div>
+          <div class="stat-pill"><strong id="statWishlist">0</strong> Wishlist</div>
+          <div class="stat-pill"><strong id="statUnvisited">0</strong> Remaining</div>
+          <div class="stat-pill"><strong id="statTotal">0</strong> Total Sites</div>
         </div>
-
-        <!-- Backup Tools dropdown button -->
-        <div class="relative">
-          <button id="btn-backup-menu" class="p-2 rounded-md bg-heritage-700/80 hover:bg-heritage-700 text-white border border-white/20 transition" title="Backup &amp; Export Options">
-            <i data-lucide="hard-drive-download" class="w-4 h-4"></i>
-          </button>
-          
-          <div id="backup-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-stone-200 rounded-lg shadow-xl py-1.5 z-50 text-stone-800 text-xs">
-            <button id="btn-export-json" class="w-full text-left px-3.5 py-2 hover:bg-heritage-50 flex items-center gap-2 text-stone-700">
-              <i data-lucide="file-json" class="w-4 h-4 text-heritage-800"></i> Export JSON
-            </button>
-            <button id="btn-export-csv" class="w-full text-left px-3.5 py-2 hover:bg-heritage-50 flex items-center gap-2 text-stone-700">
-              <i data-lucide="sheet" class="w-4 h-4 text-heritage-800"></i> Export CSV
-            </button>
-            <label class="w-full text-left px-3.5 py-2 hover:bg-heritage-50 flex items-center gap-2 cursor-pointer text-stone-700 border-t border-stone-100">
-              <i data-lucide="file-up" class="w-4 h-4 text-heritage-800"></i> Import JSON
-              <input type="file" id="import-json-file" accept=".json" class="hidden">
-            </label>
-            <button id="btn-reset-checklist" class="w-full text-left px-3.5 py-2 text-rose-700 hover:bg-rose-50 flex items-center gap-2 border-t border-stone-100">
-              <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Clear All Progress
-            </button>
-          </div>
-        </div>
-
       </div>
     </div>
   </header>
 
-  <section class="bg-heritage-800 text-white border-b border-heritage-700/80 shadow-inner">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
-        
-        <div class="border-r border-heritage-700/60 pr-2">
-          <div class="text-[11px] uppercase tracking-wider text-emerald-300 font-semibold">Visited Places</div>
-          <div class="flex items-baseline gap-2 mt-0.5">
-            <span id="stat-visited" class="text-2xl sm:text-3xl font-cinzel font-bold text-white">0</span>
-            <span class="text-xs text-stone-300">of <span id="stat-total">0</span></span>
-          </div>
-        </div>
-
-        <div class="border-r border-heritage-700/60 pr-2">
-          <div class="text-[11px] uppercase tracking-wider text-amber-300 font-semibold">On Wishlist</div>
-          <div class="flex items-baseline gap-2 mt-0.5">
-            <span id="stat-wishlist" class="text-2xl sm:text-3xl font-cinzel font-bold text-amber-300">0</span>
-            <span class="text-xs text-stone-300">saved trips</span>
-          </div>
-        </div>
-
-        <div class="border-r border-heritage-700/60 pr-2">
-          <div class="text-[11px] uppercase tracking-wider text-stone-300 font-semibold">Remaining</div>
-          <div class="flex items-baseline gap-2 mt-0.5">
-            <span id="stat-unvisited" class="text-2xl sm:text-3xl font-cinzel font-bold text-stone-200">0</span>
-            <span class="text-xs text-stone-300">to explore</span>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex items-center justify-between text-xs text-stone-200 mb-1.5 font-medium">
-            <span>Overall Progress</span>
-            <span id="stat-percent" class="font-bold text-heritage-gold">0%</span>
-          </div>
-          <div class="w-full bg-heritage-900 rounded-full h-3 p-0.5 border border-white/10">
-            <div id="stat-bar" class="bg-gradient-to-r from-heritage-gold to-emerald-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Guest banner notice -->
-      <div id="guest-prompt-banner" class="mt-3.5 p-2.5 rounded-lg bg-heritage-900/80 border border-heritage-gold/40 flex flex-wrap items-center justify-between gap-2 text-xs text-stone-200">
-        <div class="flex items-center gap-2">
-          <i data-lucide="cloud-off" class="w-4 h-4 text-amber-300 flex-shrink-0"></i>
-          <span>You are currently in <strong>guest mode</strong>. Your visits are saved only on this browser.</span>
-        </div>
-        <button id="banner-signin-btn" class="underline text-heritage-gold font-semibold hover:text-amber-200 cursor-pointer">
-          Sign In to sync across all your phones, tablets and computers &rarr;
-        </button>
+  <main>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+      <span class="sync-status" id="syncStatus">Mode: Local Storage (Guest)</span>
+      <div class="backup-actions">
+        <button class="btn-secondary" id="exportBtn">📥 Export JSON</button>
+        <button class="btn-secondary" id="importBtn">📤 Import JSON</button>
+        <input type="file" id="importFile" accept="application/json" style="display: none;">
       </div>
     </div>
-  </section>
 
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <div class="bg-white border border-stone-200 rounded-xl p-4 sm:p-5 shadow-sm mb-6 space-y-4">
-      
-      <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
-        
-        <!-- Search Input -->
-        <div class="relative flex-grow max-w-xl">
-          <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-          <input 
-            type="text" 
-            id="filter-search" 
-            placeholder="Search by property, county, category (e.g., Cliveden, Castle, Kent)..."
-            class="w-full pl-10 pr-9 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-heritage-800/30 focus:border-heritage-800 bg-stone-50/50"
-          >
-          <button id="clear-search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700">
-            <i data-lucide="x" class="w-4 h-4"></i>
-          </button>
-        </div>
-
-        <!-- Status Filter Buttons -->
-        <div class="flex items-center gap-1 bg-stone-100 p-1 rounded-lg border border-stone-200 self-start md:self-auto overflow-x-auto max-w-full text-xs font-semibold">
-          <button data-status="all" class="status-pill px-3 py-1.5 rounded-md bg-heritage-800 text-white shadow-xs">
-            All (<span id="pill-all">0</span>)
-          </button>
-          <button data-status="visited" class="status-pill px-3 py-1.5 rounded-md text-stone-600 hover:text-stone-900">
-            Visited (<span id="pill-visited">0</span>)
-          </button>
-          <button data-status="wishlist" class="status-pill px-3 py-1.5 rounded-md text-stone-600 hover:text-stone-900">
-            Wishlist (<span id="pill-wishlist">0</span>)
-          </button>
-          <button data-status="unvisited" class="status-pill px-3 py-1.5 rounded-md text-stone-600 hover:text-stone-900">
-            Unvisited (<span id="pill-unvisited">0</span>)
-          </button>
-        </div>
-
+    <section class="controls-panel">
+      <div class="control-field">
+        <label for="search">Search Sites</label>
+        <input type="search" id="search" placeholder="Type property or county...">
       </div>
-
-      <!-- Dropdown Selectors -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-stone-100 text-xs sm:text-sm">
-        <div>
-          <label class="block text-xs font-bold text-stone-500 uppercase tracking-wider mb-1">County</label>
-          <select id="filter-county" class="w-full px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-heritage-800/30">
-            <option value="all">All Counties (England &amp; Wales)</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-stone-500 uppercase tracking-wider mb-1">Category / Type</label>
-          <select id="filter-category" class="w-full px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-heritage-800/30">
-            <option value="all">All Categories</option>
-          </select>
-        </div>
-
-        <div class="flex items-end justify-between gap-2">
-          <button id="btn-toggle-all-counties" class="w-full py-2 px-3 border border-stone-300 hover:bg-stone-50 text-stone-700 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5">
-            <i data-lucide="chevrons-up-down" class="w-4 h-4"></i>
-            <span id="toggle-counties-label">Collapse All Counties</span>
-          </button>
-
-          <button id="btn-reset-filters" class="py-2 px-3 text-stone-500 hover:text-stone-900 text-xs underline font-medium whitespace-nowrap">
-            Reset
-          </button>
-        </div>
+      <div class="control-field">
+        <label for="filterStatus">Status</label>
+        <select id="filterStatus">
+          <option value="all">All Properties</option>
+          <option value="visited">Visited Only</option>
+          <option value="wishlist">Wishlist Only</option>
+          <option value="unvisited">Unvisited Only</option>
+        </select>
       </div>
-
-    </div>
-
-    <!-- Active Count Display -->
-    <div class="flex items-center justify-between text-xs text-stone-500 mb-3 px-1">
-      <span id="filtered-count-label">Displaying properties</span>
-    </div>
-
-    <div id="counties-container" class="space-y-4">
-      <!-- Generated dynamically by JavaScript -->
-    </div>
-
-    <!-- Empty state message -->
-    <div id="empty-state" class="hidden text-center py-16 bg-white border border-stone-200 rounded-xl p-8 shadow-sm">
-      <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-stone-100 flex items-center justify-center text-stone-400">
-        <i data-lucide="map-pin-off" class="w-7 h-7"></i>
+      <div class="control-field">
+        <label for="filterCategory">Category</label>
+        <select id="filterCategory">
+          <option value="all">All Types</option>
+        </select>
       </div>
-      <h3 class="font-cinzel font-bold text-lg text-stone-800">No National Trust sites found</h3>
-      <p class="text-stone-500 text-xs max-w-sm mx-auto mt-1 mb-4">Try clearing your search term or resetting your county and category filters.</p>
-      <button id="btn-empty-reset" class="px-4 py-2 bg-heritage-800 text-white text-xs font-semibold rounded-md hover:bg-heritage-700 transition">
-        Clear All Filters
-      </button>
-    </div>
+      <div class="control-field">
+        <label for="filterCounty">County</label>
+        <select id="filterCounty">
+          <option value="all">All Counties</option>
+        </select>
+      </div>
+    </section>
 
+    <div id="siteListContainer"></div>
+    <div id="noMatches" class="hidden" style="text-align: center; padding: 3rem; color: #6b7280;">No properties match your filters.</div>
   </main>
 
   <script>
-  // 1. Paste your Firebase keys here
-  const firebaseConfig = {  
-  apiKey: "AIzaSyAhQzasS4kaNiKq0A2QVVJ8iebM9GMisYM",
-  authDomain: "national-trust-checklist.firebaseapp.com",
-  projectId: "national-trust-checklist",
-  storageBucket: "national-trust-checklist.firebasestorage.app",
-  messagingSenderId: "955767248474",
-  appId: "1:955767248474:web:bf076519f964c5ae54aa63",
-  measurementId: "G-TY6X1EXW8E"
-  };
+    // ----------------------------------------------------
+    // 1. FIREBASE CONFIGURATION
+    // Replace these values with your Firebase Console keys:
+    // ----------------------------------------------------
+    const firebaseConfig = {  
+      apiKey: "AIzaSyAhQzasS4kaNiKq0A2QVVJ8iebM9GMisYM",
+      authDomain: "national-trust-checklist.firebaseapp.com",
+      projectId: "national-trust-checklist",
+      storageBucket: "national-trust-checklist.firebasestorage.app",
+      messagingSenderId: "955767248474",
+      appId: "1:955767248474:web:bf076519f964c5ae54aa63",
+      measurementId: "G-TY6X1EXW8E"
+      };
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+    let auth = null;
+    let db = null;
+    let currentUser = null;
 
-  // 2. Google Login Function
-  function signInWithGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch(error => {
-      console.error("Login failed:", error);
-    });
-  }
-
-  // 3. Listen for login status changes
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      console.log("Logged in as:", user.displayName, user.uid);
-      // Load user's saved data from Firestore
-      db.collection("users").doc(user.uid).get().then(doc => {
-        if (doc.exists) {
-          userData = doc.data().checklist || {};
-          renderSites();
-          updateStats();
-        }
-      });
-    } else {
-      console.log("User logged out");
+    // Initialize Firebase safely
+    try {
+      if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "PASTE_YOUR_API_KEY_HERE") {
+        firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.firestore();
+      }
+    } catch(err) {
+      console.warn("Firebase initialization skipped or keys missing:", err);
     }
-  });
 
-  // 4. Save progress to Firestore when user clicks a site
-  function saveToCloud(userId, data) {
-    if (!auth.currentUser) return;
-    db.collection("users").doc(auth.currentUser.uid).set({
-      checklist: data,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-  }
-</script>
-
-  <div id="modal-visit-log" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden border border-stone-200">
-      
-      <div class="bg-heritage-800 text-white px-5 py-4 flex items-center justify-between">
-        <div>
-          <span class="text-[10px] uppercase tracking-wider text-heritage-gold font-bold">Personal Heritage Journal</span>
-          <h3 id="modal-site-title" class="font-cinzel text-base sm:text-lg font-bold">Site Name</h3>
-          <p id="modal-site-location" class="text-xs text-stone-300">County</p>
-        </div>
-        <button type="button" class="btn-close-modal text-white/80 hover:text-white" data-target="modal-visit-log">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <form id="form-visit-log" class="p-5 space-y-4 text-sm">
-        <input type="hidden" id="log-site-id">
-
-        <div>
-          <label class="block font-semibold text-stone-700 text-xs uppercase tracking-wide mb-1">Date Visited</label>
-          <input type="date" id="log-date" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-heritage-800 focus:outline-none text-sm">
-        </div>
-
-        <div>
-          <label class="block font-semibold text-stone-700 text-xs uppercase tracking-wide mb-1">Your Rating</label>
-          <div class="flex items-center gap-1.5" id="star-picker">
-            <button type="button" data-val="1" class="star-btn text-stone-300 hover:text-amber-400 transition p-0.5"><i data-lucide="star" class="w-6 h-6 fill-current"></i></button>
-            <button type="button" data-val="2" class="star-btn text-stone-300 hover:text-amber-400 transition p-0.5"><i data-lucide="star" class="w-6 h-6 fill-current"></i></button>
-            <button type="button" data-val="3" class="star-btn text-stone-300 hover:text-amber-400 transition p-0.5"><i data-lucide="star" class="w-6 h-6 fill-current"></i></button>
-            <button type="button" data-val="4" class="star-btn text-stone-300 hover:text-amber-400 transition p-0.5"><i data-lucide="star" class="w-6 h-6 fill-current"></i></button>
-            <button type="button" data-val="5" class="star-btn text-stone-300 hover:text-amber-400 transition p-0.5"><i data-lucide="star" class="w-6 h-6 fill-current"></i></button>
-            <span id="star-label" class="ml-2 text-xs font-semibold text-stone-600">Unrated</span>
-          </div>
-          <input type="hidden" id="log-rating" value="0">
-        </div>
-
-        <div>
-          <label class="block font-semibold text-stone-700 text-xs uppercase tracking-wide mb-1">Memories, Notes &amp; Tips</label>
-          <textarea id="log-notes" rows="3" placeholder="Scones in the tea room were excellent, recommend arriving early for parkland parking, loved the walled rose garden..." class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-heritage-800 focus:outline-none text-xs sm:text-sm"></textarea>
-        </div>
-
-        <div class="flex items-center justify-between pt-3 border-t border-stone-200">
-          <button type="button" id="btn-clear-log" class="text-xs text-rose-700 hover:underline font-semibold">
-            Clear Details
-          </button>
-          <div class="flex gap-2">
-            <button type="button" class="btn-close-modal px-3.5 py-1.5 border border-stone-300 rounded-md text-stone-600 hover:bg-stone-50 text-xs font-semibold" data-target="modal-visit-log">Cancel</button>
-            <button type="submit" class="px-4 py-1.5 bg-heritage-800 hover:bg-heritage-900 text-white rounded-md text-xs font-semibold shadow-sm">Save Journal</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div id="modal-auth" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden border border-stone-200">
-      
-      <div class="bg-heritage-800 text-white px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i data-lucide="shield-check" class="w-5 h-5 text-heritage-gold"></i>
-          <h3 class="font-cinzel text-base sm:text-lg font-bold">Cloud Account Sync</h3>
-        </div>
-        <button type="button" class="btn-close-modal text-white/80 hover:text-white" data-target="modal-auth">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <div class="p-6">
-        <p class="text-xs text-stone-600 mb-4 leading-relaxed">
-          Sign in or create an account to securely sync your visited National Trust sites, wishlist, dates, and journal notes across all your devices.
-        </p>
-
-        <!-- Social Sign In with Google -->
-        <button id="btn-google-login" class="w-full py-2.5 px-4 border border-stone-300 rounded-lg text-sm font-semibold text-stone-700 bg-white hover:bg-stone-50 flex items-center justify-center gap-3 transition shadow-xs mb-4">
-          <svg class="w-4 h-4" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          <span>Continue with Google</span>
-        </button>
-
-        <div class="relative flex items-center justify-center mb-4">
-          <div class="border-t border-stone-200 w-full"></div>
-          <span class="bg-white px-2 text-[11px] uppercase tracking-wider text-stone-400 font-semibold absolute">or email</span>
-        </div>
-
-        <!-- Auth Tabs (Sign In / Register) -->
-        <div class="flex border-b border-stone-200 mb-4 text-xs font-semibold">
-          <button id="tab-auth-login" class="flex-1 pb-2 border-b-2 border-heritage-800 text-heritage-800">Log In</button>
-          <button id="tab-auth-signup" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400 hover:text-stone-700">Sign Up</button>
-        </div>
-
-        <form id="form-email-auth" class="space-y-3 text-xs sm:text-sm">
-          <div id="signup-name-container" class="hidden">
-            <label class="block font-semibold text-stone-700 mb-1">Your Name</label>
-            <input type="text" id="auth-name" placeholder="Sir Winston" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-heritage-800 focus:outline-none">
-          </div>
-
-          <div>
-            <label class="block font-semibold text-stone-700 mb-1">Email Address</label>
-            <input type="email" id="auth-email" required placeholder="explorer@nationaltrust.org.uk" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-heritage-800 focus:outline-none">
-          </div>
-
-          <div>
-            <label class="block font-semibold text-stone-700 mb-1">Password</label>
-            <input type="password" id="auth-password" required minlength="6" placeholder="••••••••" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-heritage-800 focus:outline-none">
-          </div>
-
-          <div id="auth-error-msg" class="hidden text-xs text-rose-600 bg-rose-50 p-2 rounded border border-rose-200">
-            Error message
-          </div>
-
-          <button type="submit" id="btn-submit-auth" class="w-full mt-2 py-2 px-4 bg-heritage-800 hover:bg-heritage-900 text-white rounded-md font-semibold text-sm transition shadow-sm">
-            Sign In
-          </button>
-        </form>
-      </div>
-
-    </div>
-  </div>
-
-  <div id="toast" class="fixed bottom-5 right-5 z-50 max-w-sm px-4 py-3 bg-heritage-900 text-white rounded-lg shadow-xl border border-heritage-gold/30 transform translate-y-24 opacity-0 transition-all duration-300 flex items-center gap-3 text-xs sm:text-sm pointer-events-none">
-    <i id="toast-icon" data-lucide="check-circle" class="w-5 h-5 text-emerald-400 flex-shrink-0"></i>
-    <span id="toast-msg">Notification</span>
-  </div>
-
-  <footer class="mt-auto bg-heritage-900 text-stone-400 text-xs py-6 border-t border-heritage-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
-      <div class="flex items-center justify-center gap-1.5 text-stone-300 font-cinzel text-xs sm:text-sm">
-        <i data-lucide="leaf" class="w-4 h-4 text-heritage-gold"></i>
-        <span>Preserving Heritage &amp; Coastlines for Everyone</span>
-      </div>
-      <p class="text-stone-500">
-        An independent tracker for National Trust members and visitors across England and Wales. Securely synced to your account.
-      </p>
-    </div>
-  </footer>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { 
-      getAuth, 
-      signInWithCustomToken, 
-      signInAnonymously, 
-      onAuthStateChanged,
-      signOut,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      updateProfile,
-      GoogleAuthProvider,
-      signInWithPopup
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { 
-      getFirestore, 
-      doc, 
-      getDoc, 
-      setDoc, 
-      onSnapshot 
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    const RAW_NT_SITES = [
-      // Bedfordshire
+    // ----------------------------------------------------
+    // 2. DATASET (230+ National Trust Sites)
+    // ----------------------------------------------------
+    const RAW_DATA = [
       { county: "Bedfordshire", name: "Dunstable Downs and Whipsnade Estate", category: "Countryside" },
       { county: "Bedfordshire", name: "Whipsnade Tree Cathedral", category: "Cathedral" },
-      { county: "Willington Dovecote and Stables", county: "Bedfordshire", name: "Willington Dovecote and Stables", category: "Historic Property" },
-
-      // Berkshire
+      { county: "Bedfordshire", name: "Willington Dovecote and Stables", category: "Historic Property" },
       { county: "Berkshire", name: "Ashdown House", category: "Historic House" },
       { county: "Berkshire", name: "Basildon Park", category: "Historic House" },
-
-      // Bristol
       { county: "Bristol", name: "Blaise Hamlet", category: "Historic Property" },
       { county: "Bristol", name: "Westbury College Gatehouse", category: "Historic Property" },
-
-      // Buckinghamshire
       { county: "Buckinghamshire", name: "Ascott", category: "Historic House" },
       { county: "Buckinghamshire", name: "Boarstall Duck Decoy", category: "Historic Property" },
       { county: "Buckinghamshire", name: "Boarstall Tower", category: "Historic Property" },
@@ -533,8 +525,6 @@
       { county: "Buckinghamshire", name: "Stowe Landscape Gardens", category: "Garden" },
       { county: "Buckinghamshire", name: "Waddesdon Manor", category: "Historic House" },
       { county: "Buckinghamshire", name: "West Wycombe Park", category: "Historic House" },
-
-      // Cambridgeshire
       { county: "Cambridgeshire", name: "Anglesey Abbey", category: "Historic House" },
       { county: "Cambridgeshire", name: "Houghton Mill", category: "Historic Property" },
       { county: "Cambridgeshire", name: "Octavia Hill Birthplace Museum", category: "Museum" },
@@ -542,8 +532,6 @@
       { county: "Cambridgeshire", name: "Ramsey Abbey Gatehouse", category: "Abbey" },
       { county: "Cambridgeshire", name: "Wicken Fen", category: "Countryside" },
       { county: "Cambridgeshire", name: "Wimpole Hall", category: "Historic House" },
-
-      // Cheshire
       { county: "Cheshire", name: "Alderley Edge", category: "Countryside" },
       { county: "Cheshire", name: "Dunham Massey", category: "Historic House" },
       { county: "Cheshire", name: "Hare Hill Garden", category: "Garden" },
@@ -552,15 +540,9 @@
       { county: "Cheshire", name: "Nether Alderley Mill", category: "Historic Property" },
       { county: "Cheshire", name: "Quarry Bank Mill", category: "Historic Property" },
       { county: "Cheshire", name: "Tatton Park", category: "Historic House" },
-
-      // Cleveland
       { county: "Cleveland", name: "Ormesby Hall", category: "Historic Property" },
-
-      // Clwyd
       { county: "Clwyd", name: "Chirk Castle", category: "Castle" },
       { county: "Clwyd", name: "Erddig House", category: "Historic House" },
-
-      // Cornwall
       { county: "Cornwall", name: "Antony House", category: "Historic House" },
       { county: "Cornwall", name: "Bedruthan Steps", category: "Countryside" },
       { county: "Cornwall", name: "Cotehele", category: "Historic House" },
@@ -578,8 +560,6 @@
       { county: "Cornwall", name: "Trerice", category: "Historic House" },
       { county: "Cornwall", name: "Wheal Coates Tin Mine", category: "Historic Property" },
       { county: "Cornwall", name: "Willapark and Forrabury Stitches", category: "Countryside" },
-
-      // Cumbria
       { county: "Cumbria", name: "Acorn Bank", category: "Garden" },
       { county: "Cumbria", name: "Beatrix Potter Gallery", category: "Museum" },
       { county: "Cumbria", name: "Borrowdale", category: "Countryside" },
@@ -601,8 +581,6 @@
       { county: "Cumbria", name: "Townend", category: "Historic House" },
       { county: "Cumbria", name: "Wordsworth House", category: "Historic Property" },
       { county: "Cumbria", name: "Wray Castle", category: "Historic House" },
-
-      // Derbyshire
       { county: "Derbyshire", name: "Calke Abbey", category: "Historic House" },
       { county: "Derbyshire", name: "Hardwick Hall", category: "Historic House" },
       { county: "Derbyshire", name: "Kedleston Hall", category: "Historic House" },
@@ -610,8 +588,6 @@
       { county: "Derbyshire", name: "Stainsby Mill", category: "Historic Property" },
       { county: "Derbyshire", name: "Sudbury Hall", category: "Historic House" },
       { county: "Derbyshire", name: "Winster Market House", category: "Historic Property" },
-
-      // Devon
       { county: "Devon", name: "A La Ronde", category: "Historic House" },
       { county: "Devon", name: "Arlington Court", category: "Historic House" },
       { county: "Devon", name: "Bradley Manor House", category: "Historic House" },
@@ -638,8 +614,6 @@
       { county: "Devon", name: "Parke", category: "Countryside" },
       { county: "Devon", name: "Saltram", category: "Historic House" },
       { county: "Devon", name: "Shute Barton", category: "Historic Property" },
-
-      // Dorset
       { county: "Dorset", name: "Badbury Rings", category: "Prehistoric" },
       { county: "Dorset", name: "Brownsea Island", category: "Countryside" },
       { county: "Dorset", name: "Clouds Hill", category: "Historic Property" },
@@ -648,8 +622,6 @@
       { county: "Dorset", name: "Kingston Lacy", category: "Historic House" },
       { county: "Dorset", name: "Max Gate", category: "Historic Property" },
       { county: "Dorset", name: "White Mill", category: "Historic Property" },
-
-      // Dyfed (Wales)
       { county: "Dyfed", name: "Bosherston Lakes (Lily Ponds)", category: "Garden" },
       { county: "Dyfed", name: "Colby Woodland Garden", category: "Garden" },
       { county: "Dyfed", name: "Dinefwr Park", category: "Garden" },
@@ -660,26 +632,18 @@
       { county: "Dyfed", name: "Stackpole Court & Walled Gardens", category: "Garden" },
       { county: "Dyfed", name: "Stackpole Estate", category: "Garden" },
       { county: "Dyfed", name: "Tudor Merchant's House", category: "Historic House" },
-
-      // East Sussex
       { county: "East Sussex", name: "Alfriston Clergy House", category: "Historic Property" },
       { county: "East Sussex", name: "Bateman's", category: "Historic House" },
       { county: "East Sussex", name: "Bodiam Castle", category: "Castle" },
       { county: "East Sussex", name: "Lamb House", category: "Historic Property" },
       { county: "East Sussex", name: "Monk's House", category: "Historic Property" },
       { county: "East Sussex", name: "Sheffield Park", category: "Garden" },
-
-      // Essex
       { county: "Essex", name: "Bourne Mill", category: "Historic Property" },
       { county: "Essex", name: "Coggeshall Grange Barn", category: "Historic Property" },
       { county: "Essex", name: "Paycockes", category: "Historic Property" },
       { county: "Essex", name: "Rayleigh Mount", category: "Castle" },
-
-      // Glamorgan (Wales)
       { county: "Glamorgan", name: "Aberdulais Tin Mine and Waterfall", category: "Historic Property" },
       { county: "Glamorgan", name: "Dyffryn Gardens and Arboretum", category: "Garden" },
-
-      // Gloucestershire
       { county: "Gloucestershire", name: "Ashleworth Tithe Barn", category: "Historic Property" },
       { county: "Gloucestershire", name: "Chedworth Roman Villa", category: "Roman" },
       { county: "Gloucestershire", name: "Chipping Campden Market Hall", category: "Historic Property" },
@@ -689,8 +653,6 @@
       { county: "Gloucestershire", name: "Lodge Park", category: "Historic House" },
       { county: "Gloucestershire", name: "Newark Park", category: "Historic House" },
       { county: "Gloucestershire", name: "Westbury Court Garden", category: "Garden" },
-
-      // Greater London
       { county: "Greater London", name: "2 Willow Road", category: "Historic Property" },
       { county: "Greater London", name: "Carlyle's House", category: "Historic Property" },
       { county: "Greater London", name: "Eastbury Manor House", category: "Historic Property" },
@@ -702,12 +664,8 @@
       { county: "Greater London", name: "Rainham Hall", category: "Historic Property" },
       { county: "Greater London", name: "Red House", category: "Historic House" },
       { county: "Greater London", name: "Sutton House", category: "Historic House" },
-
-      // Gwent (Wales)
       { county: "Gwent", name: "The Kymin", category: "Historic Property" },
       { county: "Gwent", name: "Tredegar House", category: "Historic House" },
-
-      // Gwynedd (Wales)
       { county: "Gwynedd", name: "Aberconwy House", category: "Historic House" },
       { county: "Gwynedd", name: "Bodnant Garden", category: "Garden" },
       { county: "Gwynedd", name: "Conwy Suspension Bridge", category: "Historic Property" },
@@ -716,35 +674,25 @@
       { county: "Gwynedd", name: "Plas-yn-Rhiw", category: "Historic House" },
       { county: "Gwynedd", name: "Porth Oer (Whistling Sands)", category: "Countryside" },
       { county: "Gwynedd", name: "Ty Mawr Wybrnant", category: "Historic House" },
-
-      // Hampshire
       { county: "Hampshire", name: "Hinton Ampner House & Garden", category: "Garden" },
       { county: "Hampshire", name: "Mottisfont Abbey", category: "Historic House" },
       { county: "Hampshire", name: "Sandham Memorial Chapel", category: "Church" },
       { county: "Hampshire", name: "The Vyne", category: "Historic House" },
       { county: "Hampshire", name: "West Green House Garden", category: "Garden" },
       { county: "Hampshire", name: "Winchester City Mill", category: "Museum" },
-
-      // Herefordshire
       { county: "Herefordshire", name: "Berrington Hall", category: "Historic House" },
       { county: "Herefordshire", name: "Brockhampton Estate", category: "Historic Property" },
       { county: "Herefordshire", name: "Croft Castle", category: "Historic House" },
       { county: "Herefordshire", name: "Cwmmau Farmhouse", category: "Historic Property" },
       { county: "Herefordshire", name: "The Weir Garden", category: "Garden" },
-
-      // Hertfordshire
       { county: "Hertfordshire", name: "Ashridge Estate", category: "Countryside" },
       { county: "Hertfordshire", name: "Shaw's Corner", category: "Historic Property" },
       { county: "Hertfordshire", name: "Stocks Farm Dovecote", category: "Historic Property" },
-
-      // Isle of Wight
       { county: "Isle of Wight", name: "Bembridge Fort", category: "Historic Property" },
       { county: "Isle of Wight", name: "Bembridge Windmill", category: "Historic Property" },
       { county: "Isle of Wight", name: "Mottistone Manor Garden", category: "Garden" },
       { county: "Isle of Wight", name: "Needles Old Battery", category: "Historic Property" },
       { county: "Isle of Wight", name: "Newtown Old Town Hall", category: "Historic Property" },
-
-      // Kent
       { county: "Kent", name: "Chartwell", category: "Historic House" },
       { county: "Kent", name: "Cobham Mausoleum", category: "Historic Property" },
       { county: "Kent", name: "Coldrum Longbarrow", category: "Prehistoric" },
@@ -760,32 +708,22 @@
       { county: "Kent", name: "St John's Jerusalem", category: "Church" },
       { county: "Kent", name: "Stoneacre", category: "Historic House" },
       { county: "Kent", name: "White Cliffs of Dover", category: "Countryside" },
-
-      // Lancashire
       { county: "Lancashire", name: "Arnside and Silverdale", category: "Countryside" },
       { county: "Lancashire", name: "Gawthorpe Hall", category: "Historic House" },
       { county: "Lancashire", name: "Heysham, St Patrick's Chapel", category: "Church" },
       { county: "Lancashire", name: "Rufford Hall", category: "Historic Property" },
-
-      // Leicestershire
       { county: "Leicestershire", name: "Staunton Harold Church", category: "Church" },
       { county: "Leicestershire", name: "Stoneywell", category: "Historic Property" },
-
-      // Lincolnshire
       { county: "Lincolnshire", name: "Belton House", category: "Historic House" },
       { county: "Lincolnshire", name: "Grantham House", category: "Historic Property" },
       { county: "Lincolnshire", name: "Gunby Hall", category: "Historic House" },
       { county: "Lincolnshire", name: "Monksthorpe Chapel", category: "Church" },
       { county: "Lincolnshire", name: "Tattershall Castle", category: "Historic House" },
       { county: "Lincolnshire", name: "Woolsthorpe Manor", category: "Historic Property" },
-
-      // Merseyside
       { county: "Merseyside", name: "20 Forthlin Road", category: "Historic Property" },
       { county: "Merseyside", name: "Mendips", category: "Historic Property" },
       { county: "Merseyside", name: "Speke Hall", category: "Historic House" },
       { county: "Merseyside", name: "The Hardman's House", category: "Historic Property" },
-
-      // Norfolk
       { county: "Norfolk", name: "Blickling Hall", category: "Historic House" },
       { county: "Norfolk", name: "Brancaster Estate", category: "Countryside" },
       { county: "Norfolk", name: "Burnham Overy Staithe Windmill", category: "Historic Property" },
@@ -795,14 +733,10 @@
       { county: "Norfolk", name: "Oxburgh Hall", category: "Historic House" },
       { county: "Norfolk", name: "Sheringham Park", category: "Countryside" },
       { county: "Norfolk", name: "St George's Guildhall", category: "Historic Property" },
-
-      // Northamptonshire
       { county: "Northamptonshire", name: "Canons Ashby", category: "Historic House" },
       { county: "Northamptonshire", name: "Canons Ashby Priory", category: "Church" },
       { county: "Northamptonshire", name: "Lyveden New Bield", category: "Historic House" },
       { county: "Northamptonshire", name: "Priest's House", category: "Historic Property" },
-
-      // Northumberland
       { county: "Northumberland", name: "Allen Banks & Staward Gorge", category: "Countryside" },
       { county: "Northumberland", name: "Bellister Castle", category: "Castle" },
       { county: "Northumberland", name: "Cherryburn", category: "Historic Property" },
@@ -814,13 +748,9 @@
       { county: "Northumberland", name: "Lindisfarne Castle", category: "Castle" },
       { county: "Northumberland", name: "Seaton Delaval Hall", category: "Historic House" },
       { county: "Northumberland", name: "Wallington Hall", category: "Historic House" },
-
-      // Nottinghamshire
       { county: "Nottinghamshire", name: "Clumber Park", category: "Countryside" },
       { county: "Nottinghamshire", name: "Mr Straw's House", category: "Historic Property" },
       { county: "Nottinghamshire", name: "Southwell Workhouse", category: "Historic Property" },
-
-      // Oxfordshire
       { county: "Oxfordshire", name: "Buscot Old Parsonage", category: "Historic Property" },
       { county: "Oxfordshire", name: "Buscot Park", category: "Historic House" },
       { county: "Oxfordshire", name: "Chastleton House", category: "Historic House" },
@@ -828,11 +758,7 @@
       { county: "Oxfordshire", name: "Greys Court", category: "Garden" },
       { county: "Oxfordshire", name: "Nuffield Place", category: "Historic House" },
       { county: "Oxfordshire", name: "Priory Cottages", category: "Historic Property" },
-
-      // Powys (Wales)
       { county: "Powys", name: "Powis Castle", category: "Castle" },
-
-      // Shropshire
       { county: "Shropshire", name: "Attingham Park", category: "Historic House" },
       { county: "Shropshire", name: "Benthall Hall", category: "Historic House" },
       { county: "Shropshire", name: "Cronkhill House, Attingham Park", category: "Historic House" },
@@ -840,8 +766,6 @@
       { county: "Shropshire", name: "Shrewsbury Town Walls Tower", category: "Historic Property" },
       { county: "Shropshire", name: "Sunnycroft", category: "Historic Property" },
       { county: "Shropshire", name: "Wilderhope Manor", category: "Historic Property" },
-
-      // Somerset
       { county: "Somerset", name: "Bath Assembly Rooms", category: "Historic Property" },
       { county: "Somerset", name: "Brean Down Fort", category: "Historic Property" },
       { county: "Somerset", name: "Bruton Dovecote", category: "Historic Property" },
@@ -861,23 +785,17 @@
       { county: "Somerset", name: "Tintinhull Garden", category: "Garden" },
       { county: "Somerset", name: "Tyntesfield", category: "Historic House" },
       { county: "Somerset", name: "Wellington Monument", category: "Historic Property" },
-
-      // Staffordshire
       { county: "Staffordshire", name: "Biddulph Grange Garden", category: "Garden" },
       { county: "Staffordshire", name: "Ilam Park and Hall", category: "Countryside" },
       { county: "Staffordshire", name: "Moseley Old Hall", category: "Historic Property" },
       { county: "Staffordshire", name: "Shugborough", category: "Historic House" },
       { county: "Staffordshire", name: "Wall Roman Site (Letocetum Baths and Museum)", category: "Roman" },
-
-      // Suffolk
       { county: "Suffolk", name: "Flatford Bridge Cottage", category: "Historic Property" },
       { county: "Suffolk", name: "Ickworth", category: "Historic House" },
       { county: "Suffolk", name: "Lavenham Guildhall", category: "Historic Property" },
       { county: "Suffolk", name: "Orford Ness National Nature Reserve", category: "Countryside" },
       { county: "Suffolk", name: "Theatre Royal, Bury St Edmunds", category: "Historic Property" },
       { county: "Suffolk", name: "Thorington Hall", category: "Historic Property" },
-
-      // Surrey
       { county: "Surrey", name: "Box Hill", category: "Garden" },
       { county: "Surrey", name: "Clandon Park", category: "Historic House" },
       { county: "Surrey", name: "Dapdune Wharf", category: "Historic Property" },
@@ -890,13 +808,9 @@
       { county: "Surrey", name: "Shalford Mill", category: "Historic Property" },
       { county: "Surrey", name: "The Homewood", category: "Historic Property" },
       { county: "Surrey", name: "Winkworth Arboretum", category: "Garden" },
-
-      // Tyne and Wear
       { county: "Tyne and Wear", name: "Gibside", category: "Garden" },
       { county: "Tyne and Wear", name: "Souter Lighthouse", category: "Historic Property" },
       { county: "Tyne and Wear", name: "Washington Old Hall", category: "Historic Property" },
-
-      // Warwickshire
       { county: "Warwickshire", name: "Baddesley Clinton", category: "Historic House" },
       { county: "Warwickshire", name: "Charlecote Park", category: "Historic House" },
       { county: "Warwickshire", name: "Coughton Court", category: "Historic House" },
@@ -904,20 +818,14 @@
       { county: "Warwickshire", name: "Kinwarton Dovecote", category: "Historic Property" },
       { county: "Warwickshire", name: "Packwood House", category: "Historic House" },
       { county: "Warwickshire", name: "Upton House", category: "Historic House" },
-
-      // West Midlands
       { county: "West Midlands", name: "Birmingham Back to Backs", category: "Historic Property" },
       { county: "West Midlands", name: "Wightwick Manor", category: "Historic Property" },
-
-      // West Sussex
       { county: "West Sussex", name: "Cissbury Ring", category: "Prehistoric" },
       { county: "West Sussex", name: "Nymans", category: "Garden" },
       { county: "West Sussex", name: "Petworth House", category: "Historic House" },
       { county: "West Sussex", name: "Saddlescombe Farm", category: "Countryside" },
       { county: "West Sussex", name: "Standen", category: "Historic House" },
       { county: "West Sussex", name: "Uppark", category: "Historic House" },
-
-      // Wiltshire
       { county: "Wiltshire", name: "Avebury Manor and Garden", category: "Historic House" },
       { county: "Wiltshire", name: "Avebury Stone Circle", category: "Prehistoric" },
       { county: "Wiltshire", name: "Calstone & Cherhill Downs", category: "Countryside" },
@@ -938,8 +846,6 @@
       { county: "Wiltshire", name: "The Coombes", category: "Countryside" },
       { county: "Wiltshire", name: "The Courts Garden", category: "Garden" },
       { county: "Wiltshire", name: "Westwood Manor", category: "Historic Property" },
-
-      // Worcestershire
       { county: "Worcestershire", name: "Croome Park", category: "Garden" },
       { county: "Worcestershire", name: "Edward Elgar Birthplace Museum", category: "Museum" },
       { county: "Worcestershire", name: "Fleece Inn", category: "Historic Property" },
@@ -949,8 +855,6 @@
       { county: "Worcestershire", name: "Rosedene", category: "Historic Property" },
       { county: "Worcestershire", name: "The Greyfriars", category: "Historic Property" },
       { county: "Worcestershire", name: "Wichenford Dovecote", category: "Historic Property" },
-
-      // Yorkshire
       { county: "Yorkshire", name: "Beningbrough Hall", category: "Historic House" },
       { county: "Yorkshire", name: "Braithwaite Hall", category: "Historic Property" },
       { county: "Yorkshire", name: "Brimham Rocks", category: "Countryside" },
@@ -971,264 +875,235 @@
       { county: "Yorkshire", name: "Treasurers House", category: "Historic Property" }
     ];
 
-    // Helper to generate a predictable key for each site
-    function makeSiteId(item) {
-      return (item.county + "_" + item.name).toLowerCase().replace(/[^a-z0-9]/g, "_");
+    function generateId(site) {
+      return (site.county + "_" + site.name).toLowerCase().replace(/[^a-z0-9]/g, "_");
     }
 
-    const ALL_SITES = RAW_NT_SITES.map(s => ({
-      ...s,
-      id: makeSiteId(s)
+    const sites = RAW_DATA.map(item => ({
+      ...item,
+      id: generateId(item)
     }));
 
-    const LOCAL_STORAGE_KEY = 'nt_visited_data_v2';
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'nt-checklist-app';
+    // ----------------------------------------------------
+    // 3. STORAGE & STATE MANAGEMENT
+    // ----------------------------------------------------
+    const LOCAL_KEY = "nt_checklist_progress";
+    let userData = {};
 
-    let app = null;
-    let auth = null;
-    let db = null;
-    let currentUser = null;
-    let firestoreUnsubscribe = null;
-
-    // In-memory user progress state
-    // { [siteId]: { status: 'visited'|'wishlist'|'unvisited', date: 'YYYY-MM-DD', rating: 0-5, notes: '' } }
-    let userProgress = {};
-
-    // Filter states
-    let currentSearch = '';
-    let currentStatus = 'all';
-    let currentCounty = 'all';
-    let currentCategory = 'all';
-    let allCollapsed = false;
-
-    // Toast utility
-    function notify(message, isSuccess = true) {
-      const toast = document.getElementById('toast');
-      const msg = document.getElementById('toast-msg');
-      const icon = document.getElementById('toast-icon');
-
-      msg.textContent = message;
-      if (isSuccess) {
-        icon.setAttribute('data-lucide', 'check-circle');
-        icon.className = 'w-5 h-5 text-emerald-400 flex-shrink-0';
-      } else {
-        icon.setAttribute('data-lucide', 'alert-circle');
-        icon.className = 'w-5 h-5 text-rose-400 flex-shrink-0';
-      }
-      lucide.createIcons();
-
-      toast.classList.remove('translate-y-24', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-
-      setTimeout(() => {
-        toast.classList.add('translate-y-24', 'opacity-0');
-        toast.classList.remove('translate-y-0', 'opacity-100');
-      }, 3500);
-    }
-
-    function loadLocalProgress() {
+    function loadLocal() {
       try {
-        const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (stored) {
-          userProgress = JSON.parse(stored);
-        }
-      } catch (err) {
-        console.warn('Could not read local storage:', err);
+        const stored = localStorage.getItem(LOCAL_KEY);
+        if (stored) userData = JSON.parse(stored);
+      } catch(e) {
+        console.warn("Local storage inaccessible", e);
       }
     }
 
-    function saveLocalProgress() {
+    function saveState() {
+      // 1. Save locally
       try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userProgress));
-      } catch (err) {
-        console.warn('Could not write to local storage:', err);
+        localStorage.setItem(LOCAL_KEY, JSON.stringify(userData));
+      } catch (e) {
+        console.error("Local save error:", e);
       }
-    }
 
-    async function persistProgress() {
-      saveLocalProgress();
-      updateDashboard();
-      renderAllSites();
-
+      // 2. Save to Firestore if signed in
       if (currentUser && db) {
-        try {
-          const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'checklist', 'progress');
-          await setDoc(userDocRef, {
-            data: userProgress,
-            updatedAt: new Date().toISOString()
-          }, { merge: true });
-        } catch (err) {
+        const statusEl = document.getElementById("syncStatus");
+        statusEl.textContent = "Syncing to cloud...";
+        
+        db.collection("users").doc(currentUser.uid).set({
+          checklist: userData,
+          lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true })
+        .then(() => {
+          statusEl.textContent = `Synced: ${currentUser.displayName || currentUser.email}`;
+        })
+        .catch(err => {
           console.error("Cloud save failed:", err);
-          notify("Failed to save to cloud: " + err.message, false);
-        }
+          statusEl.textContent = "Sync error (saved locally)";
+        });
       }
+
+      updateStats();
     }
 
-    function attachCloudSync(userId) {
-      if (firestoreUnsubscribe) {
-        firestoreUnsubscribe();
-        firestoreUnsubscribe = null;
-      }
-      if (!db || !userId) return;
-
-      const userDocRef = doc(db, 'artifacts', appId, 'users', userId, 'checklist', 'progress');
+    function setStatus(id, newStatus) {
+      if (!userData[id]) userData[id] = {};
       
-      firestoreUnsubscribe = onSnapshot(userDocRef, (snapshot) => {
-        if (snapshot.exists()) {
-          const cloudData = snapshot.data();
-          if (cloudData && cloudData.data) {
-            userProgress = { ...userProgress, ...cloudData.data };
-            saveLocalProgress();
-            updateDashboard();
-            renderAllSites();
-          }
-        } else {
-          // If fresh user doc, push existing local changes up
-          if (Object.keys(userProgress).length > 0) {
-            persistProgress();
-          }
-        }
-      }, (error) => {
-        console.warn("Firestore subscription error:", error);
-      });
-    }
-
-    async function initFirebase() {
-      if (typeof __firebase_config !== 'undefined') {
-        try {
-          const config = JSON.parse(__firebase_config);
-          app = initializeApp(config);
-          auth = getAuth(app);
-          db = getFirestore(app);
-
-          // Handle Custom Auth Token if provided by environment
-          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            await signInWithCustomToken(auth, __initial_auth_token);
-          }
-
-          onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            updateAuthUI(user);
-            if (user) {
-              attachCloudSync(user.uid);
-            }
-          });
-        } catch (err) {
-          console.warn("Firebase initialization notice:", err);
-        }
-      }
-    }
-
-    function updateAuthUI(user) {
-      const unauthBar = document.getElementById('auth-unauthenticated');
-      const authBar = document.getElementById('auth-authenticated');
-      const banner = document.getElementById('guest-prompt-banner');
-      const syncDot = document.getElementById('sync-dot');
-      const syncText = document.getElementById('sync-text');
-
-      if (user) {
-        unauthBar.classList.add('hidden');
-        authBar.classList.remove('hidden');
-        banner.classList.add('hidden');
-
-        const name = user.displayName || user.email || 'Member';
-        document.getElementById('user-display-name').textContent = name;
-        document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
-
-        syncDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
-        syncText.textContent = 'Cloud Synced';
+      if (userData[id].status === newStatus) {
+        delete userData[id].status;
+        delete userData[id].date;
       } else {
-        unauthBar.classList.remove('hidden');
-        authBar.classList.add('hidden');
-        banner.classList.remove('hidden');
+        userData[id].status = newStatus;
+        if (newStatus === "visited") {
+          const d = new Date();
+          const year = d.getFullYear();
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          userData[id].date = `${year}-${month}-${day}`;
+        }
+      }
+      saveState();
+      renderSites();
+    }
 
-        syncDot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
-        syncText.textContent = 'Guest Mode (Local)';
+    // ----------------------------------------------------
+    // 4. AUTHENTICATION LOGIC
+    // ----------------------------------------------------
+    const authBox = document.getElementById("authBox");
+    const syncStatus = document.getElementById("syncStatus");
+
+    function renderAuthUI() {
+      if (currentUser) {
+        syncStatus.className = "sync-status online";
+        syncStatus.textContent = `Cloud Synced: ${currentUser.displayName || currentUser.email}`;
+        
+        authBox.innerHTML = `
+          <div class="auth-user-info">
+            ${currentUser.photoURL ? `<img src="${currentUser.photoURL}" class="user-avatar" alt="Profile">` : ''}
+            <span>${currentUser.displayName || currentUser.email}</span>
+          </div>
+          <button class="btn-auth" id="logoutBtn">Sign Out</button>
+        `;
+
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+          auth.signOut();
+        });
+      } else {
+        syncStatus.className = "sync-status";
+        syncStatus.textContent = "Mode: Local Storage (Guest)";
+        
+        authBox.innerHTML = `
+          <button class="btn-auth" id="loginBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
+            Sign in with Google
+          </button>
+        `;
+
+        document.getElementById("loginBtn").addEventListener("click", loginWithGoogle);
       }
     }
 
-    function updateDashboard() {
-      const total = ALL_SITES.length;
-      let visited = 0;
-      let wishlist = 0;
+    function loginWithGoogle() {
+      if (!auth) {
+        alert("Please paste your valid Firebase configuration keys into index.html to enable Google Sign-In.");
+        return;
+      }
 
-      ALL_SITES.forEach(s => {
-        const u = userProgress[s.id] || {};
-        if (u.status === 'visited') visited++;
-        else if (u.status === 'wishlist') wishlist++;
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(error => {
+        console.error("Google Auth Error:", error);
+        alert(`Authentication Error (${error.code}):\n${error.message}`);
       });
-
-      const unvisited = total - visited - wishlist;
-      const pct = total > 0 ? Math.round((visited / total) * 100) : 0;
-
-      document.getElementById('stat-total').textContent = total;
-      document.getElementById('stat-visited').textContent = visited;
-      document.getElementById('stat-wishlist').textContent = wishlist;
-      document.getElementById('stat-unvisited').textContent = unvisited;
-      document.getElementById('stat-percent').textContent = `${pct}%`;
-      document.getElementById('stat-bar').style.width = `${pct}%`;
-
-      document.getElementById('pill-all').textContent = total;
-      document.getElementById('pill-visited').textContent = visited;
-      document.getElementById('pill-wishlist').textContent = wishlist;
-      document.getElementById('pill-unvisited').textContent = unvisited;
     }
 
-    function populateDropdowns() {
-      const countySelect = document.getElementById('filter-county');
-      const categorySelect = document.getElementById('filter-category');
+    if (auth) {
+      auth.onAuthStateChanged(user => {
+        currentUser = user;
+        renderAuthUI();
 
-      const counties = [...new Set(ALL_SITES.map(s => s.county))].sort();
-      counties.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c;
-        opt.textContent = c;
-        countySelect.appendChild(opt);
+        if (user && db) {
+          syncStatus.textContent = "Loading cloud progress...";
+          db.collection("users").doc(user.uid).get()
+            .then(doc => {
+              if (doc.exists && doc.data().checklist) {
+                // Merge cloud data with any local progress
+                userData = { ...userData, ...doc.data().checklist };
+                saveState();
+              } else {
+                // First sign-in: push existing local records to user's cloud doc
+                saveState();
+              }
+              renderSites();
+              updateStats();
+            })
+            .catch(err => {
+              console.error("Error reading Firestore:", err);
+            });
+        }
+      });
+    }
+
+    // ----------------------------------------------------
+    // 5. RENDERING & UI
+    // ----------------------------------------------------
+    function updateStats() {
+      const total = sites.length;
+      let visitedCount = 0;
+      let wishlistCount = 0;
+
+      sites.forEach(s => {
+        const u = userData[s.id];
+        if (u && u.status === "visited") visitedCount++;
+        else if (u && u.status === "wishlist") wishlistCount++;
       });
 
-      const categories = [...new Set(ALL_SITES.map(s => s.category))].sort();
+      const unvisitedCount = total - visitedCount - wishlistCount;
+      const pct = total > 0 ? Math.round((visitedCount / total) * 100) : 0;
+
+      document.getElementById("statTotal").textContent = total;
+      document.getElementById("statVisited").textContent = visitedCount;
+      document.getElementById("statWishlist").textContent = wishlistCount;
+      document.getElementById("statUnvisited").textContent = unvisitedCount;
+      document.getElementById("progressPercent").textContent = `${pct}%`;
+      document.getElementById("progressBar").style.width = `${pct}%`;
+    }
+
+    function populateFilterDropdowns() {
+      const categorySelect = document.getElementById("filterCategory");
+      const countySelect = document.getElementById("filterCounty");
+
+      const categories = [...new Set(sites.map(s => s.category))].sort();
       categories.forEach(cat => {
-        const opt = document.createElement('option');
+        const opt = document.createElement("option");
         opt.value = cat;
         opt.textContent = cat;
         categorySelect.appendChild(opt);
       });
+
+      const counties = [...new Set(sites.map(s => s.county))].sort();
+      counties.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        countySelect.appendChild(opt);
+      });
     }
 
-    function renderAllSites() {
-      const container = document.getElementById('counties-container');
-      const emptyState = document.getElementById('empty-state');
-      const summaryLabel = document.getElementById('filtered-count-label');
+    function renderSites() {
+      const container = document.getElementById("siteListContainer");
+      const noMatches = document.getElementById("noMatches");
+      const q = document.getElementById("search").value.trim().toLowerCase();
+      const statusFilter = document.getElementById("filterStatus").value;
+      const catFilter = document.getElementById("filterCategory").value;
+      const countyFilter = document.getElementById("filterCounty").value;
 
-      // Filter sites
-      const filtered = ALL_SITES.filter(site => {
-        const u = userProgress[site.id] || {};
-        const st = u.status || 'unvisited';
+      const filtered = sites.filter(site => {
+        const u = userData[site.id] || {};
+        const currentStatus = u.status || "unvisited";
 
-        if (currentStatus !== 'all' && st !== currentStatus) return false;
-        if (currentCounty !== 'all' && site.county !== currentCounty) return false;
-        if (currentCategory !== 'all' && site.category !== currentCategory) return false;
+        if (statusFilter !== "all" && currentStatus !== statusFilter) return false;
+        if (catFilter !== "all" && site.category !== catFilter) return false;
+        if (countyFilter !== "all" && site.county !== countyFilter) return false;
 
-        if (currentSearch) {
-          const matchName = site.name.toLowerCase().includes(currentSearch);
-          const matchCounty = site.county.toLowerCase().includes(currentSearch);
-          const matchCat = site.category.toLowerCase().includes(currentSearch);
+        if (q) {
+          const matchName = site.name.toLowerCase().includes(q);
+          const matchCounty = site.county.toLowerCase().includes(q);
+          const matchCat = site.category.toLowerCase().includes(q);
           if (!matchName && !matchCounty && !matchCat) return false;
         }
-
         return true;
       });
 
-      summaryLabel.textContent = `Showing ${filtered.length} of ${ALL_SITES.length} National Trust places`;
+      container.innerHTML = "";
 
       if (filtered.length === 0) {
-        container.innerHTML = '';
-        emptyState.classList.remove('hidden');
+        noMatches.classList.remove("hidden");
         return;
       }
-      emptyState.classList.add('hidden');
+      noMatches.classList.add("hidden");
 
-      // Group by county
       const grouped = {};
       filtered.forEach(s => {
         if (!grouped[s.county]) grouped[s.county] = [];
@@ -1237,524 +1112,124 @@
 
       const sortedCounties = Object.keys(grouped).sort();
 
-      container.innerHTML = sortedCounties.map(countyName => {
-        const sitesInCounty = grouped[countyName];
-        const visitedInCounty = sitesInCounty.filter(s => (userProgress[s.id] || {}).status === 'visited').length;
+      sortedCounties.forEach(countyName => {
+        const countySites = grouped[countyName];
+        
+        const groupEl = document.createElement("div");
+        groupEl.className = "county-group";
 
-        return `
-          <div class="county-card bg-white rounded-xl border border-stone-200/90 shadow-xs overflow-hidden transition">
-            
-            <!-- Accordion Header -->
-            <button 
-              type="button" 
-              class="county-header w-full px-4 sm:px-5 py-3.5 bg-stone-50/70 hover:bg-stone-100 flex items-center justify-between text-left border-b border-stone-200/70 transition"
-              data-county="${countyName}"
-            >
-              <div class="flex items-center gap-3">
-                <i data-lucide="map-pin" class="w-4 h-4 text-heritage-800"></i>
-                <h3 class="font-cinzel font-bold text-sm sm:text-base text-heritage-900">${countyName}</h3>
-                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-heritage-700 border border-heritage-200">
-                  ${visitedInCounty} / ${sitesInCounty.length} visited
-                </span>
-              </div>
-              <i data-lucide="chevron-down" class="chevron-icon w-4 h-4 text-stone-500 transition-transform duration-200"></i>
-            </button>
+        const headerEl = document.createElement("div");
+        headerEl.className = "county-header open";
 
-            <!-- Cards Grid -->
-            <div class="county-body p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              ${sitesInCounty.map(site => {
-                const u = userProgress[site.id] || {};
-                const isVisited = u.status === 'visited';
-                const isWishlist = u.status === 'wishlist';
+        const visitedInCounty = countySites.filter(s => (userData[s.id] || {}).status === "visited").length;
 
-                return `
-                  <div class="site-card bg-white p-3.5 rounded-lg border ${isVisited ? 'border-emerald-600/40 bg-emerald-50/30' : isWishlist ? 'border-amber-400 bg-amber-50/20' : 'border-stone-200'} flex flex-col justify-between">
-                    <div>
-                      <div class="flex items-start justify-between gap-1 mb-1.5">
-                        <span class="inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-stone-100 text-stone-600 border border-stone-200/70">
-                          ${site.category}
-                        </span>
-                        
-                        ${isVisited ? `
-                          <span class="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                            <i data-lucide="check" class="w-3 h-3 text-emerald-700"></i> Visited
-                          </span>
-                        ` : isWishlist ? `
-                          <span class="text-[10px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                            <i data-lucide="bookmark" class="w-3 h-3 text-amber-700"></i> Wishlist
-                          </span>
-                        ` : ''}
-                      </div>
-
-                      <h4 class="font-serif font-bold text-sm text-stone-900 leading-snug mb-1">
-                        ${site.name}
-                      </h4>
-
-                      <!-- Log details preview if available -->
-                      ${isVisited && (u.date || u.rating > 0 || u.notes) ? `
-                        <div class="my-2 p-2 rounded bg-white border border-stone-200 text-[11px] text-stone-600 space-y-0.5">
-                          ${u.date ? `<div class="text-stone-500 font-medium">Logged: ${u.date}</div>` : ''}
-                          ${u.rating > 0 ? `<div class="text-amber-500 font-semibold">${'★'.repeat(u.rating)}${'☆'.repeat(5 - u.rating)}</div>` : ''}
-                          ${u.notes ? `<div class="italic text-stone-700 line-clamp-1">"${u.notes}"</div>` : ''}
-                        </div>
-                      ` : ''}
-                    </div>
-
-                    <!-- Action buttons -->
-                    <div class="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between gap-1.5">
-                      <div class="flex items-center gap-1.5">
-                        <button 
-                          type="button"
-                          class="btn-toggle-visited px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1 transition ${isVisited ? 'bg-heritage-800 text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'}"
-                          data-id="${site.id}"
-                        >
-                          <i data-lucide="check" class="w-3 h-3"></i>
-                          <span>${isVisited ? 'Visited' : 'Visit'}</span>
-                        </button>
-
-                        <button 
-                          type="button"
-                          class="btn-toggle-wishlist p-1 rounded text-xs font-semibold border transition ${isWishlist ? 'bg-amber-100 border-amber-300 text-amber-800' : 'bg-stone-50 border-stone-200 text-stone-500 hover:bg-stone-100'}"
-                          data-id="${site.id}"
-                          title="Save to Wishlist"
-                        >
-                          <i data-lucide="bookmark" class="w-3.5 h-3.5 ${isWishlist ? 'fill-current' : ''}"></i>
-                        </button>
-                      </div>
-
-                      <button 
-                        type="button" 
-                        class="btn-open-journal p-1 text-stone-400 hover:text-heritage-800 hover:bg-stone-100 rounded transition"
-                        data-id="${site.id}"
-                        title="Add Date, Notes &amp; Star Rating"
-                      >
-                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                      </button>
-                    </div>
-
-                  </div>
-                `;
-              }).join('')}
-            </div>
-
+        headerEl.innerHTML = `
+          <div class="county-title">
+            <span class="county-name">${countyName}</span>
+            <span class="county-counter">${visitedInCounty} / ${countySites.length} visited</span>
           </div>
+          <span class="chevron">▼</span>
         `;
-      }).join('');
 
-      lucide.createIcons();
-      attachCardEventListeners();
-    }
+        const contentEl = document.createElement("div");
+        contentEl.className = "county-content";
 
-    function attachCardEventListeners() {
-      // Accordion toggles
-      document.querySelectorAll('.county-header').forEach(hdr => {
-        hdr.addEventListener('click', () => {
-          const body = hdr.nextElementSibling;
-          const icon = hdr.querySelector('.chevron-icon');
-          body.classList.toggle('hidden');
-          icon.classList.toggle('rotate-180');
+        countySites.forEach(site => {
+          const u = userData[site.id] || {};
+          const status = u.status || "";
+
+          const card = document.createElement("div");
+          card.className = `site-card ${status}`;
+
+          const isVisited = status === "visited";
+          const isWishlist = status === "wishlist";
+
+          card.innerHTML = `
+            <div>
+              <div class="site-name">${site.name}</div>
+              <span class="site-category">${site.category}</span>
+              ${isVisited && u.date ? `<div class="site-date-badge">✓ Visited: ${u.date}</div>` : ""}
+            </div>
+            <div class="site-actions">
+              <button class="status-btn ${isVisited ? 'active-visited' : ''}" data-action="visited" data-id="${site.id}">
+                ${isVisited ? '✓ Visited' : 'Mark Visited'}
+              </button>
+              <button class="status-btn ${isWishlist ? 'active-wishlist' : ''}" data-action="wishlist" data-id="${site.id}">
+                ${isWishlist ? '★ Wishlist' : 'Wishlist'}
+              </button>
+            </div>
+          `;
+
+          contentEl.appendChild(card);
         });
-      });
 
-      // Visited Toggles
-      document.querySelectorAll('.btn-toggle-visited').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const siteId = btn.dataset.id;
-          const current = (userProgress[siteId] || {}).status;
-          
-          if (!userProgress[siteId]) userProgress[siteId] = {};
-
-          if (current === 'visited') {
-            userProgress[siteId].status = 'unvisited';
-            notify("Removed from visited sites");
-          } else {
-            userProgress[siteId].status = 'visited';
-            if (!userProgress[siteId].date) {
-              userProgress[siteId].date = new Date().toISOString().split('T')[0];
-            }
-            const s = ALL_SITES.find(item => item.id === siteId);
-            notify(`Marked ${s ? s.name : 'site'} as Visited!`);
-          }
-          persistProgress();
+        headerEl.addEventListener("click", () => {
+          headerEl.classList.toggle("open");
+          contentEl.classList.toggle("hidden");
         });
-      });
 
-      // Wishlist Toggles
-      document.querySelectorAll('.btn-toggle-wishlist').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const siteId = btn.dataset.id;
-          const current = (userProgress[siteId] || {}).status;
-
-          if (!userProgress[siteId]) userProgress[siteId] = {};
-
-          if (current === 'wishlist') {
-            userProgress[siteId].status = 'unvisited';
-            notify("Removed from wishlist");
-          } else {
-            userProgress[siteId].status = 'wishlist';
-            const s = ALL_SITES.find(item => item.id === siteId);
-            notify(`Added ${s ? s.name : 'site'} to Wishlist!`);
-          }
-          persistProgress();
-        });
-      });
-
-      // Journal Dialog Trigger
-      document.querySelectorAll('.btn-open-journal').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          openJournalModal(btn.dataset.id);
-        });
+        groupEl.appendChild(headerEl);
+        groupEl.appendChild(contentEl);
+        container.appendChild(groupEl);
       });
     }
 
-    function openJournalModal(siteId) {
-      const site = ALL_SITES.find(s => s.id === siteId);
-      if (!site) return;
-
-      const u = userProgress[siteId] || {};
-      document.getElementById('log-site-id').value = siteId;
-      document.getElementById('modal-site-title').textContent = site.name;
-      document.getElementById('modal-site-location').textContent = `${site.county} — ${site.category}`;
-      document.getElementById('log-date').value = u.date || '';
-      document.getElementById('log-notes').value = u.notes || '';
-      
-      setStarRating(u.rating || 0);
-
-      document.getElementById('modal-visit-log').classList.remove('hidden');
-      lucide.createIcons();
-    }
-
-    function setStarRating(val) {
-      document.getElementById('log-rating').value = val;
-      const stars = document.querySelectorAll('#star-picker .star-btn');
-      stars.forEach((btn, idx) => {
-        if (idx < val) {
-          btn.className = 'star-btn text-amber-500 hover:text-amber-500 p-0.5 transition';
-        } else {
-          btn.className = 'star-btn text-stone-300 hover:text-amber-400 p-0.5 transition';
-        }
-      });
-      document.getElementById('star-label').textContent = val > 0 ? `${val} / 5 Stars` : 'Unrated';
-    }
-
-    document.querySelectorAll('#star-picker .star-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        setStarRating(parseInt(btn.dataset.val, 10));
-      });
+    // Card Button Delegation
+    document.getElementById("siteListContainer").addEventListener("click", (e) => {
+      const btn = e.target.closest(".status-btn");
+      if (!btn) return;
+      const action = btn.dataset.action;
+      const id = btn.dataset.id;
+      setStatus(id, action);
     });
 
-    // Save journal form
-    document.getElementById('form-visit-log').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const siteId = document.getElementById('log-site-id').value;
-      if (!userProgress[siteId]) userProgress[siteId] = {};
+    // Filtering listeners
+    document.getElementById("search").addEventListener("input", renderSites);
+    document.getElementById("filterStatus").addEventListener("change", renderSites);
+    document.getElementById("filterCategory").addEventListener("change", renderSites);
+    document.getElementById("filterCounty").addEventListener("change", renderSites);
 
-      const dateVal = document.getElementById('log-date').value;
-      const ratingVal = parseInt(document.getElementById('log-rating').value, 10) || 0;
-      const notesVal = document.getElementById('log-notes').value.trim();
-
-      userProgress[siteId].date = dateVal;
-      userProgress[siteId].rating = ratingVal;
-      userProgress[siteId].notes = notesVal;
-
-      // Auto-mark as visited if logging a visit date or rating
-      if (dateVal || ratingVal > 0) {
-        userProgress[siteId].status = 'visited';
-      }
-
-      persistProgress();
-      document.getElementById('modal-visit-log').classList.add('hidden');
-      notify("Visit memories and notes saved!");
-    });
-
-    document.getElementById('btn-clear-log').addEventListener('click', () => {
-      const siteId = document.getElementById('log-site-id').value;
-      if (userProgress[siteId]) {
-        delete userProgress[siteId].date;
-        delete userProgress[siteId].rating;
-        delete userProgress[siteId].notes;
-      }
-      persistProgress();
-      document.getElementById('modal-visit-log').classList.add('hidden');
-      notify("Journal cleared for this site.");
-    });
-
-    const modalAuth = document.getElementById('modal-auth');
-    const authErrorMsg = document.getElementById('auth-error-msg');
-    let isSignUpMode = false;
-
-    function showAuthError(msg) {
-      authErrorMsg.textContent = msg;
-      authErrorMsg.classList.remove('hidden');
-    }
-
-    function clearAuthError() {
-      authErrorMsg.textContent = '';
-      authErrorMsg.classList.add('hidden');
-    }
-
-    document.getElementById('btn-open-auth').addEventListener('click', () => {
-      clearAuthError();
-      modalAuth.classList.remove('hidden');
-    });
-
-    document.getElementById('banner-signin-btn').addEventListener('click', () => {
-      clearAuthError();
-      modalAuth.classList.remove('hidden');
-    });
-
-    document.getElementById('tab-auth-login').addEventListener('click', () => {
-      isSignUpMode = false;
-      document.getElementById('tab-auth-login').className = 'flex-1 pb-2 border-b-2 border-heritage-800 text-heritage-800';
-      document.getElementById('tab-auth-signup').className = 'flex-1 pb-2 border-b-2 border-transparent text-stone-400 hover:text-stone-700';
-      document.getElementById('signup-name-container').classList.add('hidden');
-      document.getElementById('btn-submit-auth').textContent = 'Sign In';
-      clearAuthError();
-    });
-
-    document.getElementById('tab-auth-signup').addEventListener('click', () => {
-      isSignUpMode = true;
-      document.getElementById('tab-auth-signup').className = 'flex-1 pb-2 border-b-2 border-heritage-800 text-heritage-800';
-      document.getElementById('tab-auth-login').className = 'flex-1 pb-2 border-b-2 border-transparent text-stone-400 hover:text-stone-700';
-      document.getElementById('signup-name-container').classList.remove('hidden');
-      document.getElementById('btn-submit-auth').textContent = 'Create Free Account';
-      clearAuthError();
-    });
-
-    // Email/Password Submit
-    document.getElementById('form-email-auth').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      clearAuthError();
-      const email = document.getElementById('auth-email').value.trim();
-      const password = document.getElementById('auth-password').value;
-      const name = document.getElementById('auth-name').value.trim();
-
-      if (!auth) {
-        showAuthError("Cloud authentication service is currently loading or unavailable.");
-        return;
-      }
-
-      try {
-        if (isSignUpMode) {
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          if (name && userCredential.user) {
-            await updateProfile(userCredential.user, { displayName: name });
-          }
-          notify("Account created successfully! Your progress is now syncing.");
-        } else {
-          await signInWithEmailAndPassword(auth, email, password);
-          notify("Welcome back! Cloud progress loaded.");
-        }
-        modalAuth.classList.add('hidden');
-      } catch (err) {
-        showAuthError(err.message.replace('Firebase: ', ''));
-      }
-    });
-
-    // Google Sign-In
-    document.getElementById('btn-google-login').addEventListener('click', async () => {
-      clearAuthError();
-      if (!auth) {
-        showAuthError("Authentication service is unavailable.");
-        return;
-      }
-      try {
-        const provider = new GoogleAuthProvider();
-        await signInWithPopup(auth, provider);
-        modalAuth.classList.add('hidden');
-        notify("Signed in with Google!");
-      } catch (err) {
-        showAuthError(err.message.replace('Firebase: ', ''));
-      }
-    });
-
-    // Sign Out
-    document.getElementById('btn-sign-out').addEventListener('click', async () => {
-      if (auth) {
-        await signOut(auth);
-        notify("Signed out. Switched to local guest mode.");
-      }
-    });
-
-    const searchInput = document.getElementById('filter-search');
-    const clearSearchBtn = document.getElementById('clear-search');
-
-    searchInput.addEventListener('input', (e) => {
-      currentSearch = e.target.value.trim().toLowerCase();
-      clearSearchBtn.classList.toggle('hidden', currentSearch.length === 0);
-      renderAllSites();
-    });
-
-    clearSearchBtn.addEventListener('click', () => {
-      searchInput.value = '';
-      currentSearch = '';
-      clearSearchBtn.classList.add('hidden');
-      renderAllSites();
-    });
-
-    document.querySelectorAll('.status-pill').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.status-pill').forEach(b => {
-          b.className = 'status-pill px-3 py-1.5 rounded-md text-stone-600 hover:text-stone-900';
-        });
-        btn.className = 'status-pill px-3 py-1.5 rounded-md bg-heritage-800 text-white shadow-xs font-bold';
-        currentStatus = btn.dataset.status;
-        renderAllSites();
-      });
-    });
-
-    document.getElementById('filter-county').addEventListener('change', (e) => {
-      currentCounty = e.target.value;
-      renderAllSites();
-    });
-
-    document.getElementById('filter-category').addEventListener('change', (e) => {
-      currentCategory = e.target.value;
-      renderAllSites();
-    });
-
-    function resetFilters() {
-      currentSearch = '';
-      currentStatus = 'all';
-      currentCounty = 'all';
-      currentCategory = 'all';
-      searchInput.value = '';
-      clearSearchBtn.classList.add('hidden');
-      document.getElementById('filter-county').value = 'all';
-      document.getElementById('filter-category').value = 'all';
-
-      document.querySelectorAll('.status-pill').forEach(b => {
-        if (b.dataset.status === 'all') {
-          b.className = 'status-pill px-3 py-1.5 rounded-md bg-heritage-800 text-white shadow-xs font-bold';
-        } else {
-          b.className = 'status-pill px-3 py-1.5 rounded-md text-stone-600 hover:text-stone-900';
-        }
-      });
-      renderAllSites();
-    }
-
-    document.getElementById('btn-reset-filters').addEventListener('click', resetFilters);
-    document.getElementById('btn-empty-reset').addEventListener('click', resetFilters);
-
-    // Expand/Collapse all counties
-    document.getElementById('btn-toggle-all-counties').addEventListener('click', () => {
-      allCollapsed = !allCollapsed;
-      document.querySelectorAll('.county-body').forEach(b => {
-        b.classList.toggle('hidden', allCollapsed);
-      });
-      document.querySelectorAll('.chevron-icon').forEach(icon => {
-        icon.classList.toggle('rotate-180', !allCollapsed);
-      });
-      document.getElementById('toggle-counties-label').textContent = allCollapsed ? 'Expand All Counties' : 'Collapse All Counties';
-    });
-
-    const backupBtn = document.getElementById('btn-backup-menu');
-    const backupDropdown = document.getElementById('backup-dropdown');
-
-    backupBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      backupDropdown.classList.toggle('hidden');
-    });
-
-    document.addEventListener('click', () => {
-      backupDropdown.classList.add('hidden');
-    });
-
-    // JSON Export
-    document.getElementById('btn-export-json').addEventListener('click', () => {
-      const payload = {
-        app: "National Trust Checklist",
-        exportDate: new Date().toISOString(),
-        totalProperties: ALL_SITES.length,
-        userProgress: userProgress
-      };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    // Export & Import Handlers
+    document.getElementById("exportBtn").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(userData, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `national-trust-log-${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `national-trust-log-${new Date().toISOString().slice(0,10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      notify("Exported JSON backup file.");
     });
 
-    // CSV Export
-    document.getElementById('btn-export-csv').addEventListener('click', () => {
-      const headers = ["County", "Name", "Category", "Status", "Date Visited", "Rating", "Notes"];
-      const rows = ALL_SITES.map(s => {
-        const u = userProgress[s.id] || {};
-        return [
-          `"${s.county}"`,
-          `"${s.name.replace(/"/g, '""')}"`,
-          `"${s.category}"`,
-          `"${u.status || 'unvisited'}"`,
-          `"${u.date || ''}"`,
-          `"${u.rating || ''}"`,
-          `"${(u.notes || '').replace(/"/g, '""')}"`
-        ].join(",");
-      });
-
-      const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows].join("\n");
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `national-trust-checklist-${new Date().toISOString().split('T')[0]}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      notify("Exported CSV checklist.");
+    document.getElementById("importBtn").addEventListener("click", () => {
+      document.getElementById("importFile").click();
     });
 
-    // JSON Import
-    document.getElementById('import-json-file').addEventListener('change', (e) => {
+    document.getElementById("importFile").addEventListener("change", (e) => {
       const file = e.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
-      reader.onload = async (evt) => {
+      reader.onload = (event) => {
         try {
-          const parsed = JSON.parse(evt.target.result);
-          if (parsed && (parsed.userProgress || typeof parsed === 'object')) {
-            userProgress = parsed.userProgress || parsed;
-            await persistProgress();
-            notify("Progress imported successfully!");
-          } else {
-            notify("Invalid file structure.", false);
+          const parsed = JSON.parse(event.target.result);
+          if (typeof parsed === "object" && parsed !== null) {
+            userData = parsed;
+            saveState();
+            renderSites();
+            alert("Checklist progress restored successfully!");
           }
         } catch (err) {
-          notify("Failed to parse JSON file.", false);
+          alert("Could not parse file. Please upload a valid JSON backup.");
         }
       };
       reader.readAsText(file);
-      e.target.value = '';
     });
 
-    // Reset All Checklist Progress
-    document.getElementById('btn-reset-checklist').addEventListener('click', async () => {
-      userProgress = {};
-      await persistProgress();
-      notify("Cleared all checklist progress.");
-    });
-
-    // Modal Close buttons
-    document.querySelectorAll('.btn-close-modal').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const target = btn.dataset.target;
-        document.getElementById(target).classList.add('hidden');
-      });
-    });
-
-    window.addEventListener('DOMContentLoaded', async () => {
-      loadLocalProgress();
-      populateDropdowns();
-      updateDashboard();
-      renderAllSites();
-      lucide.createIcons();
-      await initFirebase();
-    });
+    // Start-up
+    loadLocal();
+    populateFilterDropdowns();
+    updateStats();
+    renderSites();
+    renderAuthUI();
   </script>
 </body>
 </html>
