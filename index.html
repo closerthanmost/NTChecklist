@@ -236,7 +236,7 @@
       background: #fff;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      margin-bottom: 1rem;
+      margin-bottom: 1.25rem;
       border: 1px solid var(--nt-border);
       overflow: hidden;
     }
@@ -293,10 +293,10 @@
     }
 
     .county-content {
-      padding: 1rem 1.25rem;
+      padding: 1.2rem;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-      gap: 0.9rem;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 1.2rem;
     }
 
     .hidden { display: none !important; }
@@ -310,36 +310,47 @@
       flex-direction: column;
       justify-content: space-between;
       overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     .site-card:hover {
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.1);
       transform: translateY(-2px);
     }
 
     .site-card.visited {
       background-color: #f6fbf8;
-      border-left: 4px solid var(--status-visited);
+      border-left: 5px solid var(--status-visited);
     }
 
     .site-card.wishlist {
       background-color: #fdfaf5;
-      border-left: 4px solid var(--status-wishlist);
+      border-left: 5px solid var(--status-wishlist);
+    }
+
+    .site-thumb-wrap {
+      width: 100%;
+      height: 165px;
+      background-color: #e5e7eb;
+      overflow: hidden;
+      position: relative;
     }
 
     .site-thumb {
       width: 100%;
-      height: 135px;
+      height: 100%;
       object-fit: cover;
-      background-color: #e5e7eb;
       display: block;
-      border-bottom: 1px solid var(--nt-border);
+      transition: transform 0.3s ease;
+    }
+
+    .site-card:hover .site-thumb {
+      transform: scale(1.04);
     }
 
     .site-card-body {
-      padding: 0.8rem;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
       flex-grow: 1;
@@ -347,9 +358,10 @@
     }
 
     .site-name {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.3rem;
       line-height: 1.3;
     }
 
@@ -358,46 +370,58 @@
       color: var(--nt-text-muted);
       background: #f1f2f4;
       display: inline-block;
-      padding: 0.15rem 0.45rem;
+      padding: 0.15rem 0.5rem;
       border-radius: 4px;
-      font-weight: 500;
-      margin-bottom: 0.45rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .nt-link {
+    .nt-button {
       display: inline-flex;
       align-items: center;
-      gap: 0.25rem;
-      font-size: 0.78rem;
+      gap: 0.4rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--nt-green);
+      background: #ecfdf5;
+      border: 1px solid rgba(10, 61, 36, 0.2);
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
       text-decoration: none;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.8rem;
+      width: fit-content;
+      transition: all 0.15s ease;
     }
 
-    .nt-link:hover {
-      text-decoration: underline;
-      color: var(--nt-gold);
+    .nt-button:hover {
+      background: var(--nt-green);
+      color: #fff;
     }
 
     .site-actions {
       display: flex;
-      gap: 0.4rem;
+      gap: 0.5rem;
       margin-top: 0.5rem;
     }
 
     .status-btn {
       flex: 1;
-      padding: 0.38rem 0.5rem;
-      font-size: 0.75rem;
+      padding: 0.45rem 0.5rem;
+      font-size: 0.78rem;
       font-weight: 600;
-      border-radius: 4px;
+      border-radius: 5px;
       border: 1px solid var(--nt-border);
       background: #fdfdfd;
       color: var(--nt-text-muted);
       cursor: pointer;
       text-align: center;
       transition: all 0.15s ease;
+    }
+
+    .status-btn:hover {
+      background: #f3f4f6;
     }
 
     .status-btn.active-visited {
@@ -413,10 +437,10 @@
     }
 
     .site-date-badge {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--status-visited);
       font-weight: 600;
-      margin-top: 0.25rem;
+      margin-top: 0.3rem;
     }
   </style>
 </head>
@@ -529,7 +553,7 @@
       { county: "Bedfordshire", name: "Dunstable Downs and Whipsnade Estate", category: "Countryside" },
       { county: "Bedfordshire", name: "Whipsnade Tree Cathedral", category: "Cathedral" },
       { county: "Bedfordshire", name: "Willington Dovecote and Stables", category: "Historic Property" },
-      { county: "Berkshire", name: "Ashdown", category: "Historic House" },
+      { county: "Berkshire", name: "Ashdown House", category: "Historic House" },
       { county: "Berkshire", name: "Basildon Park", category: "Historic House" },
       { county: "Bristol", name: "Blaise Hamlet", category: "Historic Property" },
       { county: "Bristol", name: "Westbury College Gatehouse", category: "Historic Property" },
@@ -890,7 +914,7 @@
       { county: "Yorkshire", name: "Nostell Priory", category: "Historic House" },
       { county: "Yorkshire", name: "Nunnington Hall", category: "Historic Property" },
       { county: "Yorkshire", name: "Rievaulx Terrace and Temples", category: "Garden" },
-      { county: "Roseberry Topping", name: "Roseberry Topping", category: "Countryside" },
+      { county: "Yorkshire", name: "Roseberry Topping", category: "Countryside" },
       { county: "Yorkshire", name: "Studley Royal Water Garden", category: "Garden" },
       { county: "Yorkshire", name: "The Bridestones", category: "Countryside" },
       { county: "Yorkshire", name: "Treasurers House", category: "Historic Property" }
@@ -900,21 +924,51 @@
       return (site.county + "_" + site.name).toLowerCase().replace(/[^a-z0-9]/g, "_");
     }
 
-    // Curated high quality imagery based on property type
-    function getPhoto(cat) {
-      const c = (cat || "").toLowerCase();
-      if (c.includes("castle")) return "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310?auto=format&fit=crop&w=600&q=80";
-      if (c.includes("garden")) return "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80";
-      if (c.includes("countryside")) return "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80";
-      if (c.includes("abbey") || c.includes("church") || c.includes("cathedral")) return "https://images.unsplash.com/photo-1548625361-16eb16ce3999?auto=format&fit=crop&w=600&q=80";
-      if (c.includes("roman") || c.includes("prehistoric")) return "https://images.unsplash.com/photo-1508873696983-2df5703bc20d?auto=format&fit=crop&w=600&q=80";
-      return "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80";
+    // Proxy images through wsrv.nl to prevent Wikipedia hotlink / 403 Forbidden blocks
+    function getPhoto(site) {
+      const n = site.name.toLowerCase();
+      const c = site.category.toLowerCase();
+
+      // Specific known landmarks
+      if (n.includes("bodiam")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/6/69/Bodiam_Castle_from_SE_angle.jpg/640px-Bodiam_Castle_from_SE_angle.jpg";
+      if (n.includes("corfe")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Corfe_Castle_from_West_Hill.jpg/640px-Corfe_Castle_from_West_Hill.jpg";
+      if (n.includes("fountains abbey")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/5/53/Fountains_Abbey_from_the_south_west.jpg/640px-Fountains_Abbey_from_the_south_west.jpg";
+      if (n.includes("stourhead")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/5/54/Stourhead_Garden.jpg/640px-Stourhead_Garden.jpg";
+      if (n.includes("cliveden")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cliveden_House_Parterre.jpg/640px-Cliveden_House_Parterre.jpg";
+      if (n.includes("quarry bank")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Quarry_Bank_Mill_Styal.jpg/640px-Quarry_Bank_Mill_Styal.jpg";
+      if (n.includes("dover") || n.includes("white cliffs")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/c/cd/White_Cliffs_of_Dover_2020.jpg/640px-White_Cliffs_of_Dover_2020.jpg";
+      if (n.includes("avebury")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/7/74/Avebury_Cove_Stones.jpg/640px-Avebury_Cove_Stones.jpg";
+      if (n.includes("wicken fen")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/3/30/Wicken_Fen_Nature_Reserve.jpg/640px-Wicken_Fen_Nature_Reserve.jpg";
+      if (n.includes("anglesey abbey")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Anglesey_Abbey_House.jpg/640px-Anglesey_Abbey_House.jpg";
+      if (n.includes("wimpole")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Wimpole_Hall_Arrington.jpg/640px-Wimpole_Hall_Arrington.jpg";
+      if (n.includes("houghton mill")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Houghton_Mill_Cambridgeshire.jpg/640px-Houghton_Mill_Cambridgeshire.jpg";
+      if (n.includes("powis")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Powis_Castle_Terraces.jpg/640px-Powis_Castle_Terraces.jpg";
+      if (n.includes("penrhyn")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Penrhyn_Castle_Gwynedd.jpg/640px-Penrhyn_Castle_Gwynedd.jpg";
+      if (n.includes("bodnant")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Bodnant_Garden_Terrace.jpg/640px-Bodnant_Garden_Terrace.jpg";
+      if (n.includes("dunster")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Dunster_Castle_Somerset.jpg/640px-Dunster_Castle_Somerset.jpg";
+      if (n.includes("tyntesfield")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/5/57/Tyntesfield_House_Somerset.jpg/640px-Tyntesfield_House_Somerset.jpg";
+      if (n.includes("cragside")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/5/57/Cragside_House_Northumberland.jpg/640px-Cragside_House_Northumberland.jpg";
+      if (n.includes("hardwick")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Hardwick_Hall_Derbyshire.jpg/640px-Hardwick_Hall_Derbyshire.jpg";
+      if (n.includes("calke")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/9/91/Calke_Abbey_Derbyshire.jpg/640px-Calke_Abbey_Derbyshire.jpg";
+      if (n.includes("knole")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/2/23/Knole_House_Sevenoaks.jpg/640px-Knole_House_Sevenoaks.jpg";
+      if (n.includes("chartwell")) return "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Chartwell_House_Kent.jpg/640px-Chartwell_House_Kent.jpg";
+
+      // General Category fallbacks (Served via high-performance CDN, never throttled)
+      if (c.includes("castle")) return "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310?auto=format&fit=crop&w=640&q=80";
+      if (c.includes("garden")) return "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=640&q=80";
+      if (c.includes("countryside") || n.includes("downs") || n.includes("fen") || n.includes("rocks") || n.includes("crags")) return "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=640&q=80";
+      if (c.includes("church") || c.includes("cathedral") || c.includes("abbey") || c.includes("priory")) return "https://images.unsplash.com/photo-1548625361-16eb16ce3999?auto=format&fit=crop&w=640&q=80";
+      if (c.includes("roman") || c.includes("prehistoric")) return "https://images.unsplash.com/photo-1508873696983-2df5703bc20d?auto=format&fit=crop&w=640&q=80";
+      if (n.includes("mill") || n.includes("foundry") || n.includes("mine") || n.includes("windpump") || n.includes("windmill")) return "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=640&q=80";
+      
+      // Default: Classic English heritage estate
+      return "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=640&q=80";
     }
 
     const sites = RAW_DATA.map(item => ({
       ...item,
       id: generateId(item),
-      photo: getPhoto(item.category)
+      photo: getPhoto(item)
     }));
 
     // ----------------------------------------------------
@@ -1169,18 +1223,21 @@
           const isVisited = status === "visited";
           const isWishlist = status === "wishlist";
 
-          // Direct official destination link using Google Destination Search
-          const directNtUrl = `https://www.google.com/search?q=site:nationaltrust.org.uk+${encodeURIComponent(site.name + ' ' + site.county)}&btnI=I`;
+          // Direct National Trust Website Link (Stripped of parentheses)
+          const cleanName = site.name.replace(/\(.*?\)/g, "").trim();
+          const ntSearchUrl = `https://www.nationaltrust.org.uk/search?query=${encodeURIComponent(cleanName)}`;
 
           card.innerHTML = `
-            <img class="site-thumb" src="${site.photo}" alt="${site.name}" loading="lazy">
+            <div class="site-thumb-wrap">
+              <img class="site-thumb" src="${site.photo}" alt="${site.name}" loading="lazy">
+            </div>
             <div class="site-card-body">
               <div>
                 <div class="site-name">${site.name}</div>
                 <span class="site-category">${site.category}</span>
                 <div>
-                  <a href="${directNtUrl}" target="_blank" rel="noopener noreferrer" class="nt-link">
-                    🌐 Open Official NT Page &rarr;
+                  <a href="${ntSearchUrl}" target="_blank" rel="noopener noreferrer" class="nt-button">
+                    🌐 National Trust Page &rarr;
                   </a>
                 </div>
                 ${isVisited && u.date ? `<div class="site-date-badge">✓ Visited: ${u.date}</div>` : ""}
