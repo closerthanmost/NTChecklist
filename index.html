@@ -301,15 +301,47 @@
 
     .hidden { display: none !important; }
 
-    /* Site Card */
-    .site-card {
+ .site-card {
       border: 1px solid var(--nt-border);
       background: #fff;
-      padding: 0.75rem;
       border-radius: 6px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .site-thumb {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      background-color: #e5e7eb;
+      display: block;
+      border-bottom: 1px solid var(--nt-border);
+    }
+
+    .site-card-body {
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+    }
+
+    .nt-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--nt-green);
+      text-decoration: none;
+      margin-top: 0.4rem;
+      width: fit-content;
+    }
+
+    .nt-link:hover {
+      text-decoration: underline;
     }
 
     .site-card.visited {
@@ -1043,6 +1075,51 @@
       });
     }
 
+// Helper to get fallback category images
+    function getCategoryFallbackImg(category) {
+      const cat = (category || "").toLowerCase();
+      if (cat.includes("castle")) return "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310?auto=format&fit=crop&w=600&q=80";
+      if (cat.includes("garden")) return "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80";
+      if (cat.includes("countryside")) return "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80";
+      if (cat.includes("church") || cat.includes("cathedral") || cat.includes("abbey")) return "https://images.unsplash.com/photo-1548625361-16eb16ce3999?auto=format&fit=crop&w=600&q=80";
+      return "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80";
+    }
+
+    // Cache image lookups in memory
+    const imageCache = {};
+
+    function fetchPropertyImage(siteName, category, imgElement) {
+      if (imageCache[siteName]) {
+        imgElement.src = imageCache[siteName];
+        return;
+      }
+
+      // Query Wikipedia/Wikimedia Commons API for genuine NT property photo
+      const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(siteName)}&prop=pageimages&format=json&pithumbsize=600&origin=*`;
+
+      fetch(searchUrl)
+        .then(res => res.json())
+        .then(data => {
+          const pages = data.query && data.query.pages;
+          if (pages) {
+            const pageId = Object.keys(pages)[0];
+            if (pageId !== "-1" && pages[pageId].thumbnail && pages[pageId].thumbnail.source) {
+              const url = pages[pageId].thumbnail.source;
+              imageCache[siteName] = url;
+              imgElement.src = url;
+              return;
+            }
+          }
+          // Default fallback if not on Wikipedia under exact title
+          const fallback = getCategoryFallbackImg(category);
+          imageCache[siteName] = fallback;
+          imgElement.src = fallback;
+        })
+        .catch(() => {
+          imgElement.src = getCategoryFallbackImg(category);
+        });
+    }
+
     function renderSites() {
       const container = document.getElementById("siteListContainer");
       const noMatches = document.getElementById("noMatches");
@@ -1116,23 +1193,38 @@
           const isVisited = status === "visited";
           const isWishlist = status === "wishlist";
 
+          // Direct National Trust Website Link
+          const ntSearchUrl = `https://www.nationaltrust.org.uk/search?query=${encodeURIComponent(site.name)}`;
+
           card.innerHTML = `
-            <div>
-              <div class="site-name">${site.name}</div>
-              <span class="site-category">${site.category}</span>
-              ${isVisited && u.date ? `<div class="site-date-badge">✓ Visited: ${u.date}</div>` : ""}
-            </div>
-            <div class="site-actions">
-              <button class="status-btn ${isVisited ? 'active-visited' : ''}" data-action="visited" data-id="${site.id}">
-                ${isVisited ? '✓ Visited' : 'Mark Visited'}
-              </button>
-              <button class="status-btn ${isWishlist ? 'active-wishlist' : ''}" data-action="wishlist" data-id="${site.id}">
-                ${isWishlist ? '★ Wishlist' : 'Wishlist'}
-              </button>
+            <img class="site-thumb" id="img-${site.id}" alt="${site.name}" loading="lazy">
+            <div class="site-card-body">
+              <div>
+                <div class="site-name">${site.name}</div>
+                <span class="site-category">${site.category}</span>
+                <div>
+                  <a href="${ntSearchUrl}" target="_blank" rel="noopener noreferrer" class="nt-link">
+                    🌐 View on National Trust &rarr;
+                  </a>
+                </div>
+                ${isVisited && u.date ? `<div class="site-date-badge">✓ Visited: ${u.date}</div>` : ""}
+              </div>
+              <div class="site-actions">
+                <button class="status-btn ${isVisited ? 'active-visited' : ''}" data-action="visited" data-id="${site.id}">
+                  ${isVisited ? '✓ Visited' : 'Mark Visited'}
+                </button>
+                <button class="status-btn ${isWishlist ? 'active-wishlist' : ''}" data-action="wishlist" data-id="${site.id}">
+                  ${isWishlist ? '★ Wishlist' : 'Wishlist'}
+                </button>
+              </div>
             </div>
           `;
 
           contentEl.appendChild(card);
+
+          // Lazy load the property image asynchronously
+          const imgEl = card.querySelector(`#img-${site.id}`);
+          fetchPropertyImage(site.name, site.category, imgEl);
         });
 
         headerEl.addEventListener("click", () => {
