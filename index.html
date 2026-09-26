@@ -329,17 +329,44 @@
       border-left: 4px solid var(--status-wishlist);
     }
 
+    .site-thumb-wrapper {
+      position: relative;
+      width: 100%;
+      height: 150px;
+      background-color: #e5e7eb;
+      overflow: hidden;
+    }
+
     .site-thumb {
       width: 100%;
-      height: 135px;
+      height: 100%;
       object-fit: cover;
-      background-color: #e5e7eb;
       display: block;
-      border-bottom: 1px solid var(--nt-border);
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .site-thumb.loaded {
+      opacity: 1;
+    }
+
+    .site-thumb-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: rgba(10, 61, 36, 0.4);
+      background: #edf2ed;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .site-card-body {
-      padding: 0.8rem;
+      padding: 0.85rem;
       display: flex;
       flex-direction: column;
       flex-grow: 1;
@@ -364,15 +391,22 @@
       margin-bottom: 0.45rem;
     }
 
+    .site-links {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.3rem;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+    }
+
     .nt-link {
       display: inline-flex;
       align-items: center;
       gap: 0.25rem;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 600;
       color: var(--nt-green);
       text-decoration: none;
-      margin-bottom: 0.6rem;
     }
 
     .nt-link:hover {
@@ -529,7 +563,7 @@
       { county: "Bedfordshire", name: "Dunstable Downs and Whipsnade Estate", category: "Countryside" },
       { county: "Bedfordshire", name: "Whipsnade Tree Cathedral", category: "Cathedral" },
       { county: "Bedfordshire", name: "Willington Dovecote and Stables", category: "Historic Property" },
-      { county: "Berkshire", name: "Ashdown", category: "Historic House" },
+      { county: "Berkshire", name: "Ashdown House", category: "Historic House" },
       { county: "Berkshire", name: "Basildon Park", category: "Historic House" },
       { county: "Bristol", name: "Blaise Hamlet", category: "Historic Property" },
       { county: "Bristol", name: "Westbury College Gatehouse", category: "Historic Property" },
@@ -890,7 +924,7 @@
       { county: "Yorkshire", name: "Nostell Priory", category: "Historic House" },
       { county: "Yorkshire", name: "Nunnington Hall", category: "Historic Property" },
       { county: "Yorkshire", name: "Rievaulx Terrace and Temples", category: "Garden" },
-      { county: "Roseberry Topping", name: "Roseberry Topping", category: "Countryside" },
+      { county: "Yorkshire", name: "Roseberry Topping", category: "Countryside" },
       { county: "Yorkshire", name: "Studley Royal Water Garden", category: "Garden" },
       { county: "Yorkshire", name: "The Bridestones", category: "Countryside" },
       { county: "Yorkshire", name: "Treasurers House", category: "Historic Property" }
@@ -900,21 +934,9 @@
       return (site.county + "_" + site.name).toLowerCase().replace(/[^a-z0-9]/g, "_");
     }
 
-    // Curated high quality imagery based on property type
-    function getPhoto(cat) {
-      const c = (cat || "").toLowerCase();
-      if (c.includes("castle")) return "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310?auto=format&fit=crop&w=600&q=80";
-      if (c.includes("garden")) return "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80";
-      if (c.includes("countryside")) return "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80";
-      if (c.includes("abbey") || c.includes("church") || c.includes("cathedral")) return "https://images.unsplash.com/photo-1548625361-16eb16ce3999?auto=format&fit=crop&w=600&q=80";
-      if (c.includes("roman") || c.includes("prehistoric")) return "https://images.unsplash.com/photo-1508873696983-2df5703bc20d?auto=format&fit=crop&w=600&q=80";
-      return "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80";
-    }
-
     const sites = RAW_DATA.map(item => ({
       ...item,
-      id: generateId(item),
-      photo: getPhoto(item.category)
+      id: generateId(item)
     }));
 
     // ----------------------------------------------------
@@ -1051,7 +1073,64 @@
     }
 
     // ----------------------------------------------------
-    // 5. RENDERING & UI
+    // 5. LIVE WIKIPEDIA PHOTO LOADER (CORS & Rate-Limit Safe)
+    // ----------------------------------------------------
+    const imageCache = {};
+
+    function cleanSearchTitle(name) {
+      return name.replace(/\(.*?\)/g, "").trim().replace(/\s+/g, "_");
+    }
+
+    // Lazy load property images using IntersectionObserver
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          const siteName = img.dataset.sitename;
+          loadWikipediaPhoto(siteName, img);
+          obs.unobserve(img);
+        }
+      });
+    }, { rootMargin: "200px" });
+
+    function loadWikipediaPhoto(name, imgEl) {
+      if (imageCache[name]) {
+        imgEl.src = imageCache[name];
+        imgEl.classList.add("loaded");
+        return;
+      }
+
+      const slug = cleanSearchTitle(name);
+      fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(slug)}`)
+        .then(res => {
+          if (!res.ok) throw new Error("Not found");
+          return res.json();
+        })
+        .then(data => {
+          if (data && data.thumbnail && data.thumbnail.source) {
+            imageCache[name] = data.thumbnail.source;
+            imgEl.src = data.thumbnail.source;
+            imgEl.onload = () => imgEl.classList.add("loaded");
+          }
+        })
+        .catch(() => {
+          // If direct slug fails, check with county name or leave neat typography placeholder
+          const fallbackSlug = encodeURIComponent(cleanSearchTitle(name) + "_(property)");
+          fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${fallbackSlug}`)
+            .then(res => res.json())
+            .then(fallbackData => {
+              if (fallbackData && fallbackData.thumbnail && fallbackData.thumbnail.source) {
+                imageCache[name] = fallbackData.thumbnail.source;
+                imgEl.src = fallbackData.thumbnail.source;
+                imgEl.onload = () => imgEl.classList.add("loaded");
+              }
+            })
+            .catch(() => {});
+        });
+    }
+
+    // ----------------------------------------------------
+    // 6. RENDERING & UI
     // ----------------------------------------------------
     function updateStats() {
       const total = sites.length;
@@ -1169,18 +1248,25 @@
           const isVisited = status === "visited";
           const isWishlist = status === "wishlist";
 
-          // Direct official destination link using Google Destination Search
-          const directNtUrl = `https://www.google.com/search?q=site:nationaltrust.org.uk+${encodeURIComponent(site.name + ' ' + site.county)}&btnI=I`;
+          // Direct official search link on National Trust
+          const ntSearchUrl = `https://www.nationaltrust.org.uk/search?query=${encodeURIComponent(site.name)}`;
+          const wikiUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(cleanSearchTitle(site.name))}`;
 
           card.innerHTML = `
-            <img class="site-thumb" src="${site.photo}" alt="${site.name}" loading="lazy">
+            <div class="site-thumb-wrapper">
+              <div class="site-thumb-placeholder">${site.category}</div>
+              <img class="site-thumb" data-sitename="${site.name}" alt="${site.name}">
+            </div>
             <div class="site-card-body">
               <div>
                 <div class="site-name">${site.name}</div>
                 <span class="site-category">${site.category}</span>
-                <div>
-                  <a href="${directNtUrl}" target="_blank" rel="noopener noreferrer" class="nt-link">
-                    🌐 Open Official NT Page &rarr;
+                <div class="site-links">
+                  <a href="${ntSearchUrl}" target="_blank" rel="noopener noreferrer" class="nt-link">
+                    🌐 National Trust &rarr;
+                  </a>
+                  <a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="nt-link" style="color: #4b5563;">
+                    📖 Wikipedia &rarr;
                   </a>
                 </div>
                 ${isVisited && u.date ? `<div class="site-date-badge">✓ Visited: ${u.date}</div>` : ""}
@@ -1197,6 +1283,10 @@
           `;
 
           contentEl.appendChild(card);
+
+          // Observe image for asynchronous loading as it scrolls into view
+          const imgEl = card.querySelector(".site-thumb");
+          observer.observe(imgEl);
         });
 
         headerEl.addEventListener("click", () => {
