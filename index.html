@@ -301,7 +301,7 @@
 
     .hidden { display: none !important; }
 
-    /* Site Card & Image */
+    /* Site Card & Header Banner */
     .site-card {
       border: 1px solid var(--nt-border);
       background: #fff;
@@ -329,24 +329,35 @@
       border-left: 4px solid var(--status-wishlist);
     }
 
-    .site-thumb-container {
-      width: 100%;
-      height: 145px;
-      background-color: #e5e7eb;
-      overflow: hidden;
-      position: relative;
+    .card-banner {
+      height: 75px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.2rem;
+      color: #fff;
+      background: linear-gradient(135deg, #1e3a29 0%, #0d281a 100%);
     }
 
-    .site-thumb {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.25s ease;
+    .card-banner.garden { background: linear-gradient(135deg, #2d5a27 0%, #153e18 100%); }
+    .card-banner.castle { background: linear-gradient(135deg, #4a3e35 0%, #2e2620 100%); }
+    .card-banner.countryside { background: linear-gradient(135deg, #1b4d3e 0%, #0b2e23 100%); }
+    .card-banner.abbey { background: linear-gradient(135deg, #3c3b54 0%, #232235 100%); }
+    .card-banner.roman { background: linear-gradient(135deg, #614028 0%, #3e2615 100%); }
+
+    .banner-icon {
+      font-size: 1.8rem;
     }
 
-    .site-card:hover .site-thumb {
-      transform: scale(1.03);
+    .banner-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.18);
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
     }
 
     .site-card-body {
@@ -364,21 +375,10 @@
       line-height: 1.3;
     }
 
-    .site-category {
-      font-size: 0.72rem;
-      color: var(--nt-text-muted);
-      background: #f1f2f4;
-      display: inline-block;
-      padding: 0.15rem 0.45rem;
-      border-radius: 4px;
-      font-weight: 500;
-      margin-bottom: 0.45rem;
-    }
-
     .site-links {
       display: flex;
-      gap: 0.75rem;
-      margin-top: 0.3rem;
+      gap: 0.8rem;
+      margin-top: 0.5rem;
       margin-bottom: 0.6rem;
       flex-wrap: wrap;
     }
@@ -387,7 +387,7 @@
       display: inline-flex;
       align-items: center;
       gap: 0.25rem;
-      font-size: 0.76rem;
+      font-size: 0.78rem;
       font-weight: 600;
       color: var(--nt-green);
       text-decoration: none;
@@ -604,7 +604,7 @@
       { county: "Cumbria", name: "Borrowdale", category: "Countryside" },
       { county: "Cumbria", name: "Bridge House", category: "Historic Property" },
       { county: "Cumbria", name: "Buttermere Lake", category: "Countryside" },
-      { county: "Cumbria", name: "Cartmel Priory Gatehouse", category: "Abbey" },
+      { county: "Cartmel Priory Gatehouse", name: "Cartmel Priory Gatehouse", category: "Abbey" },
       { county: "Cumbria", name: "Claife Viewing Station", category: "Historic Property" },
       { county: "Cumbria", name: "Dalton Castle", category: "Castle" },
       { county: "Cumbria", name: "Derwent Island House", category: "Historic Property" },
@@ -923,15 +923,14 @@
       id: generateId(item)
     }));
 
-    // High quality distinct fallback photos per category
-    function getFallbackPhoto(cat) {
-      const c = (cat || "").toLowerCase();
-      if (c.includes("castle")) return "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310?auto=format&fit=crop&w=600&q=80";
-      if (c.includes("garden")) return "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80";
-      if (c.includes("countryside")) return "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80";
-      if (c.includes("abbey") || c.includes("church") || c.includes("cathedral")) return "https://images.unsplash.com/photo-1548625361-16eb16ce3999?auto=format&fit=crop&w=600&q=80";
-      if (c.includes("roman") || c.includes("prehistoric")) return "https://images.unsplash.com/photo-1508873696983-2df5703bc20d?auto=format&fit=crop&w=600&q=80";
-      return "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80";
+    function getBannerDetails(category) {
+      const c = (category || "").toLowerCase();
+      if (c.includes("garden")) return { cls: "garden", icon: "🌿" };
+      if (c.includes("castle")) return { cls: "castle", icon: "🏰" };
+      if (c.includes("abbey") || c.includes("cathedral") || c.includes("church")) return { cls: "abbey", icon: "⛪" };
+      if (c.includes("roman") || c.includes("prehistoric")) return { cls: "roman", icon: "🏛️" };
+      if (c.includes("countryside")) return { cls: "countryside", icon: "🏞️" };
+      return { cls: "house", icon: "🏡" };
     }
 
     // ----------------------------------------------------
@@ -1068,40 +1067,7 @@
     }
 
     // ----------------------------------------------------
-    // 5. RELIABLE WIKIPEDIA PHOTO FETCHING
-    // ----------------------------------------------------
-// ----------------------------------------------------
-    // 5. CURATED HIGH-RESOLUTION HERITAGE IMAGERY
-    // Fast, permanent CDN images that will NEVER be blocked or disappear
-    // ----------------------------------------------------
-    function getSitePhoto(site) {
-      const name = site.name.toLowerCase();
-      const cat = (site.category || "").toLowerCase();
-
-      // Specific landmark matches
-      if (name.includes("stonehenge") || name.includes("avebury")) 
-        return "https://images.unsplash.com/photo-1599833975787-5c143f373c30?auto=format&fit=crop&w=600&q=80";
-      if (name.includes("cliveden") || name.includes("stourhead") || name.includes("bodnant") || cat.includes("garden")) 
-        return "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80";
-      if (name.includes("fountains abbey") || cat.includes("abbey") || cat.includes("priory") || cat.includes("cathedral") || cat.includes("church")) 
-        return "https://images.unsplash.com/photo-1548625361-16eb16ce3999?auto=format&fit=crop&w=600&q=80";
-      if (name.includes("bodiam") || name.includes("corfe") || name.includes("chirk") || cat.includes("castle")) 
-        return "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310?auto=format&fit=crop&w=600&q=80";
-      if (name.includes("dover") || name.includes("lundy") || name.includes("cliff") || name.includes("bay") || name.includes("beach")) 
-        return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80";
-      if (cat.includes("roman") || cat.includes("prehistoric")) 
-        return "https://images.unsplash.com/photo-1508873696983-2df5703bc20d?auto=format&fit=crop&w=600&q=80";
-      if (name.includes("mill") || name.includes("foundry") || name.includes("mine") || name.includes("windpump")) 
-        return "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=600&q=80";
-      if (cat.includes("countryside") || name.includes("fen") || name.includes("woods") || name.includes("lake") || name.includes("waterfall")) 
-        return "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80";
-      
-      // Default: Classic English country estate & manor house
-      return "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80";
-    }
-
-    // ----------------------------------------------------
-    // 6. RENDERING & UI
+    // 5. RENDERING & UI
     // ----------------------------------------------------
     function updateStats() {
       const total = sites.length;
@@ -1222,16 +1188,16 @@
           const cleanName = site.name.replace(/\(.*?\)/g, "").trim();
           const ntSearchUrl = `https://www.nationaltrust.org.uk/search?query=${encodeURIComponent(cleanName)}`;
           const wikiUrl = `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(cleanName + ' National Trust')}`;
-          const photoUrl = getSitePhoto(site);
+          const banner = getBannerDetails(site.category);
 
           card.innerHTML = `
-            <div class="site-thumb-container">
-              <img class="site-thumb" src="${photoUrl}" alt="${site.name}" loading="lazy">
+            <div class="card-banner ${banner.cls}">
+              <span class="banner-icon">${banner.icon}</span>
+              <span class="banner-tag">${site.category}</span>
             </div>
             <div class="site-card-body">
               <div>
                 <div class="site-name">${site.name}</div>
-                <span class="site-category">${site.category}</span>
                 <div class="site-links">
                   <a href="${ntSearchUrl}" target="_blank" rel="noopener noreferrer" class="nt-link">
                     🌐 National Trust &rarr;
@@ -1254,177 +1220,6 @@
           `;
 
           contentEl.appendChild(card);
-        });
-
-        headerEl.addEventListener("click", () => {
-          headerEl.classList.toggle("open");
-          contentEl.classList.toggle("hidden");
-        });
-
-        groupEl.appendChild(headerEl);
-        groupEl.appendChild(contentEl);
-        container.appendChild(groupEl);
-      });
-    }
-
-    // ----------------------------------------------------
-    // 6. RENDERING & UI
-    // ----------------------------------------------------
-    function updateStats() {
-      const total = sites.length;
-      let visitedCount = 0;
-      let wishlistCount = 0;
-
-      sites.forEach(s => {
-        const u = userData[s.id];
-        if (u && u.status === "visited") visitedCount++;
-        else if (u && u.status === "wishlist") wishlistCount++;
-      });
-
-      const unvisitedCount = total - visitedCount - wishlistCount;
-      const pct = total > 0 ? Math.round((visitedCount / total) * 100) : 0;
-
-      document.getElementById("statTotal").textContent = total;
-      document.getElementById("statVisited").textContent = visitedCount;
-      document.getElementById("statWishlist").textContent = wishlistCount;
-      document.getElementById("statUnvisited").textContent = unvisitedCount;
-      document.getElementById("progressPercent").textContent = `${pct}%`;
-      document.getElementById("progressBar").style.width = `${pct}%`;
-    }
-
-    function populateFilterDropdowns() {
-      const categorySelect = document.getElementById("filterCategory");
-      const countySelect = document.getElementById("filterCounty");
-
-      const categories = [...new Set(sites.map(s => s.category))].sort();
-      categories.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        categorySelect.appendChild(opt);
-      });
-
-      const counties = [...new Set(sites.map(s => s.county))].sort();
-      counties.forEach(c => {
-        const opt = document.createElement("option");
-        opt.value = c;
-        opt.textContent = c;
-        countySelect.appendChild(opt);
-      });
-    }
-
-    function renderSites() {
-      const container = document.getElementById("siteListContainer");
-      const noMatches = document.getElementById("noMatches");
-      const q = document.getElementById("search").value.trim().toLowerCase();
-      const statusFilter = document.getElementById("filterStatus").value;
-      const catFilter = document.getElementById("filterCategory").value;
-      const countyFilter = document.getElementById("filterCounty").value;
-
-      const filtered = sites.filter(site => {
-        const u = userData[site.id] || {};
-        const currentStatus = u.status || "unvisited";
-
-        if (statusFilter !== "all" && currentStatus !== statusFilter) return false;
-        if (catFilter !== "all" && site.category !== catFilter) return false;
-        if (countyFilter !== "all" && site.county !== countyFilter) return false;
-
-        if (q) {
-          const matchName = site.name.toLowerCase().includes(q);
-          const matchCounty = site.county.toLowerCase().includes(q);
-          const matchCat = site.category.toLowerCase().includes(q);
-          if (!matchName && !matchCounty && !matchCat) return false;
-        }
-        return true;
-      });
-
-      container.innerHTML = "";
-
-      if (filtered.length === 0) {
-        noMatches.classList.remove("hidden");
-        return;
-      }
-      noMatches.classList.add("hidden");
-
-      const grouped = {};
-      filtered.forEach(s => {
-        if (!grouped[s.county]) grouped[s.county] = [];
-        grouped[s.county].push(s);
-      });
-
-      const sortedCounties = Object.keys(grouped).sort();
-
-      sortedCounties.forEach(countyName => {
-        const countySites = grouped[countyName];
-        
-        const groupEl = document.createElement("div");
-        groupEl.className = "county-group";
-
-        const headerEl = document.createElement("div");
-        headerEl.className = "county-header open";
-
-        const visitedInCounty = countySites.filter(s => (userData[s.id] || {}).status === "visited").length;
-
-        headerEl.innerHTML = `
-          <div class="county-title">
-            <span class="county-name">${countyName}</span>
-            <span class="county-counter">${visitedInCounty} / ${countySites.length} visited</span>
-          </div>
-          <span class="chevron">▼</span>
-        `;
-
-        const contentEl = document.createElement("div");
-        contentEl.className = "county-content";
-
-        countySites.forEach(site => {
-          const u = userData[site.id] || {};
-          const status = u.status || "";
-
-          const card = document.createElement("div");
-          card.className = `site-card ${status}`;
-
-          const isVisited = status === "visited";
-          const isWishlist = status === "wishlist";
-
-          // Search direct on National Trust & Wikipedia
-          const cleanName = site.name.replace(/\(.*?\)/g, "").trim();
-          const ntSearchUrl = `https://www.nationaltrust.org.uk/search?query=${encodeURIComponent(cleanName)}`;
-          const wikiUrl = `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(cleanName + ' National Trust')}`;
-          const imgElemId = `img_${site.id}`;
-
-          card.innerHTML = `
-            <div class="site-thumb-container">
-              <img id="${imgElemId}" class="site-thumb" src="${getFallbackPhoto(site.category)}" alt="${site.name}" loading="lazy">
-            </div>
-            <div class="site-card-body">
-              <div>
-                <div class="site-name">${site.name}</div>
-                <span class="site-category">${site.category}</span>
-                <div class="site-links">
-                  <a href="${ntSearchUrl}" target="_blank" rel="noopener noreferrer" class="nt-link">
-                    🌐 National Trust &rarr;
-                  </a>
-                  <a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="nt-link" style="color: #4b5563;">
-                    📖 Wikipedia &rarr;
-                  </a>
-                </div>
-                ${isVisited && u.date ? `<div class="site-date-badge">✓ Visited: ${u.date}</div>` : ""}
-              </div>
-              <div class="site-actions">
-                <button class="status-btn ${isVisited ? 'active-visited' : ''}" data-action="visited" data-id="${site.id}">
-                  ${isVisited ? '✓ Visited' : 'Mark Visited'}
-                </button>
-                <button class="status-btn ${isWishlist ? 'active-wishlist' : ''}" data-action="wishlist" data-id="${site.id}">
-                  ${isWishlist ? '★ Wishlist' : 'Wishlist'}
-                </button>
-              </div>
-            </div>
-          `;
-
-          contentEl.appendChild(card);
-
-          // Asynchronously query Wikipedia's search index for the exact photo
-          fetchPhotoForSite(site.name, site.category, imgElemId);
         });
 
         headerEl.addEventListener("click", () => {
