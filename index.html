@@ -431,7 +431,7 @@
 
   <main>
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-      <span class="sync-status" id="syncStatus">Mode: Local Storage (Guest)</span>
+      
       <div class="backup-actions">
         <button class="btn-secondary" id="exportBtn">📥 Export JSON</button>
         <button class="btn-secondary" id="importBtn">📤 Import JSON</button>
@@ -956,9 +956,7 @@
 
     function renderAuthUI() {
       if (currentUser) {
-        syncStatus.className = "sync-status online";
-        syncStatus.textContent = `Cloud Synced: ${currentUser.displayName || currentUser.email}`;
-        
+                
         authBox.innerHTML = `
           <div class="auth-user-info">
             ${currentUser.photoURL ? `<img src="${currentUser.photoURL}" class="user-avatar" alt="Profile">` : ''}
@@ -984,7 +982,6 @@
         });
       } else {
         syncStatus.className = "sync-status";
-        syncStatus.textContent = "Mode: Local Storage (Guest)";
         
         authBox.innerHTML = `
           <button class="btn-auth" id="loginBtn">
