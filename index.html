@@ -232,7 +232,7 @@
       color: #fff;
     }
 
-    /* Location Group */
+    /* Location Accordion */
     .location-group {
       background: #fff;
       border-radius: var(--radius);
@@ -582,7 +582,7 @@
     }
 
     // ----------------------------------------------------
-    // 2. DATASET WITH DIRECT OFFICIAL NT URL PATHS
+    // 2. DATASET WITH VERIFIED OFFICIAL NATIONAL TRUST SLUGS
     // ----------------------------------------------------
     const RAW_DATA = [
       // === LONDON & SOUTH EAST ===
@@ -680,25 +680,27 @@
       { region: "London & South East", location: "Isle of Wight", sub: "near Newport", name: "Newtown National Nature Reserve", category: "Historic Property", wiki: "Newtown Old Town Hall", slug: "isle-of-wight/newtown-national-nature-reserve-and-old-town-hall" },
 
       // === MIDLANDS & EAST OF ENGLAND ===
-      // Cambridgeshire & Beds
+      // Essex, Bedfordshire & Hertfordshire Hub
+      { region: "Midlands & East of England", location: "Bedfordshire", sub: "near Bedford", name: "Willington Dovecote and Stables", category: "Historic Property", wiki: "Willington Dovecote and Stables", slug: "essex-bedfordshire-hertfordshire/willington-dovecote-and-stables" },
+      { region: "Midlands & East of England", location: "Bedfordshire", sub: "near Dunstable", name: "Dunstable Downs and Whipsnade Estate", category: "Countryside", wiki: "Dunstable Downs", slug: "essex-bedfordshire-hertfordshire/dunstable-downs-and-whipsnade-estate" },
+      { region: "Midlands & East of England", location: "Bedfordshire", sub: "near Dunstable", name: "Whipsnade Tree Cathedral", category: "Cathedral", wiki: "Whipsnade Tree Cathedral", slug: "essex-bedfordshire-hertfordshire/whipsnade-tree-cathedral" },
+
+      { region: "Midlands & East of England", location: "Essex", sub: "near Bishop's Stortford", name: "Hatfield Forest", category: "Countryside", wiki: "Hatfield Forest", slug: "essex-bedfordshire-hertfordshire/hatfield-forest" },
+      { region: "Midlands & East of England", location: "Essex", sub: "near Coggeshall", name: "Paycocke's House and Garden", category: "Historic Property", wiki: "Paycocke's", slug: "essex-bedfordshire-hertfordshire/paycockes-house-and-garden" },
+      { region: "Midlands & East of England", location: "Essex", sub: "near Coggeshall", name: "Coggeshall Grange Barn", category: "Historic Property", wiki: "Grange Barn", slug: "essex-bedfordshire-hertfordshire/coggeshall-grange-barn" },
+      { region: "Midlands & East of England", location: "Essex", sub: "Colchester", name: "Bourne Mill", category: "Historic Property", wiki: "Bourne Mill, Colchester", slug: "essex-bedfordshire-hertfordshire/bourne-mill" },
+      { region: "Midlands & East of England", location: "Essex", sub: "Rayleigh", name: "Rayleigh Mount", category: "Castle", wiki: "Rayleigh Mount", slug: "essex-bedfordshire-hertfordshire/rayleigh-mount" },
+
+      { region: "Midlands & East of England", location: "Hertfordshire", sub: "near Berkhamsted", name: "Ashridge Estate", category: "Countryside", wiki: "Ashridge", slug: "essex-bedfordshire-hertfordshire/ashridge-estate" },
+      { region: "Midlands & East of England", location: "Hertfordshire", sub: "near Welwyn", name: "Shaw's Corner", category: "Historic Property", wiki: "Shaw's Corner", slug: "essex-bedfordshire-hertfordshire/shaws-corner" },
+
+      // Cambridgeshire
       { region: "Midlands & East of England", location: "Cambridgeshire", sub: "near Cambridge", name: "Wimpole Estate", category: "Historic House", wiki: "Wimpole Estate", slug: "cambridgeshire/wimpole-estate" },
       { region: "Midlands & East of England", location: "Cambridgeshire", sub: "near Cambridge", name: "Anglesey Abbey, Gardens & Mill", category: "Historic House", wiki: "Anglesey Abbey", slug: "cambridgeshire/anglesey-abbey-gardens-and-lode-mill" },
       { region: "Midlands & East of England", location: "Cambridgeshire", sub: "near Ely", name: "Wicken Fen Nature Reserve", category: "Countryside", wiki: "Wicken Fen", slug: "cambridgeshire/wicken-fen-nature-reserve" },
-      { region: "Midlands & East of England", location: "Cambridgeshire", sub: "near St Ives", name: "Houghton Mill", category: "Historic Property", wiki: "Houghton Mill", slug: "cambridgeshire/houghton-mill-and-waterclose-meadows" },
+      { region: "Midlands & East of England", location: "Cambridgeshire", sub: "near St Ives", name: "Houghton Mill and Waterclose Meadows", category: "Historic Property", wiki: "Houghton Mill", slug: "cambridgeshire/houghton-mill-and-waterclose-meadows" },
       { region: "Midlands & East of England", location: "Cambridgeshire", sub: "Wisbech", name: "Peckover House and Garden", category: "Historic House", wiki: "Peckover House and Garden", slug: "cambridgeshire/peckover-house-and-garden" },
-
-      { region: "Midlands & East of England", location: "Bedfordshire", sub: "near Dunstable", name: "Dunstable Downs", category: "Countryside", wiki: "Dunstable Downs", slug: "bedfordshire/dunstable-downs-and-whipsnade-estate" },
-      { region: "Midlands & East of England", location: "Bedfordshire", sub: "near Dunstable", name: "Whipsnade Tree Cathedral", category: "Cathedral", wiki: "Whipsnade Tree Cathedral", slug: "bedfordshire/whipsnade-tree-cathedral" },
-      { region: "Midlands & East of England", location: "Bedfordshire", sub: "near Bedford", name: "Willington Dovecote and Stables", category: "Historic Property", wiki: "Willington Dovecote and Stables", slug: "bedfordshire/willington-dovecote-and-stables" },
-
-      // Essex & Hertfordshire
-      { region: "Midlands & East of England", location: "Essex", sub: "near Bishop's Stortford", name: "Hatfield Forest", category: "Countryside", wiki: "Hatfield Forest", slug: "essex/hatfield-forest" },
-      { region: "Midlands & East of England", location: "Essex", sub: "near Coggeshall", name: "Paycocke's House and Garden", category: "Historic Property", wiki: "Paycocke's", slug: "essex/paycockes-house-and-garden" },
-      { region: "Midlands & East of England", location: "Essex", sub: "near Coggeshall", name: "Grange Barn", category: "Historic Property", wiki: "Grange Barn", slug: "essex/coggeshall-grange-barn" },
-      { region: "Midlands & East of England", location: "Essex", sub: "Colchester", name: "Bourne Mill", category: "Historic Property", wiki: "Bourne Mill, Colchester", slug: "essex/bourne-mill" },
-
-      { region: "Midlands & East of England", location: "Hertfordshire", sub: "near Berkhamsted", name: "Ashridge Estate", category: "Countryside", wiki: "Ashridge", slug: "hertfordshire/ashridge-estate" },
-      { region: "Midlands & East of England", location: "Hertfordshire", sub: "near Welwyn", name: "Shaw's Corner", category: "Historic Property", wiki: "Shaw's Corner", slug: "hertfordshire/shaws-corner" },
+      { region: "Midlands & East of England", location: "Cambridgeshire", sub: "Ramsey", name: "Ramsey Abbey Gatehouse", category: "Abbey", wiki: "Ramsey Abbey", slug: "cambridgeshire/ramsey-abbey-gatehouse" },
 
       // Norfolk & Suffolk
       { region: "Midlands & East of England", location: "Norfolk", sub: "near Aylsham", name: "Blickling Estate", category: "Historic House", wiki: "Blickling Hall", slug: "norfolk/blickling-estate" },
@@ -937,7 +939,7 @@
     const sites = RAW_DATA.map(item => ({
       ...item,
       id: generateId(item),
-      ntUrl: item.slug ? `https://www.nationaltrust.org.uk/visit/${item.slug}` : `https://www.nationaltrust.org.uk/search?query=${encodeURIComponent(item.name)}`
+      ntUrl: `https://www.nationaltrust.org.uk/visit/${item.slug}`
     }));
 
     // ----------------------------------------------------
@@ -1076,7 +1078,7 @@
     // ----------------------------------------------------
     // 5. BATCH IMAGE LOADER & PERSISTENT CACHE
     // ----------------------------------------------------
-    const PHOTO_CACHE_KEY = "nt_property_photos_v4";
+    const PHOTO_CACHE_KEY = "nt_property_photos_v5";
     let photoCache = {};
     try {
       const stored = localStorage.getItem(PHOTO_CACHE_KEY);
