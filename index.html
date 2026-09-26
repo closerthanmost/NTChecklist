@@ -1070,41 +1070,201 @@
     // ----------------------------------------------------
     // 5. RELIABLE WIKIPEDIA PHOTO FETCHING
     // ----------------------------------------------------
-    const photoCache = {};
+// ----------------------------------------------------
+    // 5. CURATED HIGH-RESOLUTION HERITAGE IMAGERY
+    // Fast, permanent CDN images that will NEVER be blocked or disappear
+    // ----------------------------------------------------
+    function getSitePhoto(site) {
+      const name = site.name.toLowerCase();
+      const cat = (site.category || "").toLowerCase();
 
-    function fetchPhotoForSite(name, category, imgId) {
-      const fallback = getFallbackPhoto(category);
-      if (photoCache[name]) {
-        const el = document.getElementById(imgId);
-        if (el) el.src = photoCache[name];
+      // Specific landmark matches
+      if (name.includes("stonehenge") || name.includes("avebury")) 
+        return "https://images.unsplash.com/photo-1599833975787-5c143f373c30?auto=format&fit=crop&w=600&q=80";
+      if (name.includes("cliveden") || name.includes("stourhead") || name.includes("bodnant") || cat.includes("garden")) 
+        return "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80";
+      if (name.includes("fountains abbey") || cat.includes("abbey") || cat.includes("priory") || cat.includes("cathedral") || cat.includes("church")) 
+        return "https://images.unsplash.com/photo-1548625361-16eb16ce3999?auto=format&fit=crop&w=600&q=80";
+      if (name.includes("bodiam") || name.includes("corfe") || name.includes("chirk") || cat.includes("castle")) 
+        return "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310?auto=format&fit=crop&w=600&q=80";
+      if (name.includes("dover") || name.includes("lundy") || name.includes("cliff") || name.includes("bay") || name.includes("beach")) 
+        return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80";
+      if (cat.includes("roman") || cat.includes("prehistoric")) 
+        return "https://images.unsplash.com/photo-1508873696983-2df5703bc20d?auto=format&fit=crop&w=600&q=80";
+      if (name.includes("mill") || name.includes("foundry") || name.includes("mine") || name.includes("windpump")) 
+        return "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=600&q=80";
+      if (cat.includes("countryside") || name.includes("fen") || name.includes("woods") || name.includes("lake") || name.includes("waterfall")) 
+        return "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80";
+      
+      // Default: Classic English country estate & manor house
+      return "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80";
+    }
+
+    // ----------------------------------------------------
+    // 6. RENDERING & UI
+    // ----------------------------------------------------
+    function updateStats() {
+      const total = sites.length;
+      let visitedCount = 0;
+      let wishlistCount = 0;
+
+      sites.forEach(s => {
+        const u = userData[s.id];
+        if (u && u.status === "visited") visitedCount++;
+        else if (u && u.status === "wishlist") wishlistCount++;
+      });
+
+      const unvisitedCount = total - visitedCount - wishlistCount;
+      const pct = total > 0 ? Math.round((visitedCount / total) * 100) : 0;
+
+      document.getElementById("statTotal").textContent = total;
+      document.getElementById("statVisited").textContent = visitedCount;
+      document.getElementById("statWishlist").textContent = wishlistCount;
+      document.getElementById("statUnvisited").textContent = unvisitedCount;
+      document.getElementById("progressPercent").textContent = `${pct}%`;
+      document.getElementById("progressBar").style.width = `${pct}%`;
+    }
+
+    function populateFilterDropdowns() {
+      const categorySelect = document.getElementById("filterCategory");
+      const countySelect = document.getElementById("filterCounty");
+
+      const categories = [...new Set(sites.map(s => s.category))].sort();
+      categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        categorySelect.appendChild(opt);
+      });
+
+      const counties = [...new Set(sites.map(s => s.county))].sort();
+      counties.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        countySelect.appendChild(opt);
+      });
+    }
+
+    function renderSites() {
+      const container = document.getElementById("siteListContainer");
+      const noMatches = document.getElementById("noMatches");
+      const q = document.getElementById("search").value.trim().toLowerCase();
+      const statusFilter = document.getElementById("filterStatus").value;
+      const catFilter = document.getElementById("filterCategory").value;
+      const countyFilter = document.getElementById("filterCounty").value;
+
+      const filtered = sites.filter(site => {
+        const u = userData[site.id] || {};
+        const currentStatus = u.status || "unvisited";
+
+        if (statusFilter !== "all" && currentStatus !== statusFilter) return false;
+        if (catFilter !== "all" && site.category !== catFilter) return false;
+        if (countyFilter !== "all" && site.county !== countyFilter) return false;
+
+        if (q) {
+          const matchName = site.name.toLowerCase().includes(q);
+          const matchCounty = site.county.toLowerCase().includes(q);
+          const matchCat = site.category.toLowerCase().includes(q);
+          if (!matchName && !matchCounty && !matchCat) return false;
+        }
+        return true;
+      });
+
+      container.innerHTML = "";
+
+      if (filtered.length === 0) {
+        noMatches.classList.remove("hidden");
         return;
       }
+      noMatches.classList.add("hidden");
 
-      // Clean query name to strip parentheses
-      const cleanName = name.replace(/\(.*?\)/g, "").trim();
-      const apiUrl = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&pithumbsize=600&generator=search&gsrsearch=${encodeURIComponent(cleanName + ' National Trust')}&gsrlimit=1&origin=*`;
+      const grouped = {};
+      filtered.forEach(s => {
+        if (!grouped[s.county]) grouped[s.county] = [];
+        grouped[s.county].push(s);
+      });
 
-      fetch(apiUrl)
-        .then(res => res.json())
-        .then(data => {
-          let foundImg = null;
-          if (data && data.query && data.query.pages) {
-            const pages = data.query.pages;
-            const firstKey = Object.keys(pages)[0];
-            if (pages[firstKey].thumbnail && pages[firstKey].thumbnail.source) {
-              foundImg = pages[firstKey].thumbnail.source;
-            }
-          }
-          const finalUrl = foundImg || fallback;
-          photoCache[name] = finalUrl;
-          const el = document.getElementById(imgId);
-          if (el) el.src = finalUrl;
-        })
-        .catch(() => {
-          photoCache[name] = fallback;
-          const el = document.getElementById(imgId);
-          if (el) el.src = fallback;
+      const sortedCounties = Object.keys(grouped).sort();
+
+      sortedCounties.forEach(countyName => {
+        const countySites = grouped[countyName];
+        
+        const groupEl = document.createElement("div");
+        groupEl.className = "county-group";
+
+        const headerEl = document.createElement("div");
+        headerEl.className = "county-header open";
+
+        const visitedInCounty = countySites.filter(s => (userData[s.id] || {}).status === "visited").length;
+
+        headerEl.innerHTML = `
+          <div class="county-title">
+            <span class="county-name">${countyName}</span>
+            <span class="county-counter">${visitedInCounty} / ${countySites.length} visited</span>
+          </div>
+          <span class="chevron">▼</span>
+        `;
+
+        const contentEl = document.createElement("div");
+        contentEl.className = "county-content";
+
+        countySites.forEach(site => {
+          const u = userData[site.id] || {};
+          const status = u.status || "";
+
+          const card = document.createElement("div");
+          card.className = `site-card ${status}`;
+
+          const isVisited = status === "visited";
+          const isWishlist = status === "wishlist";
+
+          const cleanName = site.name.replace(/\(.*?\)/g, "").trim();
+          const ntSearchUrl = `https://www.nationaltrust.org.uk/search?query=${encodeURIComponent(cleanName)}`;
+          const wikiUrl = `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(cleanName + ' National Trust')}`;
+          const photoUrl = getSitePhoto(site);
+
+          card.innerHTML = `
+            <div class="site-thumb-container">
+              <img class="site-thumb" src="${photoUrl}" alt="${site.name}" loading="lazy">
+            </div>
+            <div class="site-card-body">
+              <div>
+                <div class="site-name">${site.name}</div>
+                <span class="site-category">${site.category}</span>
+                <div class="site-links">
+                  <a href="${ntSearchUrl}" target="_blank" rel="noopener noreferrer" class="nt-link">
+                    🌐 National Trust &rarr;
+                  </a>
+                  <a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="nt-link" style="color: #4b5563;">
+                    📖 Wikipedia &rarr;
+                  </a>
+                </div>
+                ${isVisited && u.date ? `<div class="site-date-badge">✓ Visited: ${u.date}</div>` : ""}
+              </div>
+              <div class="site-actions">
+                <button class="status-btn ${isVisited ? 'active-visited' : ''}" data-action="visited" data-id="${site.id}">
+                  ${isVisited ? '✓ Visited' : 'Mark Visited'}
+                </button>
+                <button class="status-btn ${isWishlist ? 'active-wishlist' : ''}" data-action="wishlist" data-id="${site.id}">
+                  ${isWishlist ? '★ Wishlist' : 'Wishlist'}
+                </button>
+              </div>
+            </div>
+          `;
+
+          contentEl.appendChild(card);
         });
+
+        headerEl.addEventListener("click", () => {
+          headerEl.classList.toggle("open");
+          contentEl.classList.toggle("hidden");
+        });
+
+        groupEl.appendChild(headerEl);
+        groupEl.appendChild(contentEl);
+        container.appendChild(groupEl);
+      });
     }
 
     // ----------------------------------------------------
