@@ -169,21 +169,6 @@
       padding: 0 1rem;
     }
 
-    .sync-status {
-      display: inline-block;
-      font-size: 0.8rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
-      margin-bottom: 1rem;
-      background: #e5e7eb;
-      color: #374151;
-    }
-
-    .sync-status.online {
-      background: #dcfce7;
-      color: #166534;
-    }
-
     .controls-panel {
       background: #fff;
       padding: 1.25rem;
@@ -430,12 +415,10 @@
   </header>
 
   <main>
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-      <div class="backup-actions">
-        <button class="btn-secondary" id="exportBtn">📥 Export JSON</button>
-        <button class="btn-secondary" id="importBtn">📤 Import JSON</button>
-        <input type="file" id="importFile" accept="application/json" style="display: none;">
-      </div>
+    <div class="backup-actions">
+      <button class="btn-secondary" id="exportBtn">📥 Export JSON</button>
+      <button class="btn-secondary" id="importBtn">📤 Import JSON</button>
+      <input type="file" id="importFile" accept="application/json" style="display: none;">
     </div>
 
     <section class="controls-panel">
@@ -473,7 +456,6 @@
   <script>
     // ----------------------------------------------------
     // 1. FIREBASE CONFIGURATION
-    // Replace these values with your Firebase Console keys:
     // ----------------------------------------------------
     const firebaseConfig = {  
       apiKey: "AIzaSyAhQzasS4kaNiKq0A2QVVJ8iebM9GMisYM",
@@ -483,13 +465,12 @@
       messagingSenderId: "955767248474",
       appId: "1:955767248474:web:bf076519f964c5ae54aa63",
       measurementId: "G-TY6X1EXW8E"
-      };
+    };
 
     let auth = null;
     let db = null;
     let currentUser = null;
 
-    // Initialize Firebase safely
     try {
       if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "PASTE_YOUR_API_KEY_HERE") {
         firebase.initializeApp(firebaseConfig);
@@ -889,25 +870,14 @@
     const LOCAL_KEY = "nt_checklist_progress";
     let userData = {};
 
-    function loadLocal() {
-      try {
-        const stored = localStorage.getItem(LOCAL_KEY);
-        if (stored) userData = JSON.parse(stored);
-      } catch(e) {
-        console.warn("Local storage inaccessible", e);
-      }
-    }
-
     function saveState() {
-      // 1. Save locally
       try {
         localStorage.setItem(LOCAL_KEY, JSON.stringify(userData));
       } catch (e) {
         console.error("Local save error:", e);
       }
 
-      // 2. Save to Firestore if signed in
-if (currentUser && db) {
+      if (currentUser && db) {
         db.collection("users").doc(currentUser.uid).set({
           checklist: userData,
           lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
@@ -957,7 +927,6 @@ if (currentUser && db) {
 
         document.getElementById("logoutBtn").addEventListener("click", () => {
           auth.signOut().then(() => {
-            // Clear memory state and local storage so previous user's picks vanish
             userData = {};
             try {
               localStorage.removeItem(LOCAL_KEY);
@@ -984,7 +953,7 @@ if (currentUser && db) {
 
     function loginWithGoogle() {
       if (!auth) {
-        alert("Please paste your valid Firebase configuration keys into index.html to enable Google Sign-In.");
+        alert("Firebase is not initialized.");
         return;
       }
 
@@ -995,7 +964,7 @@ if (currentUser && db) {
       });
     }
 
-if (auth) {
+    if (auth) {
       auth.onAuthStateChanged(user => {
         currentUser = user;
         renderAuthUI();
@@ -1018,7 +987,6 @@ if (auth) {
               console.error("Error reading Firestore:", err);
             });
         } else {
-          // When signed out or on refresh while logged out: clear state completely
           userData = {};
           try {
             localStorage.removeItem(LOCAL_KEY);
@@ -1229,7 +1197,6 @@ if (auth) {
     });
 
     // Start-up
-    loadLocal();
     populateFilterDropdowns();
     updateStats();
     renderSites();
