@@ -968,7 +968,19 @@
         `;
 
         document.getElementById("logoutBtn").addEventListener("click", () => {
-          auth.signOut();
+          auth.signOut().then(() => {
+            // Clear memory state and local storage so previous user's picks vanish
+            userData = {};
+            try {
+              localStorage.removeItem(LOCAL_KEY);
+            } catch (e) {
+              console.warn("Storage clear failed:", e);
+            }
+            renderSites();
+            updateStats();
+          }).catch(err => {
+            console.error("Sign out error:", err);
+          });
         });
       } else {
         syncStatus.className = "sync-status";
