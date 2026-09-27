@@ -769,21 +769,28 @@
 
       // === SOUTH WEST ===
       // Cornwall
+      { region: "South West", location: "Cornwall", sub: "near Helston & Porthleven", name: "Penrose", category: "Countryside", wiki: "Penrose, Cornwall", slug: "cornwall/penrose" },
       { region: "South West", location: "Cornwall", sub: "Marazion", name: "St Michael's Mount", category: "Castle", wiki: "St Michael's Mount", slug: "cornwall/st-michaels-mount" },
       { region: "South West", location: "Cornwall", sub: "near Bodmin", name: "Lanhydrock", category: "Historic House", wiki: "Lanhydrock", slug: "cornwall/lanhydrock" },
       { region: "South West", location: "Cornwall", sub: "near Saltash", name: "Cotehele", category: "Historic House", wiki: "Cotehele", slug: "cornwall/cotehele" },
+      { region: "South West", location: "Cornwall", sub: "near Saltash", name: "Cotehele Mill", category: "Historic Property", wiki: "Cotehele Mill", slug: "cornwall/cotehele-mill" },
+      { region: "South West", location: "Cornwall", sub: "near Pool & Redruth", name: "East Pool Mine", category: "Historic Property", wiki: "East Pool Mine", slug: "cornwall/east-pool-mine" },
       { region: "South West", location: "Cornwall", sub: "near Truro", name: "Trelissick Garden", category: "Garden", wiki: "Trelissick Garden", slug: "cornwall/trelissick" },
       { region: "South West", location: "Cornwall", sub: "near Falmouth", name: "Glendurgan Garden", category: "Garden", wiki: "Glendurgan Garden", slug: "cornwall/glendurgan-garden" },
       { region: "South West", location: "Cornwall", sub: "near Newquay", name: "Trerice", category: "Historic House", wiki: "Trerice", slug: "cornwall/trerice" },
       { region: "South West", location: "Cornwall", sub: "near Penzance", name: "Trengwainton Garden", category: "Garden", wiki: "Trengwainton Garden", slug: "cornwall/trengwainton-garden" },
       { region: "South West", location: "Cornwall", sub: "The Lizard", name: "Kynance Cove & Lizard Point", category: "Countryside", wiki: "Kynance Cove", slug: "cornwall/lizard-point-and-kynance-cove" },
+      { region: "South West", location: "Cornwall", sub: "near Hayle", name: "Godrevy", category: "Countryside", wiki: "Godrevy", slug: "cornwall/godrevy" },
       { region: "South West", location: "Cornwall", sub: "near St Just", name: "Botallack and the Tin Coast", category: "Historic Property", wiki: "Botallack Mine", slug: "cornwall/botallack" },
       { region: "South West", location: "Cornwall", sub: "near St Just", name: "Levant Mine and Beam Engine", category: "Historic Property", wiki: "Levant Mine and Beam Engine", slug: "cornwall/levant-mine-and-beam-engine" },
+      { region: "South West", location: "Cornwall", sub: "near St Just", name: "Cape Cornwall", category: "Countryside", wiki: "Cape Cornwall", slug: "cornwall/cape-cornwall" },
       { region: "South West", location: "Cornwall", sub: "near St Agnes", name: "Wheal Coates", category: "Historic Property", wiki: "Wheal Coates", slug: "cornwall/wheal-coates" },
       { region: "South West", location: "Cornwall", sub: "near Helston", name: "Godolphin", category: "Historic House", wiki: "Godolphin Estate", slug: "cornwall/godolphin" },
       { region: "South West", location: "Cornwall", sub: "Tintagel", name: "Tintagel Old Post Office", category: "Historic Property", wiki: "Tintagel Old Post Office", slug: "cornwall/tintagel-old-post-office" },
       { region: "South West", location: "Cornwall", sub: "near Torpoint", name: "Antony", category: "Historic House", wiki: "Antony House", slug: "cornwall/antony" },
+      { region: "South West", location: "Cornwall", sub: "near Fowey", name: "Lantic Bay", category: "Countryside", wiki: "Lantic Bay", slug: "cornwall/lantic-bay" },
       { region: "South West", location: "Cornwall", sub: "near Newquay", name: "Carnewas at Bedruthan", category: "Countryside", wiki: "Bedruthan Steps", slug: "cornwall/carnewas-at-bedruthan" },
+      { region: "South West", location: "Cornwall", sub: "North Cornwall", name: "Boscastle and Valency Valley", category: "Countryside", wiki: "Boscastle", slug: "cornwall/boscastle" },
 
       // Devon
       { region: "South West", location: "Devon", sub: "near Exeter", name: "Killerton", category: "Historic House", wiki: "Killerton", slug: "devon/killerton" },
@@ -1078,7 +1085,7 @@
     // ----------------------------------------------------
     // 5. BATCH IMAGE LOADER & PERSISTENT CACHE
     // ----------------------------------------------------
-    const PHOTO_CACHE_KEY = "nt_property_photos_v5";
+    const PHOTO_CACHE_KEY = "nt_property_photos_v6";
     let photoCache = {};
     try {
       const stored = localStorage.getItem(PHOTO_CACHE_KEY);
