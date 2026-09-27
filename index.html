@@ -177,16 +177,16 @@
       box-shadow: var(--shadow);
       margin-bottom: 1.5rem;
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
       gap: 1rem;
       align-items: center;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1024px) {
       .controls-panel { grid-template-columns: 1fr 1fr; }
     }
 
-    @media (max-width: 550px) {
+    @media (max-width: 600px) {
       .controls-panel { grid-template-columns: 1fr; }
     }
 
@@ -232,7 +232,7 @@
       color: #fff;
     }
 
-    /* Location Accordion */
+    /* Location Accordion & Flat Grid Container */
     .location-group {
       background: #fff;
       border-radius: var(--radius);
@@ -294,11 +294,15 @@
       transform: rotate(180deg);
     }
 
-    .location-content {
+    .location-content, .flat-list-content {
       padding: 1.2rem;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
       gap: 1.2rem;
+    }
+
+    .flat-list-content {
+      padding: 0;
     }
 
     .hidden { display: none !important; }
@@ -331,25 +335,31 @@
       border-left: 5px solid var(--status-wishlist);
     }
 
-    .site-thumb-wrap {
-      width: 100%;
-      height: 175px;
-      background-color: #e2e8f0;
+    /* Clickable Image Banner */
+    .site-thumb-link {
+      display: block;
       position: relative;
+      width: 100%;
+      height: 180px;
+      background-color: #e2e8f0;
       overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .site-thumb-link::before {
+      content: attr(data-placeholder);
+      position: absolute;
+      inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .site-thumb-wrap::before {
-      content: attr(data-placeholder);
-      position: absolute;
       color: #94a3b8;
       font-size: 0.85rem;
       font-weight: 600;
       text-align: center;
       padding: 0 1rem;
+      z-index: 0;
     }
 
     .site-thumb {
@@ -367,8 +377,26 @@
       opacity: 1;
     }
 
-    .site-card:hover .site-thumb.loaded {
-      transform: scale(1.04);
+    .site-thumb-link:hover .site-thumb.loaded {
+      transform: scale(1.05);
+    }
+
+    .site-thumb-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(10, 61, 36, 0.88);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.25rem 0.55rem;
+      border-radius: 4px;
+      z-index: 2;
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .site-card-body {
@@ -392,13 +420,17 @@
       align-items: center;
       gap: 0.4rem;
       flex-wrap: wrap;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.65rem;
     }
 
-    .site-sublocation {
-      font-size: 0.75rem;
+    .site-location-badge {
+      font-size: 0.72rem;
       color: var(--nt-text-muted);
-      font-weight: 500;
+      background: #f1f2f4;
+      display: inline-block;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 600;
     }
 
     .site-category {
@@ -413,32 +445,81 @@
       letter-spacing: 0.5px;
     }
 
-    .nt-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--nt-green);
-      background: #ecfdf5;
-      border: 1px solid rgba(10, 61, 36, 0.25);
-      padding: 0.45rem 0.8rem;
+    /* Date Visited Editor */
+    .date-editor-box {
+      margin-top: 0.5rem;
+      padding: 0.5rem 0.65rem;
+      background: #edf7f0;
+      border: 1px solid rgba(21, 128, 61, 0.2);
       border-radius: 6px;
-      text-decoration: none;
-      margin-bottom: 0.8rem;
-      width: fit-content;
-      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.75rem;
     }
 
-    .nt-button:hover {
-      background: var(--nt-green);
-      color: #fff;
+    .date-editor-box label {
+      font-weight: 600;
+      color: var(--status-visited);
+    }
+
+    .date-input {
+      padding: 0.25rem 0.4rem;
+      font-size: 0.75rem;
+      font-family: inherit;
+      border: 1px solid rgba(21, 128, 61, 0.35);
+      border-radius: 4px;
+      background: #fff;
+      color: #1f2937;
+    }
+
+    /* User Notes Details Box */
+    .notes-details {
+      margin-top: 0.65rem;
+      border-top: 1px solid var(--nt-border);
+      padding-top: 0.5rem;
+    }
+
+    .notes-summary {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--nt-text-muted);
+      cursor: pointer;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .notes-summary:hover {
+      color: var(--nt-green);
+    }
+
+    .notes-textarea {
+      width: 100%;
+      margin-top: 0.4rem;
+      padding: 0.45rem;
+      font-size: 0.78rem;
+      font-family: inherit;
+      border: 1px solid var(--nt-border);
+      border-radius: 5px;
+      resize: vertical;
+      min-height: 55px;
+      line-height: 1.4;
+      background: #fafaf9;
+    }
+
+    .notes-textarea:focus {
+      outline: none;
+      border-color: var(--nt-green);
+      background: #fff;
     }
 
     .site-actions {
       display: flex;
       gap: 0.5rem;
-      margin-top: 0.5rem;
+      margin-top: 0.75rem;
     }
 
     .status-btn {
@@ -469,13 +550,6 @@
       background: var(--status-wishlist);
       color: #fff;
       border-color: var(--status-wishlist);
-    }
-
-    .site-date-badge {
-      font-size: 0.72rem;
-      color: var(--status-visited);
-      font-weight: 600;
-      margin-top: 0.3rem;
     }
   </style>
 </head>
@@ -524,7 +598,7 @@
     <section class="controls-panel">
       <div class="control-field">
         <label for="search">Search Places</label>
-        <input type="search" id="search" placeholder="Type property, county or town...">
+        <input type="search" id="search" placeholder="Type property, county or notes...">
       </div>
       <div class="control-field">
         <label for="filterStatus">Status</label>
@@ -545,6 +619,16 @@
         <label for="filterLocation">Location / Area</label>
         <select id="filterLocation">
           <option value="all">All Locations</option>
+        </select>
+      </div>
+      <div class="control-field">
+        <label for="sortOrder">Sort By</label>
+        <select id="sortOrder">
+          <option value="location">Location (Accordion)</option>
+          <option value="name_asc">Name (A–Z)</option>
+          <option value="name_desc">Name (Z–A)</option>
+          <option value="date_desc">Date Visited (Newest First)</option>
+          <option value="date_asc">Date Visited (Oldest First)</option>
         </select>
       </div>
     </section>
@@ -587,484 +671,484 @@
     const RAW_DATA = [
       // === LONDON & SOUTH EAST ===
       // Buckinghamshire, Berkshire & Oxfordshire
-      { region: "London & South East", location: "Buckinghamshire", sub: "near High Wycombe", name: "Hughenden Manor", category: "Historic House", wiki: "Hughenden Manor", slug: "oxfordshire-buckinghamshire-berkshire/hughenden" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "near Maidenhead", name: "Cliveden", category: "Garden", wiki: "Cliveden", slug: "oxfordshire-buckinghamshire-berkshire/cliveden" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "near Aylesbury", name: "Waddesdon Manor", category: "Historic House", wiki: "Waddesdon Manor", slug: "oxfordshire-buckinghamshire-berkshire/waddesdon" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "Buckingham", name: "Stowe Landscape Gardens", category: "Garden", wiki: "Stowe House", slug: "oxfordshire-buckinghamshire-berkshire/stowe-gardens" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "near High Wycombe", name: "West Wycombe Park", category: "Historic House", wiki: "West Wycombe Park", slug: "oxfordshire-buckinghamshire-berkshire/west-wycombe-park-village-and-hill" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "near Buckingham", name: "Claydon House", category: "Historic House", wiki: "Claydon House", slug: "oxfordshire-buckinghamshire-berkshire/claydon" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "near Leighton Buzzard", name: "Ascott", category: "Historic House", wiki: "Ascott House", slug: "oxfordshire-buckinghamshire-berkshire/ascott" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "near Wendover", name: "Coombe Hill", category: "Countryside", wiki: "Coombe Hill, Buckinghamshire", slug: "oxfordshire-buckinghamshire-berkshire/coombe-hill" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "near Burnham", name: "Dorneywood Garden", category: "Garden", wiki: "Dorneywood", slug: "oxfordshire-buckinghamshire-berkshire/dorneywood-garden" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "near Brill", name: "Boarstall Tower", category: "Historic Property", wiki: "Boarstall Tower", slug: "oxfordshire-buckinghamshire-berkshire/boarstall-tower" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "near Brill", name: "Boarstall Duck Decoy", category: "Historic Property", wiki: "Boarstall Duck Decoy", slug: "oxfordshire-buckinghamshire-berkshire/boarstall-duck-decoy" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "Pitstone", name: "Pitstone Windmill", category: "Historic Property", wiki: "Pitstone Windmill", slug: "oxfordshire-buckinghamshire-berkshire/pitstone-windmill" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "Aylesbury", name: "The King's Head", category: "Historic Property", wiki: "The King's Head, Aylesbury", slug: "oxfordshire-buckinghamshire-berkshire/the-kings-head" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "Long Crendon", name: "Long Crendon Courthouse", category: "Historic Property", wiki: "Long Crendon Courthouse", slug: "oxfordshire-buckinghamshire-berkshire/long-crendon-courthouse" },
-      { region: "London & South East", location: "Buckinghamshire", sub: "Buckingham", name: "Buckingham Chantry Chapel", category: "Church", wiki: "Buckingham Chantry Chapel", slug: "oxfordshire-buckinghamshire-berkshire/buckingham-chantry-chapel" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Hughenden Manor", category: "Historic House", wiki: "Hughenden Manor", slug: "oxfordshire-buckinghamshire-berkshire/hughenden" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Cliveden", category: "Garden", wiki: "Cliveden", slug: "oxfordshire-buckinghamshire-berkshire/cliveden" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Waddesdon Manor", category: "Historic House", wiki: "Waddesdon Manor", slug: "oxfordshire-buckinghamshire-berkshire/waddesdon" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Stowe Landscape Gardens", category: "Garden", wiki: "Stowe House", slug: "oxfordshire-buckinghamshire-berkshire/stowe-gardens" },
+      { region: "London & South East", location: "Buckinghamshire", name: "West Wycombe Park", category: "Historic House", wiki: "West Wycombe Park", slug: "oxfordshire-buckinghamshire-berkshire/west-wycombe-park-village-and-hill" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Claydon House", category: "Historic House", wiki: "Claydon House", slug: "oxfordshire-buckinghamshire-berkshire/claydon" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Ascott", category: "Historic House", wiki: "Ascott House", slug: "oxfordshire-buckinghamshire-berkshire/ascott" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Coombe Hill", category: "Countryside", wiki: "Coombe Hill, Buckinghamshire", slug: "oxfordshire-buckinghamshire-berkshire/coombe-hill" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Dorneywood Garden", category: "Garden", wiki: "Dorneywood", slug: "oxfordshire-buckinghamshire-berkshire/dorneywood-garden" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Boarstall Tower", category: "Historic Property", wiki: "Boarstall Tower", slug: "oxfordshire-buckinghamshire-berkshire/boarstall-tower" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Boarstall Duck Decoy", category: "Historic Property", wiki: "Boarstall Duck Decoy", slug: "oxfordshire-buckinghamshire-berkshire/boarstall-duck-decoy" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Pitstone Windmill", category: "Historic Property", wiki: "Pitstone Windmill", slug: "oxfordshire-buckinghamshire-berkshire/pitstone-windmill" },
+      { region: "London & South East", location: "Buckinghamshire", name: "The King's Head", category: "Historic Property", wiki: "The King's Head, Aylesbury", slug: "oxfordshire-buckinghamshire-berkshire/the-kings-head" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Long Crendon Courthouse", category: "Historic Property", wiki: "Long Crendon Courthouse", slug: "oxfordshire-buckinghamshire-berkshire/long-crendon-courthouse" },
+      { region: "London & South East", location: "Buckinghamshire", name: "Buckingham Chantry Chapel", category: "Church", wiki: "Buckingham Chantry Chapel", slug: "oxfordshire-buckinghamshire-berkshire/buckingham-chantry-chapel" },
 
-      { region: "London & South East", location: "Berkshire", sub: "near Reading", name: "Basildon Park", category: "Historic House", wiki: "Basildon Park", slug: "oxfordshire-buckinghamshire-berkshire/basildon-park" },
-      { region: "London & South East", location: "Berkshire", sub: "near Lambourn", name: "Ashdown House", category: "Historic House", wiki: "Ashdown House, Berkshire", slug: "oxfordshire-buckinghamshire-berkshire/ashdown-house" },
-      { region: "London & South East", location: "Berkshire", sub: "Cookham", name: "Cookham Commons", category: "Countryside", wiki: "Cookham", slug: "oxfordshire-buckinghamshire-berkshire/cookham" },
-      { region: "London & South East", location: "Berkshire", sub: "near Newbury", name: "The Chase", category: "Countryside", wiki: "Woolton Hill", slug: "oxfordshire-buckinghamshire-berkshire/the-chase" },
+      { region: "London & South East", location: "Berkshire", name: "Basildon Park", category: "Historic House", wiki: "Basildon Park", slug: "oxfordshire-buckinghamshire-berkshire/basildon-park" },
+      { region: "London & South East", location: "Berkshire", name: "Ashdown House", category: "Historic House", wiki: "Ashdown House, Berkshire", slug: "oxfordshire-buckinghamshire-berkshire/ashdown-house" },
+      { region: "London & South East", location: "Berkshire", name: "Cookham Commons", category: "Countryside", wiki: "Cookham", slug: "oxfordshire-buckinghamshire-berkshire/cookham" },
+      { region: "London & South East", location: "Berkshire", name: "The Chase", category: "Countryside", wiki: "Woolton Hill", slug: "oxfordshire-buckinghamshire-berkshire/the-chase" },
 
-      { region: "London & South East", location: "Oxfordshire", sub: "near Henley-on-Thames", name: "Greys Court", category: "Historic House", wiki: "Greys Court", slug: "oxfordshire-buckinghamshire-berkshire/greys-court" },
-      { region: "London & South East", location: "Oxfordshire", sub: "near Chipping Norton", name: "Chastleton House", category: "Historic House", wiki: "Chastleton House", slug: "oxfordshire-buckinghamshire-berkshire/chastleton" },
-      { region: "London & South East", location: "Oxfordshire", sub: "near Faringdon", name: "Buscot Park", category: "Historic House", wiki: "Buscot Park", slug: "oxfordshire-buckinghamshire-berkshire/buscot-park" },
-      { region: "London & South East", location: "Oxfordshire", sub: "Buscot", name: "Buscot Old Parsonage", category: "Historic Property", wiki: "Buscot Old Parsonage", slug: "oxfordshire-buckinghamshire-berkshire/buscot-old-parsonage" },
-      { region: "London & South East", location: "Oxfordshire", sub: "near Henley-on-Thames", name: "Nuffield Place", category: "Historic House", wiki: "Nuffield Place", slug: "oxfordshire-buckinghamshire-berkshire/nuffield-place" },
-      { region: "London & South East", location: "Oxfordshire", sub: "near Faringdon", name: "Great Coxwell Barn", category: "Historic Property", wiki: "Great Coxwell Barn", slug: "oxfordshire-buckinghamshire-berkshire/great-coxwell-barn" },
-      { region: "London & South East", location: "Oxfordshire", sub: "near Uffington", name: "White Horse Hill", category: "Prehistoric", wiki: "Uffington White Horse", slug: "oxfordshire-buckinghamshire-berkshire/white-horse-hill" },
+      { region: "London & South East", location: "Oxfordshire", name: "Greys Court", category: "Historic House", wiki: "Greys Court", slug: "oxfordshire-buckinghamshire-berkshire/greys-court" },
+      { region: "London & South East", location: "Oxfordshire", name: "Chastleton House", category: "Historic House", wiki: "Chastleton House", slug: "oxfordshire-buckinghamshire-berkshire/chastleton" },
+      { region: "London & South East", location: "Oxfordshire", name: "Buscot Park", category: "Historic House", wiki: "Buscot Park", slug: "oxfordshire-buckinghamshire-berkshire/buscot-park" },
+      { region: "London & South East", location: "Oxfordshire", name: "Buscot Old Parsonage", category: "Historic Property", wiki: "Buscot Old Parsonage", slug: "oxfordshire-buckinghamshire-berkshire/buscot-old-parsonage" },
+      { region: "London & South East", location: "Oxfordshire", name: "Nuffield Place", category: "Historic House", wiki: "Nuffield Place", slug: "oxfordshire-buckinghamshire-berkshire/nuffield-place" },
+      { region: "London & South East", location: "Oxfordshire", name: "Great Coxwell Barn", category: "Historic Property", wiki: "Great Coxwell Barn", slug: "oxfordshire-buckinghamshire-berkshire/great-coxwell-barn" },
+      { region: "London & South East", location: "Oxfordshire", name: "White Horse Hill", category: "Prehistoric", wiki: "Uffington White Horse", slug: "oxfordshire-buckinghamshire-berkshire/white-horse-hill" },
 
       // London
-      { region: "London & South East", location: "London", sub: "Richmond", name: "Ham House and Garden", category: "Historic House", wiki: "Ham House", slug: "london/ham-house-and-garden" },
-      { region: "London & South East", location: "London", sub: "Isleworth", name: "Osterley Park and House", category: "Historic House", wiki: "Osterley Park", slug: "london/osterley-park-and-house" },
-      { region: "London & South East", location: "London", sub: "Morden", name: "Morden Hall Park", category: "Garden", wiki: "Morden Hall Park", slug: "london/morden-hall-park" },
-      { region: "London & South East", location: "London", sub: "Hampstead", name: "Fenton House and Garden", category: "Historic House", wiki: "Fenton House", slug: "london/fenton-house-and-garden" },
-      { region: "London & South East", location: "London", sub: "Hampstead", name: "2 Willow Road", category: "Historic Property", wiki: "2 Willow Road", slug: "london/2-willow-road" },
-      { region: "London & South East", location: "London", sub: "Bexleyheath", name: "Red House", category: "Historic House", wiki: "Red House, Bexleyheath", slug: "london/red-house" },
-      { region: "London & South East", location: "London", sub: "Chelsea", name: "Carlyle's House", category: "Historic Property", wiki: "Carlyle's House", slug: "london/carlyles-house" },
-      { region: "London & South East", location: "London", sub: "Hackney", name: "Sutton House and Breaker's Yard", category: "Historic House", wiki: "Sutton House, London", slug: "london/sutton-house-and-breakers-yard" },
-      { region: "London & South East", location: "London", sub: "Barking", name: "Eastbury Manor House", category: "Historic Property", wiki: "Eastbury Manor House", slug: "london/eastbury-manor-house" },
-      { region: "London & South East", location: "London", sub: "Southwark", name: "The George Inn", category: "Historic Property", wiki: "The George Inn, Southwark", slug: "london/the-george-inn" },
-      { region: "London & South East", location: "London", sub: "Havering", name: "Rainham Hall", category: "Historic Property", wiki: "Rainham Hall", slug: "london/rainham-hall" },
+      { region: "London & South East", location: "London", name: "Ham House and Garden", category: "Historic House", wiki: "Ham House", slug: "london/ham-house-and-garden" },
+      { region: "London & South East", location: "London", name: "Osterley Park and House", category: "Historic House", wiki: "Osterley Park", slug: "london/osterley-park-and-house" },
+      { region: "London & South East", location: "London", name: "Morden Hall Park", category: "Garden", wiki: "Morden Hall Park", slug: "london/morden-hall-park" },
+      { region: "London & South East", location: "London", name: "Fenton House and Garden", category: "Historic House", wiki: "Fenton House", slug: "london/fenton-house-and-garden" },
+      { region: "London & South East", location: "London", name: "2 Willow Road", category: "Historic Property", wiki: "2 Willow Road", slug: "london/2-willow-road" },
+      { region: "London & South East", location: "London", name: "Red House", category: "Historic House", wiki: "Red House, Bexleyheath", slug: "london/red-house" },
+      { region: "London & South East", location: "London", name: "Carlyle's House", category: "Historic Property", wiki: "Carlyle's House", slug: "london/carlyles-house" },
+      { region: "London & South East", location: "London", name: "Sutton House and Breaker's Yard", category: "Historic House", wiki: "Sutton House, London", slug: "london/sutton-house-and-breakers-yard" },
+      { region: "London & South East", location: "London", name: "Eastbury Manor House", category: "Historic Property", wiki: "Eastbury Manor House", slug: "london/eastbury-manor-house" },
+      { region: "London & South East", location: "London", name: "The George Inn", category: "Historic Property", wiki: "The George Inn, Southwark", slug: "london/the-george-inn" },
+      { region: "London & South East", location: "London", name: "Rainham Hall", category: "Historic Property", wiki: "Rainham Hall", slug: "london/rainham-hall" },
 
       // Surrey & West Sussex
-      { region: "London & South East", location: "Surrey", sub: "near Dorking", name: "Polesden Lacey", category: "Historic House", wiki: "Polesden Lacey", slug: "surrey/polesden-lacey" },
-      { region: "London & South East", location: "Surrey", sub: "near Guildford", name: "Hatchlands Park", category: "Historic House", wiki: "Hatchlands Park", slug: "surrey/hatchlands-park" },
-      { region: "London & South East", location: "Surrey", sub: "near Guildford", name: "Clandon Park", category: "Historic House", wiki: "Clandon Park", slug: "surrey/clandon-park" },
-      { region: "London & South East", location: "Surrey", sub: "near Godalming", name: "Winkworth Arboretum", category: "Garden", wiki: "Winkworth Arboretum", slug: "surrey/winkworth-arboretum" },
-      { region: "London & South East", location: "Surrey", sub: "Esher", name: "Claremont Landscape Garden", category: "Garden", wiki: "Claremont Landscape Garden", slug: "surrey/claremont-landscape-garden" },
-      { region: "London & South East", location: "Surrey", sub: "near Tadworth", name: "Box Hill", category: "Countryside", wiki: "Box Hill, Surrey", slug: "surrey/box-hill" },
-      { region: "London & South East", location: "Surrey", sub: "near Hindhead", name: "Devil's Punch Bowl and Hindhead", category: "Countryside", wiki: "Devil's Punch Bowl", slug: "surrey/hindhead-commons-and-the-devils-punch-bowl" },
-      { region: "London & South East", location: "Surrey", sub: "near Dorking", name: "Leith Hill Tower and Place", category: "Historic Property", wiki: "Leith Hill", slug: "surrey/leith-hill-place" },
-      { region: "London & South East", location: "Surrey", sub: "near Egham", name: "Runnymede and Ankerwycke", category: "Historic Property", wiki: "Runnymede", slug: "surrey/runnymede-and-ankerwycke" },
-      { region: "London & South East", location: "Surrey", sub: "Guildford", name: "River Wey and Dapdune Wharf", category: "Historic Property", wiki: "Dapdune Wharf", slug: "surrey/river-wey-and-godalming-navigations-and-dapdune-wharf" },
-      { region: "London & South East", location: "Surrey", sub: "near Farnham", name: "Frensham Little Pond", category: "Countryside", wiki: "Frensham Common", slug: "surrey/frensham-little-pond" },
-      { region: "London & South East", location: "Surrey", sub: "near Leatherhead", name: "Bookham Commons", category: "Countryside", wiki: "Bookham Commons", slug: "surrey/bookham-commons" },
-      { region: "London & South East", location: "Surrey", sub: "near Dorking", name: "Holmbury Hill & Abinger Roughs", category: "Countryside", wiki: "Holmbury Hill", slug: "surrey/abinger-roughs-and-netley-park" },
-      { region: "London & South East", location: "Surrey", sub: "near Guildford", name: "Shalford Mill", category: "Historic Property", wiki: "Shalford Mill", slug: "surrey/shalford-mill" },
-      { region: "London & South East", location: "Surrey", sub: "near Reigate", name: "Reigate Fort", category: "Historic Property", wiki: "Reigate Fort", slug: "surrey/reigate-hill-and-gatton-park" },
-      { region: "London & South East", location: "Surrey", sub: "near Chiddingfold", name: "Oakhurst Cottage", category: "Historic Property", wiki: "Oakhurst Cottage", slug: "surrey/oakhurst-cottage" },
-      { region: "London & South East", location: "Surrey", sub: "near Esher", name: "The Homewood", category: "Historic Property", wiki: "The Homewood", slug: "surrey/the-homewood" },
+      { region: "London & South East", location: "Surrey", name: "Polesden Lacey", category: "Historic House", wiki: "Polesden Lacey", slug: "surrey/polesden-lacey" },
+      { region: "London & South East", location: "Surrey", name: "Hatchlands Park", category: "Historic House", wiki: "Hatchlands Park", slug: "surrey/hatchlands-park" },
+      { region: "London & South East", location: "Surrey", name: "Clandon Park", category: "Historic House", wiki: "Clandon Park", slug: "surrey/clandon-park" },
+      { region: "London & South East", location: "Surrey", name: "Winkworth Arboretum", category: "Garden", wiki: "Winkworth Arboretum", slug: "surrey/winkworth-arboretum" },
+      { region: "London & South East", location: "Surrey", name: "Claremont Landscape Garden", category: "Garden", wiki: "Claremont Landscape Garden", slug: "surrey/claremont-landscape-garden" },
+      { region: "London & South East", location: "Surrey", name: "Box Hill", category: "Countryside", wiki: "Box Hill, Surrey", slug: "surrey/box-hill" },
+      { region: "London & South East", location: "Surrey", name: "Devil's Punch Bowl and Hindhead", category: "Countryside", wiki: "Devil's Punch Bowl", slug: "surrey/hindhead-commons-and-the-devils-punch-bowl" },
+      { region: "London & South East", location: "Surrey", name: "Leith Hill Tower and Place", category: "Historic Property", wiki: "Leith Hill", slug: "surrey/leith-hill-place" },
+      { region: "London & South East", location: "Surrey", name: "Runnymede and Ankerwycke", category: "Historic Property", wiki: "Runnymede", slug: "surrey/runnymede-and-ankerwycke" },
+      { region: "London & South East", location: "Surrey", name: "River Wey and Dapdune Wharf", category: "Historic Property", wiki: "Dapdune Wharf", slug: "surrey/river-wey-and-godalming-navigations-and-dapdune-wharf" },
+      { region: "London & South East", location: "Surrey", name: "Frensham Little Pond", category: "Countryside", wiki: "Frensham Common", slug: "surrey/frensham-little-pond" },
+      { region: "London & South East", location: "Surrey", name: "Bookham Commons", category: "Countryside", wiki: "Bookham Commons", slug: "surrey/bookham-commons" },
+      { region: "London & South East", location: "Surrey", name: "Holmbury Hill & Abinger Roughs", category: "Countryside", wiki: "Holmbury Hill", slug: "surrey/abinger-roughs-and-netley-park" },
+      { region: "London & South East", location: "Surrey", name: "Shalford Mill", category: "Historic Property", wiki: "Shalford Mill", slug: "surrey/shalford-mill" },
+      { region: "London & South East", location: "Surrey", name: "Reigate Fort", category: "Historic Property", wiki: "Reigate Fort", slug: "surrey/reigate-hill-and-gatton-park" },
+      { region: "London & South East", location: "Surrey", name: "Oakhurst Cottage", category: "Historic Property", wiki: "Oakhurst Cottage", slug: "surrey/oakhurst-cottage" },
+      { region: "London & South East", location: "Surrey", name: "The Homewood", category: "Historic Property", wiki: "The Homewood", slug: "surrey/the-homewood" },
 
-      { region: "London & South East", location: "West Sussex", sub: "Petworth", name: "Petworth House and Park", category: "Historic House", wiki: "Petworth House", slug: "sussex/petworth-house-and-park" },
-      { region: "London & South East", location: "West Sussex", sub: "near Handcross", name: "Nymans", category: "Garden", wiki: "Nymans", slug: "sussex/nymans" },
-      { region: "London & South East", location: "West Sussex", sub: "East Grinstead", name: "Standen House and Garden", category: "Historic House", wiki: "Standen", slug: "sussex/standen-house-and-garden" },
-      { region: "London & South East", location: "West Sussex", sub: "near Petersfield", name: "Uppark House and Garden", category: "Historic House", wiki: "Uppark", slug: "sussex/uppark-house-and-garden" },
-      { region: "London & South East", location: "West Sussex", sub: "near Midhurst", name: "Woolbeding Gardens", category: "Garden", wiki: "Woolbeding Gardens", slug: "sussex/woolbeding-gardens" },
-      { region: "London & South East", location: "West Sussex", sub: "near Haslemere", name: "Black Down", category: "Countryside", wiki: "Black Down, Sussex", slug: "sussex/black-down" },
-      { region: "London & South East", location: "West Sussex", sub: "near Worthing", name: "Cissbury Ring", category: "Prehistoric", wiki: "Cissbury Ring", slug: "sussex/cissbury-ring" },
-      { region: "London & South East", location: "West Sussex", sub: "near Brighton", name: "Devil's Dyke", category: "Countryside", wiki: "Devil's Dyke, Sussex", slug: "sussex/devils-dyke" },
-      { region: "London & South East", location: "West Sussex", sub: "near Brighton", name: "Saddlescombe Farm", category: "Countryside", wiki: "Saddlescombe", slug: "sussex/saddlescombe-farm-and-newtimber-hill" },
+      { region: "London & South East", location: "West Sussex", name: "Petworth House and Park", category: "Historic House", wiki: "Petworth House", slug: "sussex/petworth-house-and-park" },
+      { region: "London & South East", location: "West Sussex", name: "Nymans", category: "Garden", wiki: "Nymans", slug: "sussex/nymans" },
+      { region: "London & South East", location: "West Sussex", name: "Standen House and Garden", category: "Historic House", wiki: "Standen", slug: "sussex/standen-house-and-garden" },
+      { region: "London & South East", location: "West Sussex", name: "Uppark House and Garden", category: "Historic House", wiki: "Uppark", slug: "sussex/uppark-house-and-garden" },
+      { region: "London & South East", location: "West Sussex", name: "Woolbeding Gardens", category: "Garden", wiki: "Woolbeding Gardens", slug: "sussex/woolbeding-gardens" },
+      { region: "London & South East", location: "West Sussex", name: "Black Down", category: "Countryside", wiki: "Black Down, Sussex", slug: "sussex/black-down" },
+      { region: "London & South East", location: "West Sussex", name: "Cissbury Ring", category: "Prehistoric", wiki: "Cissbury Ring", slug: "sussex/cissbury-ring" },
+      { region: "London & South East", location: "West Sussex", name: "Devil's Dyke", category: "Countryside", wiki: "Devil's Dyke, Sussex", slug: "sussex/devils-dyke" },
+      { region: "London & South East", location: "West Sussex", name: "Saddlescombe Farm", category: "Countryside", wiki: "Saddlescombe", slug: "sussex/saddlescombe-farm-and-newtimber-hill" },
 
       // Kent & East Sussex
-      { region: "London & South East", location: "Kent", sub: "near Sevenoaks", name: "Knole", category: "Historic House", wiki: "Knole", slug: "kent/knole" },
-      { region: "London & South East", location: "Kent", sub: "near Westerham", name: "Chartwell", category: "Historic House", wiki: "Chartwell", slug: "kent/chartwell" },
-      { region: "London & South East", location: "Kent", sub: "near Sevenoaks", name: "Ightham Mote", category: "Historic House", wiki: "Ightham Mote", slug: "kent/ightham-mote" },
-      { region: "London & South East", location: "Kent", sub: "near Cranbrook", name: "Sissinghurst Castle Garden", category: "Garden", wiki: "Sissinghurst Castle Garden", slug: "kent/sissinghurst-castle-garden" },
-      { region: "London & South East", location: "Kent", sub: "near Lamberhurst", name: "Scotney Castle", category: "Castle", wiki: "Scotney Castle", slug: "kent/scotney-castle" },
-      { region: "London & South East", location: "Kent", sub: "Dover", name: "The White Cliffs of Dover", category: "Countryside", wiki: "White Cliffs of Dover", slug: "kent/the-white-cliffs-of-dover" },
-      { region: "London & South East", location: "Kent", sub: "Dover", name: "South Foreland Lighthouse", category: "Historic Property", wiki: "South Foreland Lighthouse", slug: "kent/south-foreland-lighthouse" },
-      { region: "London & South East", location: "Kent", sub: "near Sevenoaks", name: "Emmetts Garden", category: "Garden", wiki: "Emmetts Garden", slug: "kent/emmetts-garden" },
-      { region: "London & South East", location: "Kent", sub: "near Tenterden", name: "Smallhythe Place", category: "Historic Property", wiki: "Smallhythe Place", slug: "kent/smallhythe-place" },
-      { region: "London & South East", location: "Kent", sub: "Westerham", name: "Quebec House", category: "Historic Property", wiki: "Quebec House", slug: "kent/quebec-house" },
-      { region: "London & South East", location: "Kent", sub: "Cobham", name: "Cobham Wood and Mausoleum", category: "Historic Property", wiki: "Darnley Mausoleum", slug: "kent/cobham-wood-and-mausoleum" },
-      { region: "London & South East", location: "Kent", sub: "near Edenbridge", name: "Chiddingstone Village", category: "Historic Property", wiki: "Chiddingstone", slug: "kent/chiddingstone-village" },
-      { region: "London & South East", location: "Kent", sub: "near Westerham", name: "Toys Hill", category: "Countryside", wiki: "Toys Hill", slug: "kent/toys-hill" },
-      { region: "London & South East", location: "Kent", sub: "Cobham", name: "Owletts", category: "Historic Property", wiki: "Owletts", slug: "kent/owletts" },
-      { region: "London & South East", location: "Kent", sub: "near Maidstone", name: "Stoneacre", category: "Historic House", wiki: "Stoneacre", slug: "kent/stoneacre" },
-      { region: "London & South East", location: "Kent", sub: "near Tonbridge", name: "Old Soar Manor", category: "Historic House", wiki: "Old Soar Manor", slug: "kent/old-soar-manor" },
-      { region: "London & South East", location: "Kent", sub: "near Wrotham", name: "Coldrum Long Barrow", category: "Prehistoric", wiki: "Coldrum Long Barrow", slug: "kent/coldrum-long-barrow" },
-      { region: "London & South East", location: "Kent", sub: "near Dartford", name: "St John's Jerusalem", category: "Church", wiki: "St John's Jerusalem, Sutton-at-Hone", slug: "kent/st-johns-jerusalem" },
+      { region: "London & South East", location: "Kent", name: "Knole", category: "Historic House", wiki: "Knole", slug: "kent/knole" },
+      { region: "London & South East", location: "Kent", name: "Chartwell", category: "Historic House", wiki: "Chartwell", slug: "kent/chartwell" },
+      { region: "London & South East", location: "Kent", name: "Ightham Mote", category: "Historic House", wiki: "Ightham Mote", slug: "kent/ightham-mote" },
+      { region: "London & South East", location: "Kent", name: "Sissinghurst Castle Garden", category: "Garden", wiki: "Sissinghurst Castle Garden", slug: "kent/sissinghurst-castle-garden" },
+      { region: "London & South East", location: "Kent", name: "Scotney Castle", category: "Castle", wiki: "Scotney Castle", slug: "kent/scotney-castle" },
+      { region: "London & South East", location: "Kent", name: "The White Cliffs of Dover", category: "Countryside", wiki: "White Cliffs of Dover", slug: "kent/the-white-cliffs-of-dover" },
+      { region: "London & South East", location: "Kent", name: "South Foreland Lighthouse", category: "Historic Property", wiki: "South Foreland Lighthouse", slug: "kent/south-foreland-lighthouse" },
+      { region: "London & South East", location: "Kent", name: "Emmetts Garden", category: "Garden", wiki: "Emmetts Garden", slug: "kent/emmetts-garden" },
+      { region: "London & South East", location: "Kent", name: "Smallhythe Place", category: "Historic Property", wiki: "Smallhythe Place", slug: "kent/smallhythe-place" },
+      { region: "London & South East", location: "Kent", name: "Quebec House", category: "Historic Property", wiki: "Quebec House", slug: "kent/quebec-house" },
+      { region: "London & South East", location: "Kent", name: "Cobham Wood and Mausoleum", category: "Historic Property", wiki: "Darnley Mausoleum", slug: "kent/cobham-wood-and-mausoleum" },
+      { region: "London & South East", location: "Kent", name: "Chiddingstone Village", category: "Historic Property", wiki: "Chiddingstone", slug: "kent/chiddingstone-village" },
+      { region: "London & South East", location: "Kent", name: "Toys Hill", category: "Countryside", wiki: "Toys Hill", slug: "kent/toys-hill" },
+      { region: "London & South East", location: "Kent", name: "Owletts", category: "Historic Property", wiki: "Owletts", slug: "kent/owletts" },
+      { region: "London & South East", location: "Kent", name: "Stoneacre", category: "Historic House", wiki: "Stoneacre", slug: "kent/stoneacre" },
+      { region: "London & South East", location: "Kent", name: "Old Soar Manor", category: "Historic House", wiki: "Old Soar Manor", slug: "kent/old-soar-manor" },
+      { region: "London & South East", location: "Kent", name: "Coldrum Long Barrow", category: "Prehistoric", wiki: "Coldrum Long Barrow", slug: "kent/coldrum-long-barrow" },
+      { region: "London & South East", location: "Kent", name: "St John's Jerusalem", category: "Church", wiki: "St John's Jerusalem, Sutton-at-Hone", slug: "kent/st-johns-jerusalem" },
 
-      { region: "London & South East", location: "East Sussex", sub: "near Robertsbridge", name: "Bodiam Castle", category: "Castle", wiki: "Bodiam Castle", slug: "sussex/bodiam-castle" },
-      { region: "London & South East", location: "East Sussex", sub: "near Eastbourne", name: "Birling Gap and Seven Sisters", category: "Countryside", wiki: "Birling Gap", slug: "sussex/birling-gap-and-the-seven-sisters" },
-      { region: "London & South East", location: "East Sussex", sub: "near Burwash", name: "Bateman's", category: "Historic House", wiki: "Bateman's", slug: "sussex/batemans" },
-      { region: "London & South East", location: "East Sussex", sub: "near Uckfield", name: "Sheffield Park and Garden", category: "Garden", wiki: "Sheffield Park Garden", slug: "sussex/sheffield-park-and-garden" },
-      { region: "London & South East", location: "East Sussex", sub: "Rye", name: "Lamb House", category: "Historic Property", wiki: "Lamb House", slug: "sussex/lamb-house" },
-      { region: "London & South East", location: "East Sussex", sub: "near Lewes", name: "Monk's House", category: "Historic Property", wiki: "Monk's House", slug: "sussex/monks-house" },
-      { region: "London & South East", location: "East Sussex", sub: "near Polegate", name: "Alfriston Clergy House", category: "Historic Property", wiki: "Alfriston Clergy House", slug: "sussex/alfriston-clergy-house" },
-      { region: "London & South East", location: "East Sussex", sub: "near Brighton", name: "Ditchling Beacon", category: "Countryside", wiki: "Ditchling Beacon", slug: "sussex/ditchling-beacon" },
-      { region: "London & South East", location: "East Sussex", sub: "near Eastbourne", name: "Crowlink & Exceat", category: "Countryside", wiki: "Cuckmere Haven", slug: "sussex/crowlink" },
+      { region: "London & South East", location: "East Sussex", name: "Bodiam Castle", category: "Castle", wiki: "Bodiam Castle", slug: "sussex/bodiam-castle" },
+      { region: "London & South East", location: "East Sussex", name: "Birling Gap and Seven Sisters", category: "Countryside", wiki: "Birling Gap", slug: "sussex/birling-gap-and-the-seven-sisters" },
+      { region: "London & South East", location: "East Sussex", name: "Bateman's", category: "Historic House", wiki: "Bateman's", slug: "sussex/batemans" },
+      { region: "London & South East", location: "East Sussex", name: "Sheffield Park and Garden", category: "Garden", wiki: "Sheffield Park Garden", slug: "sussex/sheffield-park-and-garden" },
+      { region: "London & South East", location: "East Sussex", name: "Lamb House", category: "Historic Property", wiki: "Lamb House", slug: "sussex/lamb-house" },
+      { region: "London & South East", location: "East Sussex", name: "Monk's House", category: "Historic Property", wiki: "Monk's House", slug: "sussex/monks-house" },
+      { region: "London & South East", location: "East Sussex", name: "Alfriston Clergy House", category: "Historic Property", wiki: "Alfriston Clergy House", slug: "sussex/alfriston-clergy-house" },
+      { region: "London & South East", location: "East Sussex", name: "Ditchling Beacon", category: "Countryside", wiki: "Ditchling Beacon", slug: "sussex/ditchling-beacon" },
+      { region: "London & South East", location: "East Sussex", name: "Crowlink & Exceat", category: "Countryside", wiki: "Cuckmere Haven", slug: "sussex/crowlink" },
 
       // Hampshire & Isle of Wight
-      { region: "London & South East", location: "Hampshire", sub: "near Romsey", name: "Mottisfont", category: "Historic House", wiki: "Mottisfont", slug: "hampshire/mottisfont" },
-      { region: "London & South East", location: "Hampshire", sub: "near Basingstoke", name: "The Vyne", category: "Historic House", wiki: "The Vyne", slug: "hampshire/the-vyne" },
-      { region: "London & South East", location: "Hampshire", sub: "near Alresford", name: "Hinton Ampner", category: "Garden", wiki: "Hinton Ampner", slug: "hampshire/hinton-ampner" },
-      { region: "London & South East", location: "Hampshire", sub: "Winchester", name: "Winchester City Mill", category: "Museum", wiki: "Winchester City Mill", slug: "hampshire/winchester-city-mill" },
-      { region: "London & South East", location: "Hampshire", sub: "near Newbury", name: "Sandham Memorial Chapel", category: "Church", wiki: "Sandham Memorial Chapel", slug: "hampshire/sandham-memorial-chapel" },
-      { region: "London & South East", location: "Hampshire", sub: "near Hartley Wintney", name: "West Green House Garden", category: "Garden", wiki: "West Green House", slug: "hampshire/west-green-house-garden" },
-      { region: "London & South East", location: "Hampshire", sub: "New Forest", name: "New Forest Northern Commons", category: "Countryside", wiki: "New Forest", slug: "hampshire/new-forest-northern-commons" },
-      { region: "London & South East", location: "Hampshire", sub: "near Petersfield", name: "Ludshott Common and Waggoners Wells", category: "Countryside", wiki: "Waggoners Wells", slug: "hampshire/ludshott-common-and-waggoners-wells" },
+      { region: "London & South East", location: "Hampshire", name: "Mottisfont", category: "Historic House", wiki: "Mottisfont", slug: "hampshire/mottisfont" },
+      { region: "London & South East", location: "Hampshire", name: "The Vyne", category: "Historic House", wiki: "The Vyne", slug: "hampshire/the-vyne" },
+      { region: "London & South East", location: "Hampshire", name: "Hinton Ampner", category: "Garden", wiki: "Hinton Ampner", slug: "hampshire/hinton-ampner" },
+      { region: "London & South East", location: "Hampshire", name: "Winchester City Mill", category: "Museum", wiki: "Winchester City Mill", slug: "hampshire/winchester-city-mill" },
+      { region: "London & South East", location: "Hampshire", name: "Sandham Memorial Chapel", category: "Church", wiki: "Sandham Memorial Chapel", slug: "hampshire/sandham-memorial-chapel" },
+      { region: "London & South East", location: "Hampshire", name: "West Green House Garden", category: "Garden", wiki: "West Green House", slug: "hampshire/west-green-house-garden" },
+      { region: "London & South East", location: "Hampshire", name: "New Forest Northern Commons", category: "Countryside", wiki: "New Forest", slug: "hampshire/new-forest-northern-commons" },
+      { region: "London & South East", location: "Hampshire", name: "Ludshott Common and Waggoners Wells", category: "Countryside", wiki: "Waggoners Wells", slug: "hampshire/ludshott-common-and-waggoners-wells" },
 
-      { region: "London & South East", location: "Isle of Wight", sub: "Alum Bay", name: "The Needles Old Battery", category: "Historic Property", wiki: "Needles Old Battery", slug: "isle-of-wight/the-needles-old-battery-and-new-battery" },
-      { region: "London & South East", location: "Isle of Wight", sub: "near Newport", name: "Mottistone Gardens and Estate", category: "Garden", wiki: "Mottistone Manor", slug: "isle-of-wight/mottistone-gardens-and-estate" },
-      { region: "London & South East", location: "Isle of Wight", sub: "Bembridge", name: "Bembridge Windmill", category: "Historic Property", wiki: "Bembridge Windmill", slug: "isle-of-wight/bembridge-windmill" },
-      { region: "London & South East", location: "Isle of Wight", sub: "near Newport", name: "Newtown National Nature Reserve", category: "Historic Property", wiki: "Newtown Old Town Hall", slug: "isle-of-wight/newtown-national-nature-reserve-and-old-town-hall" },
-      { region: "London & South East", location: "Isle of Wight", sub: "Bembridge", name: "Bembridge Fort", category: "Historic Property", wiki: "Bembridge Fort", slug: "isle-of-wight/bembridge-fort" },
+      { region: "London & South East", location: "Isle of Wight", name: "The Needles Old Battery", category: "Historic Property", wiki: "Needles Old Battery", slug: "isle-of-wight/the-needles-old-battery-and-new-battery" },
+      { region: "London & South East", location: "Isle of Wight", name: "Mottistone Gardens and Estate", category: "Garden", wiki: "Mottistone Manor", slug: "isle-of-wight/mottistone-gardens-and-estate" },
+      { region: "London & South East", location: "Isle of Wight", name: "Bembridge Windmill", category: "Historic Property", wiki: "Bembridge Windmill", slug: "isle-of-wight/bembridge-windmill" },
+      { region: "London & South East", location: "Isle of Wight", name: "Newtown National Nature Reserve", category: "Historic Property", wiki: "Newtown Old Town Hall", slug: "isle-of-wight/newtown-national-nature-reserve-and-old-town-hall" },
+      { region: "London & South East", location: "Isle of Wight", name: "Bembridge Fort", category: "Historic Property", wiki: "Bembridge Fort", slug: "isle-of-wight/bembridge-fort" },
 
       // === MIDLANDS & EAST OF ENGLAND ===
       // Essex, Bedfordshire & Hertfordshire Hub
-      { region: "Midlands & East of England", location: "Bedfordshire", sub: "near Bedford", name: "Willington Dovecote and Stables", category: "Historic Property", wiki: "Willington Dovecote and Stables", slug: "essex-bedfordshire-hertfordshire/willington-dovecote-and-stables" },
-      { region: "Midlands & East of England", location: "Bedfordshire", sub: "near Dunstable", name: "Dunstable Downs and Whipsnade Estate", category: "Countryside", wiki: "Dunstable Downs", slug: "essex-bedfordshire-hertfordshire/dunstable-downs-and-whipsnade-estate" },
-      { region: "Midlands & East of England", location: "Bedfordshire", sub: "near Dunstable", name: "Whipsnade Tree Cathedral", category: "Cathedral", wiki: "Whipsnade Tree Cathedral", slug: "essex-bedfordshire-hertfordshire/whipsnade-tree-cathedral" },
-      { region: "Midlands & East of England", location: "Bedfordshire", sub: "near Streatley", name: "Sharpenhoe Clappers", category: "Countryside", wiki: "Sharpenhoe Clappers", slug: "essex-bedfordshire-hertfordshire/sharpenhoe" },
-      { region: "Midlands & East of England", location: "Bedfordshire", sub: "Totternhoe", name: "Totternhoe Knolls", category: "Countryside", wiki: "Totternhoe Castle", slug: "essex-bedfordshire-hertfordshire/totternhoe" },
+      { region: "Midlands & East of England", location: "Bedfordshire", name: "Willington Dovecote and Stables", category: "Historic Property", wiki: "Willington Dovecote and Stables", slug: "essex-bedfordshire-hertfordshire/willington-dovecote-and-stables" },
+      { region: "Midlands & East of England", location: "Bedfordshire", name: "Dunstable Downs and Whipsnade Estate", category: "Countryside", wiki: "Dunstable Downs", slug: "essex-bedfordshire-hertfordshire/dunstable-downs-and-whipsnade-estate" },
+      { region: "Midlands & East of England", location: "Bedfordshire", name: "Whipsnade Tree Cathedral", category: "Cathedral", wiki: "Whipsnade Tree Cathedral", slug: "essex-bedfordshire-hertfordshire/whipsnade-tree-cathedral" },
+      { region: "Midlands & East of England", location: "Bedfordshire", name: "Sharpenhoe Clappers", category: "Countryside", wiki: "Sharpenhoe Clappers", slug: "essex-bedfordshire-hertfordshire/sharpenhoe" },
+      { region: "Midlands & East of England", location: "Bedfordshire", name: "Totternhoe Knolls", category: "Countryside", wiki: "Totternhoe Castle", slug: "essex-bedfordshire-hertfordshire/totternhoe" },
 
-      { region: "Midlands & East of England", location: "Essex", sub: "near Bishop's Stortford", name: "Hatfield Forest", category: "Countryside", wiki: "Hatfield Forest", slug: "essex-bedfordshire-hertfordshire/hatfield-forest" },
-      { region: "Midlands & East of England", location: "Essex", sub: "near Coggeshall", name: "Paycocke's House and Garden", category: "Historic Property", wiki: "Paycocke's", slug: "essex-bedfordshire-hertfordshire/paycockes-house-and-garden" },
-      { region: "Midlands & East of England", location: "Essex", sub: "near Coggeshall", name: "Coggeshall Grange Barn", category: "Historic Property", wiki: "Grange Barn", slug: "essex-bedfordshire-hertfordshire/coggeshall-grange-barn" },
-      { region: "Midlands & East of England", location: "Essex", sub: "Colchester", name: "Bourne Mill", category: "Historic Property", wiki: "Bourne Mill, Colchester", slug: "essex-bedfordshire-hertfordshire/bourne-mill" },
-      { region: "Midlands & East of England", location: "Essex", sub: "Rayleigh", name: "Rayleigh Mount", category: "Castle", wiki: "Rayleigh Mount", slug: "essex-bedfordshire-hertfordshire/rayleigh-mount" },
-      { region: "Midlands & East of England", location: "Essex", sub: "Danbury", name: "Danbury Commons and Blakes Wood", category: "Countryside", wiki: "Danbury, Essex", slug: "essex-bedfordshire-hertfordshire/danbury-commons-and-blakes-wood" },
-      { region: "Midlands & East of England", location: "Essex", sub: "Maldon", name: "Northey Island", category: "Countryside", wiki: "Northey Island", slug: "essex-bedfordshire-hertfordshire/northey-island" },
+      { region: "Midlands & East of England", location: "Essex", name: "Hatfield Forest", category: "Countryside", wiki: "Hatfield Forest", slug: "essex-bedfordshire-hertfordshire/hatfield-forest" },
+      { region: "Midlands & East of England", location: "Essex", name: "Paycocke's House and Garden", category: "Historic Property", wiki: "Paycocke's", slug: "essex-bedfordshire-hertfordshire/paycockes-house-and-garden" },
+      { region: "Midlands & East of England", location: "Essex", name: "Coggeshall Grange Barn", category: "Historic Property", wiki: "Grange Barn", slug: "essex-bedfordshire-hertfordshire/coggeshall-grange-barn" },
+      { region: "Midlands & East of England", location: "Essex", name: "Bourne Mill", category: "Historic Property", wiki: "Bourne Mill, Colchester", slug: "essex-bedfordshire-hertfordshire/bourne-mill" },
+      { region: "Midlands & East of England", location: "Essex", name: "Rayleigh Mount", category: "Castle", wiki: "Rayleigh Mount", slug: "essex-bedfordshire-hertfordshire/rayleigh-mount" },
+      { region: "Midlands & East of England", location: "Essex", name: "Danbury Commons and Blakes Wood", category: "Countryside", wiki: "Danbury, Essex", slug: "essex-bedfordshire-hertfordshire/danbury-commons-and-blakes-wood" },
+      { region: "Midlands & East of England", location: "Essex", name: "Northey Island", category: "Countryside", wiki: "Northey Island", slug: "essex-bedfordshire-hertfordshire/northey-island" },
 
-      { region: "Midlands & East of England", location: "Hertfordshire", sub: "near Berkhamsted", name: "Ashridge Estate", category: "Countryside", wiki: "Ashridge", slug: "essex-bedfordshire-hertfordshire/ashridge-estate" },
-      { region: "Midlands & East of England", location: "Hertfordshire", sub: "near Welwyn", name: "Shaw's Corner", category: "Historic Property", wiki: "Shaw's Corner", slug: "essex-bedfordshire-hertfordshire/shaws-corner" },
-      { region: "Midlands & East of England", location: "Hertfordshire", sub: "Aldbury", name: "Stocks Farm Dovecote", category: "Historic Property", wiki: "Stocks Farm Dovecote", slug: "essex-bedfordshire-hertfordshire/stocks-farm-dovecote" },
+      { region: "Midlands & East of England", location: "Hertfordshire", name: "Ashridge Estate", category: "Countryside", wiki: "Ashridge", slug: "essex-bedfordshire-hertfordshire/ashridge-estate" },
+      { region: "Midlands & East of England", location: "Hertfordshire", name: "Shaw's Corner", category: "Historic Property", wiki: "Shaw's Corner", slug: "essex-bedfordshire-hertfordshire/shaws-corner" },
+      { region: "Midlands & East of England", location: "Hertfordshire", name: "Stocks Farm Dovecote", category: "Historic Property", wiki: "Stocks Farm Dovecote", slug: "essex-bedfordshire-hertfordshire/stocks-farm-dovecote" },
 
       // Cambridgeshire
-      { region: "Midlands & East of England", location: "Cambridgeshire", sub: "near Cambridge", name: "Wimpole Estate", category: "Historic House", wiki: "Wimpole Estate", slug: "cambridgeshire/wimpole-estate" },
-      { region: "Midlands & East of England", location: "Cambridgeshire", sub: "near Cambridge", name: "Anglesey Abbey, Gardens & Mill", category: "Historic House", wiki: "Anglesey Abbey", slug: "cambridgeshire/anglesey-abbey-gardens-and-lode-mill" },
-      { region: "Midlands & East of England", location: "Cambridgeshire", sub: "near Ely", name: "Wicken Fen Nature Reserve", category: "Countryside", wiki: "Wicken Fen", slug: "cambridgeshire/wicken-fen-nature-reserve" },
-      { region: "Midlands & East of England", location: "Cambridgeshire", sub: "near St Ives", name: "Houghton Mill and Waterclose Meadows", category: "Historic Property", wiki: "Houghton Mill", slug: "cambridgeshire/houghton-mill-and-waterclose-meadows" },
-      { region: "Midlands & East of England", location: "Cambridgeshire", sub: "Wisbech", name: "Peckover House and Garden", category: "Historic House", wiki: "Peckover House and Garden", slug: "cambridgeshire/peckover-house-and-garden" },
-      { region: "Midlands & East of England", location: "Cambridgeshire", sub: "Wisbech", name: "Octavia Hill Birthplace House", category: "Museum", wiki: "Octavia Hill Birthplace House", slug: "cambridgeshire/octavia-hill-birthplace-house" },
-      { region: "Midlands & East of England", location: "Cambridgeshire", sub: "Ramsey", name: "Ramsey Abbey Gatehouse", category: "Abbey", wiki: "Ramsey Abbey", slug: "cambridgeshire/ramsey-abbey-gatehouse" },
+      { region: "Midlands & East of England", location: "Cambridgeshire", name: "Wimpole Estate", category: "Historic House", wiki: "Wimpole Estate", slug: "cambridgeshire/wimpole-estate" },
+      { region: "Midlands & East of England", location: "Cambridgeshire", name: "Anglesey Abbey, Gardens & Mill", category: "Historic House", wiki: "Anglesey Abbey", slug: "cambridgeshire/anglesey-abbey-gardens-and-lode-mill" },
+      { region: "Midlands & East of England", location: "Cambridgeshire", name: "Wicken Fen Nature Reserve", category: "Countryside", wiki: "Wicken Fen", slug: "cambridgeshire/wicken-fen-nature-reserve" },
+      { region: "Midlands & East of England", location: "Cambridgeshire", name: "Houghton Mill and Waterclose Meadows", category: "Historic Property", wiki: "Houghton Mill", slug: "cambridgeshire/houghton-mill-and-waterclose-meadows" },
+      { region: "Midlands & East of England", location: "Cambridgeshire", name: "Peckover House and Garden", category: "Historic House", wiki: "Peckover House and Garden", slug: "cambridgeshire/peckover-house-and-garden" },
+      { region: "Midlands & East of England", location: "Cambridgeshire", name: "Octavia Hill Birthplace House", category: "Museum", wiki: "Octavia Hill Birthplace House", slug: "cambridgeshire/octavia-hill-birthplace-house" },
+      { region: "Midlands & East of England", location: "Cambridgeshire", name: "Ramsey Abbey Gatehouse", category: "Abbey", wiki: "Ramsey Abbey", slug: "cambridgeshire/ramsey-abbey-gatehouse" },
 
       // Norfolk & Suffolk
-      { region: "Midlands & East of England", location: "Norfolk", sub: "near Aylsham", name: "Blickling Estate", category: "Historic House", wiki: "Blickling Hall", slug: "norfolk/blickling-estate" },
-      { region: "Midlands & East of England", location: "Norfolk", sub: "near Cromer", name: "Felbrigg Hall, Gardens and Estate", category: "Historic House", wiki: "Felbrigg Hall", slug: "norfolk/felbrigg-hall-gardens-and-estate" },
-      { region: "Midlands & East of England", location: "Norfolk", sub: "near Swaffham", name: "Oxburgh Estate", category: "Historic House", wiki: "Oxburgh Hall", slug: "norfolk/oxburgh-estate" },
-      { region: "Midlands & East of England", location: "Norfolk", sub: "near Holt", name: "Blakeney National Nature Reserve", category: "Countryside", wiki: "Blakeney Point", slug: "norfolk/blakeney-national-nature-reserve" },
-      { region: "Midlands & East of England", location: "Norfolk", sub: "near Cromer", name: "Sheringham Park", category: "Countryside", wiki: "Sheringham Park", slug: "norfolk/sheringham-park" },
-      { region: "Midlands & East of England", location: "Norfolk", sub: "near Great Yarmouth", name: "Horsey Windpump", category: "Historic Property", wiki: "Horsey Windpump", slug: "norfolk/horsey-windpump" },
-      { region: "Midlands & East of England", location: "Norfolk", sub: "King's Lynn", name: "St George's Guildhall", category: "Historic Property", wiki: "St George's Guildhall", slug: "norfolk/st-georges-guildhall" },
-      { region: "Midlands & East of England", location: "Norfolk", sub: "Great Yarmouth", name: "Elizabethan House Museum", category: "Historic Property", wiki: "Elizabethan House Museum", slug: "norfolk/elizabethan-house-museum" },
-      { region: "Midlands & East of England", location: "Norfolk", sub: "near Wells-next-the-Sea", name: "Burnham Overy Staithe Windmill", category: "Historic Property", wiki: "Burnham Overy Staithe Windmill", slug: "norfolk/burnham-overy-staithe-windmill" },
-      { region: "Midlands & East of England", location: "Norfolk", sub: "Brancaster", name: "Brancaster Estate", category: "Countryside", wiki: "Brancaster", slug: "norfolk/brancaster-estate" },
-      { region: "Midlands & East of England", location: "Norfolk", sub: "near Cromer", name: "West Runton and Beeston Regis Heath", category: "Countryside", wiki: "West Runton", slug: "norfolk/west-runton-and-beeston-regis-heath" },
+      { region: "Midlands & East of England", location: "Norfolk", name: "Blickling Estate", category: "Historic House", wiki: "Blickling Hall", slug: "norfolk/blickling-estate" },
+      { region: "Midlands & East of England", location: "Norfolk", name: "Felbrigg Hall, Gardens and Estate", category: "Historic House", wiki: "Felbrigg Hall", slug: "norfolk/felbrigg-hall-gardens-and-estate" },
+      { region: "Midlands & East of England", location: "Norfolk", name: "Oxburgh Estate", category: "Historic House", wiki: "Oxburgh Hall", slug: "norfolk/oxburgh-estate" },
+      { region: "Midlands & East of England", location: "Norfolk", name: "Blakeney National Nature Reserve", category: "Countryside", wiki: "Blakeney Point", slug: "norfolk/blakeney-national-nature-reserve" },
+      { region: "Midlands & East of England", location: "Norfolk", name: "Sheringham Park", category: "Countryside", wiki: "Sheringham Park", slug: "norfolk/sheringham-park" },
+      { region: "Midlands & East of England", location: "Norfolk", name: "Horsey Windpump", category: "Historic Property", wiki: "Horsey Windpump", slug: "norfolk/horsey-windpump" },
+      { region: "Midlands & East of England", location: "Norfolk", name: "St George's Guildhall", category: "Historic Property", wiki: "St George's Guildhall", slug: "norfolk/st-georges-guildhall" },
+      { region: "Midlands & East of England", location: "Norfolk", name: "Elizabethan House Museum", category: "Historic Property", wiki: "Elizabethan House Museum", slug: "norfolk/elizabethan-house-museum" },
+      { region: "Midlands & East of England", location: "Norfolk", name: "Burnham Overy Staithe Windmill", category: "Historic Property", wiki: "Burnham Overy Staithe Windmill", slug: "norfolk/burnham-overy-staithe-windmill" },
+      { region: "Midlands & East of England", location: "Norfolk", name: "Brancaster Estate", category: "Countryside", wiki: "Brancaster", slug: "norfolk/brancaster-estate" },
+      { region: "Midlands & East of England", location: "Norfolk", name: "West Runton and Beeston Regis Heath", category: "Countryside", wiki: "West Runton", slug: "norfolk/west-runton-and-beeston-regis-heath" },
 
-      { region: "Midlands & East of England", location: "Suffolk", sub: "near Woodbridge", name: "Sutton Hoo", category: "Prehistoric", wiki: "Sutton Hoo", slug: "suffolk/sutton-hoo" },
-      { region: "Midlands & East of England", location: "Suffolk", sub: "near Bury St Edmunds", name: "Ickworth Estate", category: "Historic House", wiki: "Ickworth House", slug: "suffolk/ickworth-estate" },
-      { region: "Midlands & East of England", location: "Suffolk", sub: "near Sudbury", name: "Melford Hall", category: "Historic House", wiki: "Melford Hall", slug: "suffolk/melford-hall" },
-      { region: "Midlands & East of England", location: "Suffolk", sub: "near Colchester", name: "Flatford and Constable Country", category: "Historic Property", wiki: "Bridge Cottage, Flatford", slug: "suffolk/flatford" },
-      { region: "Midlands & East of England", location: "Suffolk", sub: "near Southwold", name: "Dunwich Heath and Beach", category: "Countryside", wiki: "Dunwich Heath", slug: "suffolk/dunwich-heath-and-beach" },
-      { region: "Midlands & East of England", location: "Suffolk", sub: "near Aldeburgh", name: "Orford Ness National Nature Reserve", category: "Countryside", wiki: "Orford Ness", slug: "suffolk/orford-ness-national-nature-reserve" },
-      { region: "Midlands & East of England", location: "Suffolk", sub: "Lavenham", name: "Lavenham Guildhall", category: "Historic Property", wiki: "Lavenham Guildhall", slug: "suffolk/lavenham-guildhall" },
-      { region: "Midlands & East of England", location: "Suffolk", sub: "Bury St Edmunds", name: "Theatre Royal, Bury St Edmunds", category: "Historic Property", wiki: "Theatre Royal, Bury St Edmunds", slug: "suffolk/theatre-royal-bury-st-edmunds" },
-      { region: "Midlands & East of England", location: "Suffolk", sub: "near Ipswich", name: "Pin Mill", category: "Countryside", wiki: "Pin Mill", slug: "suffolk/pin-mill" },
-      { region: "Midlands & East of England", location: "Suffolk", sub: "Woodbridge", name: "Kyson Hill", category: "Countryside", wiki: "Woodbridge, Suffolk", slug: "suffolk/kyson-hill" },
-      { region: "Midlands & East of England", location: "Suffolk", sub: "near Stoke-by-Nayland", name: "Thorington Hall", category: "Historic Property", wiki: "Thorington Hall", slug: "suffolk/thorington-hall" },
+      { region: "Midlands & East of England", location: "Suffolk", name: "Sutton Hoo", category: "Prehistoric", wiki: "Sutton Hoo", slug: "suffolk/sutton-hoo" },
+      { region: "Midlands & East of England", location: "Suffolk", name: "Ickworth Estate", category: "Historic House", wiki: "Ickworth House", slug: "suffolk/ickworth-estate" },
+      { region: "Midlands & East of England", location: "Suffolk", name: "Melford Hall", category: "Historic House", wiki: "Melford Hall", slug: "suffolk/melford-hall" },
+      { region: "Midlands & East of England", location: "Suffolk", name: "Flatford and Constable Country", category: "Historic Property", wiki: "Bridge Cottage, Flatford", slug: "suffolk/flatford" },
+      { region: "Midlands & East of England", location: "Suffolk", name: "Dunwich Heath and Beach", category: "Countryside", wiki: "Dunwich Heath", slug: "suffolk/dunwich-heath-and-beach" },
+      { region: "Midlands & East of England", location: "Suffolk", name: "Orford Ness National Nature Reserve", category: "Countryside", wiki: "Orford Ness", slug: "suffolk/orford-ness-national-nature-reserve" },
+      { region: "Midlands & East of England", location: "Suffolk", name: "Lavenham Guildhall", category: "Historic Property", wiki: "Lavenham Guildhall", slug: "suffolk/lavenham-guildhall" },
+      { region: "Midlands & East of England", location: "Suffolk", name: "Theatre Royal, Bury St Edmunds", category: "Historic Property", wiki: "Theatre Royal, Bury St Edmunds", slug: "suffolk/theatre-royal-bury-st-edmunds" },
+      { region: "Midlands & East of England", location: "Suffolk", name: "Pin Mill", category: "Countryside", wiki: "Pin Mill", slug: "suffolk/pin-mill" },
+      { region: "Midlands & East of England", location: "Suffolk", name: "Kyson Hill", category: "Countryside", wiki: "Woodbridge, Suffolk", slug: "suffolk/kyson-hill" },
+      { region: "Midlands & East of England", location: "Suffolk", name: "Thorington Hall", category: "Historic Property", wiki: "Thorington Hall", slug: "suffolk/thorington-hall" },
 
       // Derbyshire & East Midlands
-      { region: "Midlands & East of England", location: "Derbyshire & Peak District", sub: "near Chesterfield", name: "Hardwick Hall and Estate", category: "Historic House", wiki: "Hardwick Hall", slug: "peak-district-derbyshire/hardwick-hall-and-estate" },
-      { region: "Midlands & East of England", location: "Derbyshire & Peak District", sub: "near Derby", name: "Kedleston Hall", category: "Historic House", wiki: "Kedleston Hall", slug: "peak-district-derbyshire/kedleston-hall" },
-      { region: "Midlands & East of England", location: "Derbyshire & Peak District", sub: "near Ticknall", name: "Calke Abbey", category: "Historic House", wiki: "Calke Abbey", slug: "peak-district-derbyshire/calke-abbey" },
-      { region: "Midlands & East of England", location: "Derbyshire & Peak District", sub: "near Ashbourne", name: "Sudbury Hall", category: "Historic House", wiki: "Sudbury Hall", slug: "peak-district-derbyshire/the-childrens-country-house-at-sudbury" },
-      { region: "Midlands & East of England", location: "Derbyshire & Peak District", sub: "near Ashbourne", name: "Dovedale and Ilam Park", category: "Countryside", wiki: "Dovedale", slug: "peak-district-derbyshire/ilam-park-dovedale-and-the-white-peak" },
-      { region: "Midlands & East of England", location: "Derbyshire & Peak District", sub: "near Sheffield", name: "Longshaw Estate", category: "Countryside", wiki: "Longshaw Estate", slug: "peak-district-derbyshire/longshaw-burbage-and-the-eastern-moors" },
-      { region: "Midlands & East of England", location: "Derbyshire & Peak District", sub: "Edale", name: "Kinder Scout and Edale", category: "Countryside", wiki: "Kinder Scout", slug: "peak-district-derbyshire/kinder-scout" },
-      { region: "Midlands & East of England", location: "Derbyshire & Peak District", sub: "Castleford", name: "Mam Tor", category: "Countryside", wiki: "Mam Tor", slug: "peak-district-derbyshire/mam-tor" },
-      { region: "Midlands & East of England", location: "Derbyshire & Peak District", sub: "near Chesterfield", name: "Stainsby Mill", category: "Historic Property", wiki: "Stainsby Mill", slug: "peak-district-derbyshire/stainsby-mill" },
-      { region: "Midlands & East of England", location: "Derbyshire & Peak District", sub: "near Matlock", name: "Winster Market House", category: "Historic Property", wiki: "Winster Market House", slug: "peak-district-derbyshire/winster-market-house" },
+      { region: "Midlands & East of England", location: "Derbyshire & Peak District", name: "Hardwick Hall and Estate", category: "Historic House", wiki: "Hardwick Hall", slug: "peak-district-derbyshire/hardwick-hall-and-estate" },
+      { region: "Midlands & East of England", location: "Derbyshire & Peak District", name: "Kedleston Hall", category: "Historic House", wiki: "Kedleston Hall", slug: "peak-district-derbyshire/kedleston-hall" },
+      { region: "Midlands & East of England", location: "Derbyshire & Peak District", name: "Calke Abbey", category: "Historic House", wiki: "Calke Abbey", slug: "peak-district-derbyshire/calke-abbey" },
+      { region: "Midlands & East of England", location: "Derbyshire & Peak District", name: "Sudbury Hall", category: "Historic House", wiki: "Sudbury Hall", slug: "peak-district-derbyshire/the-childrens-country-house-at-sudbury" },
+      { region: "Midlands & East of England", location: "Derbyshire & Peak District", name: "Dovedale and Ilam Park", category: "Countryside", wiki: "Dovedale", slug: "peak-district-derbyshire/ilam-park-dovedale-and-the-white-peak" },
+      { region: "Midlands & East of England", location: "Derbyshire & Peak District", name: "Longshaw Estate", category: "Countryside", wiki: "Longshaw Estate", slug: "peak-district-derbyshire/longshaw-burbage-and-the-eastern-moors" },
+      { region: "Midlands & East of England", location: "Derbyshire & Peak District", name: "Kinder Scout and Edale", category: "Countryside", wiki: "Kinder Scout", slug: "peak-district-derbyshire/kinder-scout" },
+      { region: "Midlands & East of England", location: "Derbyshire & Peak District", name: "Mam Tor", category: "Countryside", wiki: "Mam Tor", slug: "peak-district-derbyshire/mam-tor" },
+      { region: "Midlands & East of England", location: "Derbyshire & Peak District", name: "Stainsby Mill", category: "Historic Property", wiki: "Stainsby Mill", slug: "peak-district-derbyshire/stainsby-mill" },
+      { region: "Midlands & East of England", location: "Derbyshire & Peak District", name: "Winster Market House", category: "Historic Property", wiki: "Winster Market House", slug: "peak-district-derbyshire/winster-market-house" },
 
-      { region: "Midlands & East of England", location: "Nottinghamshire", sub: "near Worksop", name: "Clumber Park", category: "Countryside", wiki: "Clumber Park", slug: "nottinghamshire/clumber-park" },
-      { region: "Midlands & East of England", location: "Nottinghamshire", sub: "Southwell", name: "The Workhouse, Southwell", category: "Historic Property", wiki: "The Workhouse, Southwell", slug: "nottinghamshire/the-workhouse-and-straws-field" },
-      { region: "Midlands & East of England", location: "Nottinghamshire", sub: "Worksop", name: "Mr Straw's House", category: "Historic Property", wiki: "Mr Straw's House", slug: "nottinghamshire/mr-straws-house" },
+      { region: "Midlands & East of England", location: "Nottinghamshire", name: "Clumber Park", category: "Countryside", wiki: "Clumber Park", slug: "nottinghamshire/clumber-park" },
+      { region: "Midlands & East of England", location: "Nottinghamshire", name: "The Workhouse, Southwell", category: "Historic Property", wiki: "The Workhouse, Southwell", slug: "nottinghamshire/the-workhouse-and-straws-field" },
+      { region: "Midlands & East of England", location: "Nottinghamshire", name: "Mr Straw's House", category: "Historic Property", wiki: "Mr Straw's House", slug: "nottinghamshire/mr-straws-house" },
 
-      { region: "Midlands & East of England", location: "Lincolnshire", sub: "near Grantham", name: "Belton House", category: "Historic House", wiki: "Belton House", slug: "lincolnshire/belton-estate" },
-      { region: "Midlands & East of England", location: "Lincolnshire", sub: "near Spilsby", name: "Gunby Estate, Hall and Gardens", category: "Historic House", wiki: "Gunby Hall", slug: "lincolnshire/gunby-estate-hall-and-gardens" },
-      { region: "Midlands & East of England", location: "Lincolnshire", sub: "near Grantham", name: "Woolsthorpe Manor", category: "Historic Property", wiki: "Woolsthorpe Manor", slug: "lincolnshire/woolsthorpe-manor" },
-      { region: "Midlands & East of England", location: "Lincolnshire", sub: "near Coningsby", name: "Tattershall Castle", category: "Historic House", wiki: "Tattershall Castle", slug: "lincolnshire/tattershall-castle" },
-      { region: "Midlands & East of England", location: "Lincolnshire", sub: "Grantham", name: "Grantham House", category: "Historic Property", wiki: "Grantham House", slug: "lincolnshire/grantham-house" },
-      { region: "Midlands & East of England", location: "Lincolnshire", sub: "near Burgh le Marsh", name: "Monksthorpe Chapel", category: "Church", wiki: "Monksthorpe Chapel", slug: "lincolnshire/monksthorpe-chapel" },
+      { region: "Midlands & East of England", location: "Lincolnshire", name: "Belton House", category: "Historic House", wiki: "Belton House", slug: "lincolnshire/belton-estate" },
+      { region: "Midlands & East of England", location: "Lincolnshire", name: "Gunby Estate, Hall and Gardens", category: "Historic House", wiki: "Gunby Hall", slug: "lincolnshire/gunby-estate-hall-and-gardens" },
+      { region: "Midlands & East of England", location: "Lincolnshire", name: "Woolsthorpe Manor", category: "Historic Property", wiki: "Woolsthorpe Manor", slug: "lincolnshire/woolsthorpe-manor" },
+      { region: "Midlands & East of England", location: "Lincolnshire", name: "Tattershall Castle", category: "Historic House", wiki: "Tattershall Castle", slug: "lincolnshire/tattershall-castle" },
+      { region: "Midlands & East of England", location: "Lincolnshire", name: "Grantham House", category: "Historic Property", wiki: "Grantham House", slug: "lincolnshire/grantham-house" },
+      { region: "Midlands & East of England", location: "Lincolnshire", name: "Monksthorpe Chapel", category: "Church", wiki: "Monksthorpe Chapel", slug: "lincolnshire/monksthorpe-chapel" },
 
-      { region: "Midlands & East of England", location: "Leicestershire", sub: "near Charnwood", name: "Stoneywell", category: "Historic Property", wiki: "Stoneywell", slug: "leicestershire/stoneywell" },
-      { region: "Midlands & East of England", location: "Leicestershire", sub: "near Ashby-de-la-Zouch", name: "Staunton Harold Church", category: "Church", wiki: "Staunton Harold Church", slug: "leicestershire/staunton-harold-church" },
+      { region: "Midlands & East of England", location: "Leicestershire", name: "Stoneywell", category: "Historic Property", wiki: "Stoneywell", slug: "leicestershire/stoneywell" },
+      { region: "Midlands & East of England", location: "Leicestershire", name: "Staunton Harold Church", category: "Church", wiki: "Staunton Harold Church", slug: "leicestershire/staunton-harold-church" },
 
-      { region: "Midlands & East of England", location: "Northamptonshire", sub: "near Daventry", name: "Canons Ashby", category: "Historic House", wiki: "Canons Ashby House", slug: "northamptonshire/canons-ashby" },
-      { region: "Midlands & East of England", location: "Northamptonshire", sub: "near Oundle", name: "Lyveden", category: "Historic House", wiki: "Lyveden New Bield", slug: "northamptonshire/lyveden" },
+      { region: "Midlands & East of England", location: "Northamptonshire", name: "Canons Ashby", category: "Historic House", wiki: "Canons Ashby House", slug: "northamptonshire/canons-ashby" },
+      { region: "Midlands & East of England", location: "Northamptonshire", name: "Lyveden", category: "Historic House", wiki: "Lyveden New Bield", slug: "northamptonshire/lyveden" },
 
       // West Midlands & Counties
-      { region: "Midlands & East of England", location: "Warwickshire", sub: "near Stratford-upon-Avon", name: "Charlecote Park", category: "Historic House", wiki: "Charlecote Park", slug: "warwickshire/charlecote-park" },
-      { region: "Midlands & East of England", location: "Warwickshire", sub: "near Solihull", name: "Packwood House", category: "Historic House", wiki: "Packwood House", slug: "warwickshire/packwood-house" },
-      { region: "Midlands & East of England", location: "Warwickshire", sub: "near Solihull", name: "Baddesley Clinton", category: "Historic House", wiki: "Baddesley Clinton", slug: "warwickshire/baddesley-clinton" },
-      { region: "Midlands & East of England", location: "Warwickshire", sub: "near Alcester", name: "Coughton Court", category: "Historic House", wiki: "Coughton Court", slug: "warwickshire/coughton-court" },
-      { region: "Midlands & East of England", location: "Warwickshire", sub: "near Banbury", name: "Upton House and Gardens", category: "Historic House", wiki: "Upton House, Warwickshire", slug: "warwickshire/upton-house-and-gardens" },
-      { region: "Midlands & East of England", location: "Warwickshire", sub: "near Banbury", name: "Farnborough Hall", category: "Historic House", wiki: "Farnborough Hall", slug: "warwickshire/farnborough-hall" },
-      { region: "Midlands & East of England", location: "Warwickshire", sub: "Alcester", name: "Kinwarton Dovecote", category: "Historic Property", wiki: "Kinwarton Dovecote", slug: "warwickshire/kinwarton-dovecote" },
+      { region: "Midlands & East of England", location: "Warwickshire", name: "Charlecote Park", category: "Historic House", wiki: "Charlecote Park", slug: "warwickshire/charlecote-park" },
+      { region: "Midlands & East of England", location: "Warwickshire", name: "Packwood House", category: "Historic House", wiki: "Packwood House", slug: "warwickshire/packwood-house" },
+      { region: "Midlands & East of England", location: "Warwickshire", name: "Baddesley Clinton", category: "Historic House", wiki: "Baddesley Clinton", slug: "warwickshire/baddesley-clinton" },
+      { region: "Midlands & East of England", location: "Warwickshire", name: "Coughton Court", category: "Historic House", wiki: "Coughton Court", slug: "warwickshire/coughton-court" },
+      { region: "Midlands & East of England", location: "Warwickshire", name: "Upton House and Gardens", category: "Historic House", wiki: "Upton House, Warwickshire", slug: "warwickshire/upton-house-and-gardens" },
+      { region: "Midlands & East of England", location: "Warwickshire", name: "Farnborough Hall", category: "Historic House", wiki: "Farnborough Hall", slug: "warwickshire/farnborough-hall" },
+      { region: "Midlands & East of England", location: "Warwickshire", name: "Kinwarton Dovecote", category: "Historic Property", wiki: "Kinwarton Dovecote", slug: "warwickshire/kinwarton-dovecote" },
 
-      { region: "Midlands & East of England", location: "West Midlands", sub: "Birmingham", name: "Birmingham Back to Backs", category: "Historic Property", wiki: "Birmingham Back to Backs", slug: "birmingham/birmingham-back-to-backs" },
-      { region: "Midlands & East of England", location: "West Midlands", sub: "Wolverhampton", name: "Wightwick Manor and Gardens", category: "Historic Property", wiki: "Wightwick Manor", slug: "birmingham/wightwick-manor-and-gardens" },
+      { region: "Midlands & East of England", location: "West Midlands", name: "Birmingham Back to Backs", category: "Historic Property", wiki: "Birmingham Back to Backs", slug: "birmingham/birmingham-back-to-backs" },
+      { region: "Midlands & East of England", location: "West Midlands", name: "Wightwick Manor and Gardens", category: "Historic Property", wiki: "Wightwick Manor", slug: "birmingham/wightwick-manor-and-gardens" },
 
-      { region: "Midlands & East of England", location: "Staffordshire", sub: "near Stoke-on-Trent", name: "Biddulph Grange Garden", category: "Garden", wiki: "Biddulph Grange", slug: "staffordshire/biddulph-grange-garden" },
-      { region: "Midlands & East of England", location: "Staffordshire", sub: "near Stafford", name: "Shugborough Estate", category: "Historic House", wiki: "Shugborough Hall", slug: "staffordshire/shugborough-estate" },
-      { region: "Midlands & East of England", location: "Staffordshire", sub: "near Wolverhampton", name: "Moseley Old Hall", category: "Historic Property", wiki: "Moseley Old Hall", slug: "staffordshire/moseley-old-hall" },
-      { region: "Midlands & East of England", location: "Staffordshire", sub: "near Stourbridge", name: "Kinver Edge and the Rock Houses", category: "Historic Property", wiki: "Kinver Edge", slug: "staffordshire/kinver-edge-and-the-rock-houses" },
-      { region: "Midlands & East of England", location: "Staffordshire", sub: "near Lichfield", name: "Wall Roman Site (Letocetum)", category: "Roman", wiki: "Letocetum", slug: "staffordshire/letocetum-roman-site" },
-      { region: "Midlands & East of England", location: "Staffordshire", sub: "near Barlaston", name: "Downs Banks", category: "Countryside", wiki: "Barlaston", slug: "staffordshire/downs-banks" },
+      { region: "Midlands & East of England", location: "Staffordshire", name: "Biddulph Grange Garden", category: "Garden", wiki: "Biddulph Grange", slug: "staffordshire/biddulph-grange-garden" },
+      { region: "Midlands & East of England", location: "Staffordshire", name: "Shugborough Estate", category: "Historic House", wiki: "Shugborough Hall", slug: "staffordshire/shugborough-estate" },
+      { region: "Midlands & East of England", location: "Staffordshire", name: "Moseley Old Hall", category: "Historic Property", wiki: "Moseley Old Hall", slug: "staffordshire/moseley-old-hall" },
+      { region: "Midlands & East of England", location: "Staffordshire", name: "Kinver Edge and the Rock Houses", category: "Historic Property", wiki: "Kinver Edge", slug: "staffordshire/kinver-edge-and-the-rock-houses" },
+      { region: "Midlands & East of England", location: "Staffordshire", name: "Wall Roman Site (Letocetum)", category: "Roman", wiki: "Letocetum", slug: "staffordshire/letocetum-roman-site" },
+      { region: "Midlands & East of England", location: "Staffordshire", name: "Downs Banks", category: "Countryside", wiki: "Barlaston", slug: "staffordshire/downs-banks" },
 
-      { region: "Midlands & East of England", location: "Shropshire", sub: "near Shrewsbury", name: "Attingham Park", category: "Historic House", wiki: "Attingham Park", slug: "shropshire/attingham-park" },
-      { region: "Midlands & East of England", location: "Shropshire", sub: "near Bridgnorth", name: "Dudmaston", category: "Historic House", wiki: "Dudmaston Hall", slug: "shropshire/dudmaston" },
-      { region: "Midlands & East of England", location: "Shropshire", sub: "near Broseley", name: "Benthall Hall", category: "Historic House", wiki: "Benthall Hall", slug: "shropshire/benthall-hall" },
-      { region: "Midlands & East of England", location: "Shropshire", sub: "Church Stretton", name: "Carding Mill Valley and Long Mynd", category: "Countryside", wiki: "Long Mynd", slug: "shropshire/carding-mill-valley-and-the-long-mynd" },
-      { region: "Midlands & East of England", location: "Shropshire", sub: "Wellington", name: "Sunnycroft", category: "Historic Property", wiki: "Sunnycroft", slug: "shropshire/sunnycroft" },
-      { region: "Midlands & East of England", location: "Shropshire", sub: "near Much Wenlock", name: "Wilderhope Manor", category: "Historic Property", wiki: "Wilderhope Manor", slug: "shropshire/wilderhope-manor" },
-      { region: "Midlands & East of England", location: "Shropshire", sub: "near Much Wenlock", name: "Wenlock Edge", category: "Countryside", wiki: "Wenlock Edge", slug: "shropshire/wenlock-edge" },
-      { region: "Midlands & East of England", location: "Shropshire", sub: "near Bridgnorth", name: "Morville Hall", category: "Historic House", wiki: "Morville Hall", slug: "shropshire/morville-hall" },
+      { region: "Midlands & East of England", location: "Shropshire", name: "Attingham Park", category: "Historic House", wiki: "Attingham Park", slug: "shropshire/attingham-park" },
+      { region: "Midlands & East of England", location: "Shropshire", name: "Dudmaston", category: "Historic House", wiki: "Dudmaston Hall", slug: "shropshire/dudmaston" },
+      { region: "Midlands & East of England", location: "Shropshire", name: "Benthall Hall", category: "Historic House", wiki: "Benthall Hall", slug: "shropshire/benthall-hall" },
+      { region: "Midlands & East of England", location: "Shropshire", name: "Carding Mill Valley and Long Mynd", category: "Countryside", wiki: "Long Mynd", slug: "shropshire/carding-mill-valley-and-the-long-mynd" },
+      { region: "Midlands & East of England", location: "Shropshire", name: "Sunnycroft", category: "Historic Property", wiki: "Sunnycroft", slug: "shropshire/sunnycroft" },
+      { region: "Midlands & East of England", location: "Shropshire", name: "Wilderhope Manor", category: "Historic Property", wiki: "Wilderhope Manor", slug: "shropshire/wilderhope-manor" },
+      { region: "Midlands & East of England", location: "Shropshire", name: "Wenlock Edge", category: "Countryside", wiki: "Wenlock Edge", slug: "shropshire/wenlock-edge" },
+      { region: "Midlands & East of England", location: "Shropshire", name: "Morville Hall", category: "Historic House", wiki: "Morville Hall", slug: "shropshire/morville-hall" },
 
-      { region: "Midlands & East of England", location: "Herefordshire", sub: "near Leominster", name: "Berrington Hall", category: "Historic House", wiki: "Berrington Hall", slug: "herefordshire/berrington-hall" },
-      { region: "Midlands & East of England", location: "Herefordshire", sub: "near Leominster", name: "Croft Castle and Parkland", category: "Historic House", wiki: "Croft Castle", slug: "herefordshire/croft-castle-and-parkland" },
-      { region: "Midlands & East of England", location: "Herefordshire", sub: "near Bromyard", name: "Brockhampton", category: "Historic Property", wiki: "Lower Brockhampton", slug: "herefordshire/brockhampton" },
-      { region: "Midlands & East of England", location: "Herefordshire", sub: "near Hereford", name: "The Weir Garden", category: "Garden", wiki: "The Weir Garden", slug: "herefordshire/the-weir-garden" },
-      { region: "Midlands & East of England", location: "Herefordshire", sub: "near Whitney-on-Wye", name: "Cwmmau Farmhouse", category: "Historic Property", wiki: "Cwmmau Farmhouse", slug: "herefordshire/cwmmau-farmhouse" },
+      { region: "Midlands & East of England", location: "Herefordshire", name: "Berrington Hall", category: "Historic House", wiki: "Berrington Hall", slug: "herefordshire/berrington-hall" },
+      { region: "Midlands & East of England", location: "Herefordshire", name: "Croft Castle and Parkland", category: "Historic House", wiki: "Croft Castle", slug: "herefordshire/croft-castle-and-parkland" },
+      { region: "Midlands & East of England", location: "Herefordshire", name: "Brockhampton", category: "Historic Property", wiki: "Lower Brockhampton", slug: "herefordshire/brockhampton" },
+      { region: "Midlands & East of England", location: "Herefordshire", name: "The Weir Garden", category: "Garden", wiki: "The Weir Garden", slug: "herefordshire/the-weir-garden" },
+      { region: "Midlands & East of England", location: "Herefordshire", name: "Cwmmau Farmhouse", category: "Historic Property", wiki: "Cwmmau Farmhouse", slug: "herefordshire/cwmmau-farmhouse" },
 
-      { region: "Midlands & East of England", location: "Worcestershire", sub: "near Droitwich", name: "Hanbury Hall and Gardens", category: "Historic House", wiki: "Hanbury Hall", slug: "worcestershire/hanbury-hall" },
-      { region: "Midlands & East of England", location: "Worcestershire", sub: "near Worcester", name: "Croome", category: "Garden", wiki: "Croome Court", slug: "worcestershire/croome" },
-      { region: "Midlands & East of England", location: "Worcestershire", sub: "Worcester", name: "The Greyfriars", category: "Historic Property", wiki: "The Greyfriars, Worcester", slug: "worcestershire/the-greyfriars" },
-      { region: "Midlands & East of England", location: "Worcestershire", sub: "near Evesham", name: "The Fleece Inn", category: "Historic Property", wiki: "The Fleece Inn", slug: "worcestershire/the-fleece-inn" },
-      { region: "Midlands & East of England", location: "Worcestershire", sub: "near Halesowen", name: "Clent Hills", category: "Countryside", wiki: "Clent Hills", slug: "worcestershire/clent-hills" },
-      { region: "Midlands & East of England", location: "Worcestershire", sub: "Broadheath", name: "The Firs (Elgar's Birthplace)", category: "Museum", wiki: "The Firs, Lower Broadheath", slug: "worcestershire/the-firs" },
-      { region: "Midlands & East of England", location: "Worcestershire", sub: "Dodford", name: "Rosedene", category: "Historic Property", wiki: "Rosedene, Dodford", slug: "worcestershire/rosedene" },
+      { region: "Midlands & East of England", location: "Worcestershire", name: "Hanbury Hall and Gardens", category: "Historic House", wiki: "Hanbury Hall", slug: "worcestershire/hanbury-hall" },
+      { region: "Midlands & East of England", location: "Worcestershire", name: "Croome", category: "Garden", wiki: "Croome Court", slug: "worcestershire/croome" },
+      { region: "Midlands & East of England", location: "Worcestershire", name: "The Greyfriars", category: "Historic Property", wiki: "The Greyfriars, Worcester", slug: "worcestershire/the-greyfriars" },
+      { region: "Midlands & East of England", location: "Worcestershire", name: "The Fleece Inn", category: "Historic Property", wiki: "The Fleece Inn", slug: "worcestershire/the-fleece-inn" },
+      { region: "Midlands & East of England", location: "Worcestershire", name: "Clent Hills", category: "Countryside", wiki: "Clent Hills", slug: "worcestershire/clent-hills" },
+      { region: "Midlands & East of England", location: "Worcestershire", name: "The Firs (Elgar's Birthplace)", category: "Museum", wiki: "The Firs, Lower Broadheath", slug: "worcestershire/the-firs" },
+      { region: "Midlands & East of England", location: "Worcestershire", name: "Rosedene", category: "Historic Property", wiki: "Rosedene, Dodford", slug: "worcestershire/rosedene" },
 
       // === SOUTH WEST ===
       // Cornwall
-      { region: "South West", location: "Cornwall", sub: "near Helston & Porthleven", name: "Penrose", category: "Countryside", wiki: "Penrose, Cornwall", slug: "cornwall/penrose" },
-      { region: "South West", location: "Cornwall", sub: "Marazion", name: "St Michael's Mount", category: "Castle", wiki: "St Michael's Mount", slug: "cornwall/st-michaels-mount" },
-      { region: "South West", location: "Cornwall", sub: "near Bodmin", name: "Lanhydrock", category: "Historic House", wiki: "Lanhydrock", slug: "cornwall/lanhydrock" },
-      { region: "South West", location: "Cornwall", sub: "near Saltash", name: "Cotehele", category: "Historic House", wiki: "Cotehele", slug: "cornwall/cotehele" },
-      { region: "South West", location: "Cornwall", sub: "near Saltash", name: "Cotehele Mill", category: "Historic Property", wiki: "Cotehele Mill", slug: "cornwall/cotehele-mill" },
-      { region: "South West", location: "Cornwall", sub: "near Pool & Redruth", name: "East Pool Mine", category: "Historic Property", wiki: "East Pool Mine", slug: "cornwall/east-pool-mine" },
-      { region: "South West", location: "Cornwall", sub: "near Truro", name: "Trelissick Garden", category: "Garden", wiki: "Trelissick Garden", slug: "cornwall/trelissick" },
-      { region: "South West", location: "Cornwall", sub: "near Falmouth", name: "Glendurgan Garden", category: "Garden", wiki: "Glendurgan Garden", slug: "cornwall/glendurgan-garden" },
-      { region: "South West", location: "Cornwall", sub: "near Newquay", name: "Trerice", category: "Historic House", wiki: "Trerice", slug: "cornwall/trerice" },
-      { region: "South West", location: "Cornwall", sub: "near Penzance", name: "Trengwainton Garden", category: "Garden", wiki: "Trengwainton Garden", slug: "cornwall/trengwainton-garden" },
-      { region: "South West", location: "Cornwall", sub: "The Lizard", name: "Kynance Cove & Lizard Point", category: "Countryside", wiki: "Kynance Cove", slug: "cornwall/lizard-point-and-kynance-cove" },
-      { region: "South West", location: "Cornwall", sub: "near Hayle", name: "Godrevy", category: "Countryside", wiki: "Godrevy", slug: "cornwall/godrevy" },
-      { region: "South West", location: "Cornwall", sub: "near St Just", name: "Botallack and the Tin Coast", category: "Historic Property", wiki: "Botallack Mine", slug: "cornwall/botallack" },
-      { region: "South West", location: "Cornwall", sub: "near St Just", name: "Levant Mine and Beam Engine", category: "Historic Property", wiki: "Levant Mine and Beam Engine", slug: "cornwall/levant-mine-and-beam-engine" },
-      { region: "South West", location: "Cornwall", sub: "near St Just", name: "Cape Cornwall", category: "Countryside", wiki: "Cape Cornwall", slug: "cornwall/cape-cornwall" },
-      { region: "South West", location: "Cornwall", sub: "near St Agnes", name: "Wheal Coates", category: "Historic Property", wiki: "Wheal Coates", slug: "cornwall/wheal-coates" },
-      { region: "South West", location: "Cornwall", sub: "near St Agnes", name: "Chapel Porth", category: "Countryside", wiki: "St Agnes, Cornwall", slug: "cornwall/chapel-porth" },
-      { region: "South West", location: "Cornwall", sub: "near Helston", name: "Godolphin", category: "Historic House", wiki: "Godolphin Estate", slug: "cornwall/godolphin" },
-      { region: "South West", location: "Cornwall", sub: "Tintagel", name: "Tintagel Old Post Office", category: "Historic Property", wiki: "Tintagel Old Post Office", slug: "cornwall/tintagel-old-post-office" },
-      { region: "South West", location: "Cornwall", sub: "near Torpoint", name: "Antony", category: "Historic House", wiki: "Antony House", slug: "cornwall/antony" },
-      { region: "South West", location: "Cornwall", sub: "near Fowey", name: "Lantic Bay", category: "Countryside", wiki: "Lantic Bay", slug: "cornwall/lantic-bay" },
-      { region: "South West", location: "Cornwall", sub: "near Newquay", name: "Carnewas at Bedruthan", category: "Countryside", wiki: "Bedruthan Steps", slug: "cornwall/carnewas-at-bedruthan" },
-      { region: "South West", location: "Cornwall", sub: "near Newquay", name: "Holywell Bay", category: "Countryside", wiki: "Holywell Bay", slug: "cornwall/holywell-bay" },
-      { region: "South West", location: "Cornwall", sub: "near Newquay", name: "Crantock Beach", category: "Countryside", wiki: "Crantock", slug: "cornwall/crantock-beach" },
-      { region: "South West", location: "Cornwall", sub: "near Padstow", name: "Trevose Head", category: "Countryside", wiki: "Trevose Head", slug: "cornwall/trevose-head" },
-      { region: "South West", location: "Cornwall", sub: "near Padstow", name: "Carnanton Estate", category: "Countryside", wiki: "Mawgan Porth", slug: "cornwall/carnanton" },
-      { region: "South West", location: "Cornwall", sub: "North Cornwall", name: "Boscastle and Valency Valley", category: "Countryside", wiki: "Boscastle", slug: "cornwall/boscastle" },
-      { region: "South West", location: "Cornwall", sub: "near Torpoint", name: "Rame Head", category: "Countryside", wiki: "Rame Head", slug: "cornwall/rame-head" },
-      { region: "South West", location: "Cornwall", sub: "Whitsand Bay", name: "Whitsand Bay", category: "Countryside", wiki: "Whitsand Bay", slug: "cornwall/whitsand-bay" },
-      { region: "South West", location: "Cornwall", sub: "Polperro", name: "Polperro Coast and Lansallos", category: "Countryside", wiki: "Polperro", slug: "cornwall/lansallos" },
-      { region: "South West", location: "Cornwall", sub: "near Helford", name: "Bosveal and Helford River", category: "Countryside", wiki: "Helford River", slug: "cornwall/bosveal-and-helford-river" },
+      { region: "South West", location: "Cornwall", name: "Penrose", category: "Countryside", wiki: "Penrose, Cornwall", slug: "cornwall/penrose" },
+      { region: "South West", location: "Cornwall", name: "St Michael's Mount", category: "Castle", wiki: "St Michael's Mount", slug: "cornwall/st-michaels-mount" },
+      { region: "South West", location: "Cornwall", name: "Lanhydrock", category: "Historic House", wiki: "Lanhydrock", slug: "cornwall/lanhydrock" },
+      { region: "South West", location: "Cornwall", name: "Cotehele", category: "Historic House", wiki: "Cotehele", slug: "cornwall/cotehele" },
+      { region: "South West", location: "Cornwall", name: "Cotehele Mill", category: "Historic Property", wiki: "Cotehele Mill", slug: "cornwall/cotehele-mill" },
+      { region: "South West", location: "Cornwall", name: "East Pool Mine", category: "Historic Property", wiki: "East Pool Mine", slug: "cornwall/east-pool-mine" },
+      { region: "South West", location: "Cornwall", name: "Trelissick Garden", category: "Garden", wiki: "Trelissick Garden", slug: "cornwall/trelissick" },
+      { region: "South West", location: "Cornwall", name: "Glendurgan Garden", category: "Garden", wiki: "Glendurgan Garden", slug: "cornwall/glendurgan-garden" },
+      { region: "South West", location: "Cornwall", name: "Trerice", category: "Historic House", wiki: "Trerice", slug: "cornwall/trerice" },
+      { region: "South West", location: "Cornwall", name: "Trengwainton Garden", category: "Garden", wiki: "Trengwainton Garden", slug: "cornwall/trengwainton-garden" },
+      { region: "South West", location: "Cornwall", name: "Kynance Cove & Lizard Point", category: "Countryside", wiki: "Kynance Cove", slug: "cornwall/lizard-point-and-kynance-cove" },
+      { region: "South West", location: "Cornwall", name: "Godrevy", category: "Countryside", wiki: "Godrevy", slug: "cornwall/godrevy" },
+      { region: "South West", location: "Cornwall", name: "Botallack and the Tin Coast", category: "Historic Property", wiki: "Botallack Mine", slug: "cornwall/botallack" },
+      { region: "South West", location: "Cornwall", name: "Levant Mine and Beam Engine", category: "Historic Property", wiki: "Levant Mine and Beam Engine", slug: "cornwall/levant-mine-and-beam-engine" },
+      { region: "South West", location: "Cornwall", name: "Cape Cornwall", category: "Countryside", wiki: "Cape Cornwall", slug: "cornwall/cape-cornwall" },
+      { region: "South West", location: "Cornwall", name: "Wheal Coates", category: "Historic Property", wiki: "Wheal Coates", slug: "cornwall/wheal-coates" },
+      { region: "South West", location: "Cornwall", name: "Chapel Porth", category: "Countryside", wiki: "St Agnes, Cornwall", slug: "cornwall/chapel-porth" },
+      { region: "South West", location: "Cornwall", name: "Godolphin", category: "Historic House", wiki: "Godolphin Estate", slug: "cornwall/godolphin" },
+      { region: "South West", location: "Cornwall", name: "Tintagel Old Post Office", category: "Historic Property", wiki: "Tintagel Old Post Office", slug: "cornwall/tintagel-old-post-office" },
+      { region: "South West", location: "Cornwall", name: "Antony", category: "Historic House", wiki: "Antony House", slug: "cornwall/antony" },
+      { region: "South West", location: "Cornwall", name: "Lantic Bay", category: "Countryside", wiki: "Lantic Bay", slug: "cornwall/lantic-bay" },
+      { region: "South West", location: "Cornwall", name: "Carnewas at Bedruthan", category: "Countryside", wiki: "Bedruthan Steps", slug: "cornwall/carnewas-at-bedruthan" },
+      { region: "South West", location: "Cornwall", name: "Holywell Bay", category: "Countryside", wiki: "Holywell Bay", slug: "cornwall/holywell-bay" },
+      { region: "South West", location: "Cornwall", name: "Crantock Beach", category: "Countryside", wiki: "Crantock", slug: "cornwall/crantock-beach" },
+      { region: "South West", location: "Cornwall", name: "Trevose Head", category: "Countryside", wiki: "Trevose Head", slug: "cornwall/trevose-head" },
+      { region: "South West", location: "Cornwall", name: "Carnanton Estate", category: "Countryside", wiki: "Mawgan Porth", slug: "cornwall/carnanton" },
+      { region: "South West", location: "Cornwall", name: "Boscastle and Valency Valley", category: "Countryside", wiki: "Boscastle", slug: "cornwall/boscastle" },
+      { region: "South West", location: "Cornwall", name: "Rame Head", category: "Countryside", wiki: "Rame Head", slug: "cornwall/rame-head" },
+      { region: "South West", location: "Cornwall", name: "Whitsand Bay", category: "Countryside", wiki: "Whitsand Bay", slug: "cornwall/whitsand-bay" },
+      { region: "South West", location: "Cornwall", name: "Polperro Coast and Lansallos", category: "Countryside", wiki: "Polperro", slug: "cornwall/lansallos" },
+      { region: "South West", location: "Cornwall", name: "Bosveal and Helford River", category: "Countryside", wiki: "Helford River", slug: "cornwall/bosveal-and-helford-river" },
 
       // Devon
-      { region: "South West", location: "Devon", sub: "near Exeter", name: "Killerton", category: "Historic House", wiki: "Killerton", slug: "devon/killerton" },
-      { region: "South West", location: "Devon", sub: "near Tiverton", name: "Knightshayes", category: "Historic House", wiki: "Knightshayes Court", slug: "devon/knightshayes" },
-      { region: "South West", location: "Devon", sub: "Dartmoor", name: "Castle Drogo", category: "Historic House", wiki: "Castle Drogo", slug: "devon/castle-drogo" },
-      { region: "South West", location: "Devon", sub: "near Dartmouth", name: "Greenway", category: "Historic House", wiki: "Greenway Estate", slug: "devon/greenway" },
-      { region: "South West", location: "Devon", sub: "near Dartmouth", name: "Coleton Fishacre", category: "Historic House", wiki: "Coleton Fishacre", slug: "devon/coleton-fishacre" },
-      { region: "South West", location: "Devon", sub: "Plymouth", name: "Saltram", category: "Historic House", wiki: "Saltram House", slug: "devon/saltram" },
-      { region: "South West", location: "Devon", sub: "near Yelverton", name: "Buckland Abbey", category: "Historic House", wiki: "Buckland Abbey", slug: "devon/buckland-abbey" },
-      { region: "South West", location: "Devon", sub: "near Barnstaple", name: "Arlington Court", category: "Historic House", wiki: "Arlington Court", slug: "devon/arlington-court-and-the-national-trust-carriage-museum" },
-      { region: "South West", location: "Devon", sub: "Exmouth", name: "A La Ronde", category: "Historic House", wiki: "A La Ronde", slug: "devon/a-la-ronde" },
-      { region: "South West", location: "Devon", sub: "Salcombe", name: "Overbeck's Garden", category: "Museum", wiki: "Overbeck's", slug: "devon/overbecks-garden" },
-      { region: "South West", location: "Devon", sub: "Salcombe", name: "Bolt Head and Bolt Tail", category: "Countryside", wiki: "Bolt Head", slug: "devon/bolt-head-and-bolt-tail" },
-      { region: "South West", location: "Devon", sub: "near Okehampton", name: "Lydford Gorge", category: "Countryside", wiki: "Lydford Gorge", slug: "devon/lydford-gorge" },
-      { region: "South West", location: "Devon", sub: "near Lynmouth", name: "Watersmeet", category: "Countryside", wiki: "Watersmeet House", slug: "devon/watersmeet" },
-      { region: "South West", location: "Devon", sub: "Bristol Channel", name: "Lundy", category: "Countryside", wiki: "Lundy", slug: "devon/lundy" },
-      { region: "South West", location: "Devon", sub: "near Woolacombe", name: "Woolacombe and Mortehoe", category: "Countryside", wiki: "Woolacombe", slug: "devon/woolacombe" },
-      { region: "South West", location: "Devon", sub: "near Croyde", name: "Baggy Point", category: "Countryside", wiki: "Baggy Point", slug: "devon/baggy-point" },
-      { region: "South West", location: "Devon", sub: "near Plymouth", name: "Wembury", category: "Countryside", wiki: "Wembury", slug: "devon/wembury" },
-      { region: "South West", location: "Devon", sub: "near Bovey Tracey", name: "Parke", category: "Countryside", wiki: "Parke, Bovey Tracey", slug: "devon/parke" },
-      { region: "South West", location: "Devon", sub: "near Paignton", name: "Compton Castle", category: "Historic House", wiki: "Compton Castle", slug: "devon/compton-castle" },
-      { region: "South West", location: "Devon", sub: "Dartmoor", name: "Finch Foundry", category: "Historic Property", wiki: "Finch Foundry", slug: "devon/finch-foundry" },
-      { region: "South West", location: "Devon", sub: "Dartmoor", name: "Fingle Bridge", category: "Countryside", wiki: "Fingle Bridge", slug: "devon/fingle-bridge" },
-      { region: "South West", location: "Devon", sub: "Newton Abbot", name: "Bradley Manor", category: "Historic House", wiki: "Bradley Manor", slug: "devon/bradley-manor" },
-      { region: "South West", location: "Devon", sub: "near Sidmouth", name: "Branscombe", category: "Historic Property", wiki: "Branscombe", slug: "devon/branscombe" },
+      { region: "South West", location: "Devon", name: "Killerton", category: "Historic House", wiki: "Killerton", slug: "devon/killerton" },
+      { region: "South West", location: "Devon", name: "Knightshayes", category: "Historic House", wiki: "Knightshayes Court", slug: "devon/knightshayes" },
+      { region: "South West", location: "Devon", name: "Castle Drogo", category: "Historic House", wiki: "Castle Drogo", slug: "devon/castle-drogo" },
+      { region: "South West", location: "Devon", name: "Greenway", category: "Historic House", wiki: "Greenway Estate", slug: "devon/greenway" },
+      { region: "South West", location: "Devon", name: "Coleton Fishacre", category: "Historic House", wiki: "Coleton Fishacre", slug: "devon/coleton-fishacre" },
+      { region: "South West", location: "Devon", name: "Saltram", category: "Historic House", wiki: "Saltram House", slug: "devon/saltram" },
+      { region: "South West", location: "Devon", name: "Buckland Abbey", category: "Historic House", wiki: "Buckland Abbey", slug: "devon/buckland-abbey" },
+      { region: "South West", location: "Devon", name: "Arlington Court", category: "Historic House", wiki: "Arlington Court", slug: "devon/arlington-court-and-the-national-trust-carriage-museum" },
+      { region: "South West", location: "Devon", name: "A La Ronde", category: "Historic House", wiki: "A La Ronde", slug: "devon/a-la-ronde" },
+      { region: "South West", location: "Devon", name: "Overbeck's Garden", category: "Museum", wiki: "Overbeck's", slug: "devon/overbecks-garden" },
+      { region: "South West", location: "Devon", name: "Bolt Head and Bolt Tail", category: "Countryside", wiki: "Bolt Head", slug: "devon/bolt-head-and-bolt-tail" },
+      { region: "South West", location: "Devon", name: "Lydford Gorge", category: "Countryside", wiki: "Lydford Gorge", slug: "devon/lydford-gorge" },
+      { region: "South West", location: "Devon", name: "Watersmeet", category: "Countryside", wiki: "Watersmeet House", slug: "devon/watersmeet" },
+      { region: "South West", location: "Devon", name: "Lundy", category: "Countryside", wiki: "Lundy", slug: "devon/lundy" },
+      { region: "South West", location: "Devon", name: "Woolacombe and Mortehoe", category: "Countryside", wiki: "Woolacombe", slug: "devon/woolacombe" },
+      { region: "South West", location: "Devon", name: "Baggy Point", category: "Countryside", wiki: "Baggy Point", slug: "devon/baggy-point" },
+      { region: "South West", location: "Devon", name: "Wembury", category: "Countryside", wiki: "Wembury", slug: "devon/wembury" },
+      { region: "South West", location: "Devon", name: "Parke", category: "Countryside", wiki: "Parke, Bovey Tracey", slug: "devon/parke" },
+      { region: "South West", location: "Devon", name: "Compton Castle", category: "Historic House", wiki: "Compton Castle", slug: "devon/compton-castle" },
+      { region: "South West", location: "Devon", name: "Finch Foundry", category: "Historic Property", wiki: "Finch Foundry", slug: "devon/finch-foundry" },
+      { region: "South West", location: "Devon", name: "Fingle Bridge", category: "Countryside", wiki: "Fingle Bridge", slug: "devon/fingle-bridge" },
+      { region: "South West", location: "Devon", name: "Bradley Manor", category: "Historic House", wiki: "Bradley Manor", slug: "devon/bradley-manor" },
+      { region: "South West", location: "Devon", name: "Branscombe", category: "Historic Property", wiki: "Branscombe", slug: "devon/branscombe" },
 
       // Dorset
-      { region: "South West", location: "Dorset", sub: "near Wimborne", name: "Kingston Lacy", category: "Historic House", wiki: "Kingston Lacy", slug: "dorset/kingston-lacy" },
-      { region: "South West", location: "Dorset", sub: "Wareham", name: "Corfe Castle", category: "Castle", wiki: "Corfe Castle", slug: "dorset/corfe-castle" },
-      { region: "South West", location: "Dorset", sub: "Poole Harbour", name: "Brownsea Island", category: "Countryside", wiki: "Brownsea Island", slug: "dorset/brownsea-island" },
-      { region: "South West", location: "Dorset", sub: "near Swanage", name: "Studland Bay", category: "Countryside", wiki: "Studland", slug: "dorset/studland-bay" },
-      { region: "South West", location: "Dorset", sub: "Dorchester", name: "Max Gate", category: "Historic Property", wiki: "Max Gate", slug: "dorset/max-gate" },
-      { region: "South West", location: "Dorset", sub: "near Dorchester", name: "Hardy's Cottage", category: "Historic Property", wiki: "Hardy's Cottage", slug: "dorset/hardys-cottage" },
-      { region: "South West", location: "Dorset", sub: "near Wareham", name: "Clouds Hill", category: "Historic Property", wiki: "Clouds Hill", slug: "dorset/clouds-hill" },
-      { region: "South West", location: "Dorset", sub: "near Bridport", name: "Golden Cap", category: "Countryside", wiki: "Golden Cap", slug: "dorset/golden-cap" },
-      { region: "South West", location: "Dorset", sub: "near Bridport", name: "Burton Bradstock and Hive Beach", category: "Countryside", wiki: "Burton Bradstock", slug: "dorset/burton-bradstock" },
-      { region: "South West", location: "Dorset", sub: "near Swanage", name: "Spyway and Dancing Ledge", category: "Countryside", wiki: "Dancing Ledge", slug: "dorset/spyway" },
-      { region: "South West", location: "Dorset", sub: "Ringstead", name: "Ringstead Bay", category: "Countryside", wiki: "Ringstead Bay", slug: "dorset/ringstead-bay" },
-      { region: "South West", location: "Dorset", sub: "near Dorchester", name: "Hardy Monument", category: "Historic Property", wiki: "Hardy Monument", slug: "dorset/hardy-monument" },
-      { region: "South West", location: "Dorset", sub: "near Blandford Forum", name: "Badbury Rings", category: "Prehistoric", wiki: "Badbury Rings", slug: "dorset/badbury-rings" },
-      { region: "South West", location: "Dorset", sub: "near Dorchester", name: "Cerne Giant", category: "Prehistoric", wiki: "Cerne Abbas Giant", slug: "dorset/cerne-giant" },
-      { region: "South West", location: "Dorset", sub: "near Sturminster Marshall", name: "White Mill", category: "Historic Property", wiki: "White Mill, Sturminster Marshall", slug: "dorset/white-mill" },
+      { region: "South West", location: "Dorset", name: "Kingston Lacy", category: "Historic House", wiki: "Kingston Lacy", slug: "dorset/kingston-lacy" },
+      { region: "South West", location: "Dorset", name: "Corfe Castle", category: "Castle", wiki: "Corfe Castle", slug: "dorset/corfe-castle" },
+      { region: "South West", location: "Dorset", name: "Brownsea Island", category: "Countryside", wiki: "Brownsea Island", slug: "dorset/brownsea-island" },
+      { region: "South West", location: "Dorset", name: "Studland Bay", category: "Countryside", wiki: "Studland", slug: "dorset/studland-bay" },
+      { region: "South West", location: "Dorset", name: "Max Gate", category: "Historic Property", wiki: "Max Gate", slug: "dorset/max-gate" },
+      { region: "South West", location: "Dorset", name: "Hardy's Cottage", category: "Historic Property", wiki: "Hardy's Cottage", slug: "dorset/hardys-cottage" },
+      { region: "South West", location: "Dorset", name: "Clouds Hill", category: "Historic Property", wiki: "Clouds Hill", slug: "dorset/clouds-hill" },
+      { region: "South West", location: "Dorset", name: "Golden Cap", category: "Countryside", wiki: "Golden Cap", slug: "dorset/golden-cap" },
+      { region: "South West", location: "Dorset", name: "Burton Bradstock and Hive Beach", category: "Countryside", wiki: "Burton Bradstock", slug: "dorset/burton-bradstock" },
+      { region: "South West", location: "Dorset", name: "Spyway and Dancing Ledge", category: "Countryside", wiki: "Dancing Ledge", slug: "dorset/spyway" },
+      { region: "South West", location: "Dorset", name: "Ringstead Bay", category: "Countryside", wiki: "Ringstead Bay", slug: "dorset/ringstead-bay" },
+      { region: "South West", location: "Dorset", name: "Hardy Monument", category: "Historic Property", wiki: "Hardy Monument", slug: "dorset/hardy-monument" },
+      { region: "South West", location: "Dorset", name: "Badbury Rings", category: "Prehistoric", wiki: "Badbury Rings", slug: "dorset/badbury-rings" },
+      { region: "South West", location: "Dorset", name: "Cerne Giant", category: "Prehistoric", wiki: "Cerne Abbas Giant", slug: "dorset/cerne-giant" },
+      { region: "South West", location: "Dorset", name: "White Mill", category: "Historic Property", wiki: "White Mill, Sturminster Marshall", slug: "dorset/white-mill" },
 
       // Gloucestershire & Cotswolds
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "near Chipping Campden", name: "Hidcote", category: "Garden", wiki: "Hidcote Manor Garden", slug: "gloucestershire-cotswolds/hidcote" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "near Broadway", name: "Snowshill Manor and Garden", category: "Historic House", wiki: "Snowshill Manor", slug: "gloucestershire-cotswolds/snowshill-manor-and-garden" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "near Cheltenham", name: "Chedworth Roman Villa", category: "Roman", wiki: "Chedworth Roman Villa", slug: "gloucestershire-cotswolds/chedworth-roman-villa" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "near Bath", name: "Dyrham Park", category: "Historic House", wiki: "Dyrham Park", slug: "gloucestershire-cotswolds/dyrham-park" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "near Wotton-under-Edge", name: "Newark Park", category: "Historic House", wiki: "Newark Park", slug: "gloucestershire-cotswolds/newark-park" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "near Winchcombe", name: "Hailes Abbey", category: "Abbey", wiki: "Hailes Abbey", slug: "gloucestershire-cotswolds/hailes-abbey" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "Bibury", name: "Bibury (Arlington Row)", category: "Historic Property", wiki: "Arlington Row", slug: "gloucestershire-cotswolds/bibury" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "near Stonehouse", name: "Woodchester Park", category: "Countryside", wiki: "Woodchester Park", slug: "gloucestershire-cotswolds/woodchester-park" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "Stroud", name: "Minchinhampton and Rodborough Commons", category: "Countryside", wiki: "Minchinhampton Common", slug: "gloucestershire-cotswolds/minchinhampton-and-rodborough-commons" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "near Chipping Campden", name: "Dover's Hill", category: "Countryside", wiki: "Dover's Hill", slug: "gloucestershire-cotswolds/dovers-hill" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "near Cheltenham", name: "Crickley Hill", category: "Countryside", wiki: "Crickley Hill", slug: "gloucestershire-cotswolds/crickley-hill" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "Westbury-on-Severn", name: "Westbury Court Garden", category: "Garden", wiki: "Westbury Court Garden", slug: "gloucestershire-cotswolds/westbury-court-garden" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "near Newent", name: "May Hill", category: "Countryside", wiki: "May Hill", slug: "gloucestershire-cotswolds/may-hill" },
-      { region: "South West", location: "Gloucestershire & Cotswolds", sub: "near Chipping Sodbury", name: "Horton Court", category: "Historic Property", wiki: "Horton Court", slug: "gloucestershire-cotswolds/horton-court" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Hidcote", category: "Garden", wiki: "Hidcote Manor Garden", slug: "gloucestershire-cotswolds/hidcote" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Snowshill Manor and Garden", category: "Historic House", wiki: "Snowshill Manor", slug: "gloucestershire-cotswolds/snowshill-manor-and-garden" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Chedworth Roman Villa", category: "Roman", wiki: "Chedworth Roman Villa", slug: "gloucestershire-cotswolds/chedworth-roman-villa" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Dyrham Park", category: "Historic House", wiki: "Dyrham Park", slug: "gloucestershire-cotswolds/dyrham-park" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Newark Park", category: "Historic House", wiki: "Newark Park", slug: "gloucestershire-cotswolds/newark-park" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Hailes Abbey", category: "Abbey", wiki: "Hailes Abbey", slug: "gloucestershire-cotswolds/hailes-abbey" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Bibury (Arlington Row)", category: "Historic Property", wiki: "Arlington Row", slug: "gloucestershire-cotswolds/bibury" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Woodchester Park", category: "Countryside", wiki: "Woodchester Park", slug: "gloucestershire-cotswolds/woodchester-park" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Minchinhampton and Rodborough Commons", category: "Countryside", wiki: "Minchinhampton Common", slug: "gloucestershire-cotswolds/minchinhampton-and-rodborough-commons" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Dover's Hill", category: "Countryside", wiki: "Dover's Hill", slug: "gloucestershire-cotswolds/dovers-hill" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Crickley Hill", category: "Countryside", wiki: "Crickley Hill", slug: "gloucestershire-cotswolds/crickley-hill" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Westbury Court Garden", category: "Garden", wiki: "Westbury Court Garden", slug: "gloucestershire-cotswolds/westbury-court-garden" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "May Hill", category: "Countryside", wiki: "May Hill", slug: "gloucestershire-cotswolds/may-hill" },
+      { region: "South West", location: "Gloucestershire & Cotswolds", name: "Horton Court", category: "Historic Property", wiki: "Horton Court", slug: "gloucestershire-cotswolds/horton-court" },
 
       // Somerset & Bristol
-      { region: "South West", location: "Somerset & Bristol", sub: "near Bristol", name: "Tyntesfield", category: "Historic House", wiki: "Tyntesfield", slug: "somerset/tyntesfield" },
-      { region: "South West", location: "Somerset & Bristol", sub: "near Minehead", name: "Dunster Castle and Watermill", category: "Castle", wiki: "Dunster Castle", slug: "somerset/dunster-castle-and-watermill" },
-      { region: "South West", location: "Somerset & Bristol", sub: "near Yeovil", name: "Montacute House", category: "Historic House", wiki: "Montacute House", slug: "somerset/montacute-house" },
-      { region: "South West", location: "Somerset & Bristol", sub: "near Ilminster", name: "Barrington Court", category: "Historic House", wiki: "Barrington Court", slug: "somerset/barrington-court" },
-      { region: "South West", location: "Somerset & Bristol", sub: "near Somerton", name: "Lytes Cary Manor", category: "Historic House", wiki: "Lytes Cary", slug: "somerset/lytes-cary-manor" },
-      { region: "South West", location: "Somerset & Bristol", sub: "near Yeovil", name: "Tintinhull Garden", category: "Garden", wiki: "Tintinhull Garden", slug: "somerset/tintinhull-garden" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Bath", name: "Prior Park Landscape Garden", category: "Garden", wiki: "Prior Park Landscape Garden", slug: "somerset/prior-park-landscape-garden" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Bath", name: "Bath Assembly Rooms", category: "Historic Property", wiki: "Bath Assembly Rooms", slug: "somerset/bath-assembly-rooms" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Bath", name: "Bath Skyline", category: "Countryside", wiki: "Bath, Somerset", slug: "somerset/bath-skyline" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Glastonbury", name: "Glastonbury Tor", category: "Countryside", wiki: "Glastonbury Tor", slug: "somerset/glastonbury-tor" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Cheddar", name: "Cheddar Gorge", category: "Countryside", wiki: "Cheddar Gorge", slug: "somerset/cheddar-gorge" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Exmoor", name: "Holnicote Estate", category: "Countryside", wiki: "Holnicote Estate", slug: "somerset/holnicote-estate" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Burnham-on-Sea", name: "Brean Down", category: "Historic Property", wiki: "Brean Down Fort", slug: "somerset/brean-down" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Bristol", name: "Blaise Hamlet", category: "Historic Property", wiki: "Blaise Hamlet", slug: "somerset/blaise-hamlet" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Bristol", name: "Leigh Woods", category: "Countryside", wiki: "Leigh Woods National Nature Reserve", slug: "somerset/leigh-woods" },
-      { region: "South West", location: "Somerset & Bristol", sub: "near Bridgwater", name: "Fyne Court", category: "Garden", wiki: "Fyne Court", slug: "somerset/fyne-court" },
-      { region: "South West", location: "Somerset & Bristol", sub: "near Bridgwater", name: "Coleridge Cottage", category: "Historic Property", wiki: "Coleridge Cottage", slug: "somerset/coleridge-cottage" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Wellington", name: "Wellington Monument", category: "Historic Property", wiki: "Wellington Monument, Somerset", slug: "somerset/wellington-monument" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Burrowbridge", name: "Burrow Mump", category: "Historic Property", wiki: "Burrow Mump", slug: "somerset/burrow-mump" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Martock", name: "Treasurer's House, Martock", category: "Historic Property", wiki: "Treasurer's House, Martock", slug: "somerset/treasurers-house-martock" },
-      { region: "South West", location: "Somerset & Bristol", sub: "Muchelney", name: "Priest's House, Muchelney", category: "Historic Property", wiki: "Priest's House, Muchelney", slug: "somerset/priests-house-muchelney" },
+      { region: "South West", location: "Somerset & Bristol", name: "Tyntesfield", category: "Historic House", wiki: "Tyntesfield", slug: "somerset/tyntesfield" },
+      { region: "South West", location: "Somerset & Bristol", name: "Dunster Castle and Watermill", category: "Castle", wiki: "Dunster Castle", slug: "somerset/dunster-castle-and-watermill" },
+      { region: "South West", location: "Somerset & Bristol", name: "Montacute House", category: "Historic House", wiki: "Montacute House", slug: "somerset/montacute-house" },
+      { region: "South West", location: "Somerset & Bristol", name: "Barrington Court", category: "Historic House", wiki: "Barrington Court", slug: "somerset/barrington-court" },
+      { region: "South West", location: "Somerset & Bristol", name: "Lytes Cary Manor", category: "Historic House", wiki: "Lytes Cary", slug: "somerset/lytes-cary-manor" },
+      { region: "South West", location: "Somerset & Bristol", name: "Tintinhull Garden", category: "Garden", wiki: "Tintinhull Garden", slug: "somerset/tintinhull-garden" },
+      { region: "South West", location: "Somerset & Bristol", name: "Prior Park Landscape Garden", category: "Garden", wiki: "Prior Park Landscape Garden", slug: "somerset/prior-park-landscape-garden" },
+      { region: "South West", location: "Somerset & Bristol", name: "Bath Assembly Rooms", category: "Historic Property", wiki: "Bath Assembly Rooms", slug: "somerset/bath-assembly-rooms" },
+      { region: "South West", location: "Somerset & Bristol", name: "Bath Skyline", category: "Countryside", wiki: "Bath, Somerset", slug: "somerset/bath-skyline" },
+      { region: "South West", location: "Somerset & Bristol", name: "Glastonbury Tor", category: "Countryside", wiki: "Glastonbury Tor", slug: "somerset/glastonbury-tor" },
+      { region: "South West", location: "Somerset & Bristol", name: "Cheddar Gorge", category: "Countryside", wiki: "Cheddar Gorge", slug: "somerset/cheddar-gorge" },
+      { region: "South West", location: "Somerset & Bristol", name: "Holnicote Estate", category: "Countryside", wiki: "Holnicote Estate", slug: "somerset/holnicote-estate" },
+      { region: "South West", location: "Somerset & Bristol", name: "Brean Down", category: "Historic Property", wiki: "Brean Down Fort", slug: "somerset/brean-down" },
+      { region: "South West", location: "Somerset & Bristol", name: "Blaise Hamlet", category: "Historic Property", wiki: "Blaise Hamlet", slug: "somerset/blaise-hamlet" },
+      { region: "South West", location: "Somerset & Bristol", name: "Leigh Woods", category: "Countryside", wiki: "Leigh Woods National Nature Reserve", slug: "somerset/leigh-woods" },
+      { region: "South West", location: "Somerset & Bristol", name: "Fyne Court", category: "Garden", wiki: "Fyne Court", slug: "somerset/fyne-court" },
+      { region: "South West", location: "Somerset & Bristol", name: "Coleridge Cottage", category: "Historic Property", wiki: "Coleridge Cottage", slug: "somerset/coleridge-cottage" },
+      { region: "South West", location: "Somerset & Bristol", name: "Wellington Monument", category: "Historic Property", wiki: "Wellington Monument, Somerset", slug: "somerset/wellington-monument" },
+      { region: "South West", location: "Somerset & Bristol", name: "Burrow Mump", category: "Historic Property", wiki: "Burrow Mump", slug: "somerset/burrow-mump" },
+      { region: "South West", location: "Somerset & Bristol", name: "Treasurer's House, Martock", category: "Historic Property", wiki: "Treasurer's House, Martock", slug: "somerset/treasurers-house-martock" },
+      { region: "South West", location: "Somerset & Bristol", name: "Priest's House, Muchelney", category: "Historic Property", wiki: "Priest's House, Muchelney", slug: "somerset/priests-house-muchelney" },
 
       // Wiltshire
-      { region: "South West", location: "Wiltshire", sub: "near Mere", name: "Stourhead", category: "Garden", wiki: "Stourhead", slug: "wiltshire/stourhead" },
-      { region: "South West", location: "Wiltshire", sub: "near Chippenham", name: "Lacock", category: "Historic House", wiki: "Lacock Abbey", slug: "wiltshire/lacock-abbey-fox-talbot-museum-and-village" },
-      { region: "South West", location: "Wiltshire", sub: "near Marlborough", name: "Avebury", category: "Prehistoric", wiki: "Avebury", slug: "wiltshire/avebury" },
-      { region: "South West", location: "Wiltshire", sub: "Salisbury", name: "Mompesson House", category: "Historic House", wiki: "Mompesson House", slug: "wiltshire/mompesson-house" },
-      { region: "South West", location: "Wiltshire", sub: "near Bradford-on-Avon", name: "The Courts Garden", category: "Garden", wiki: "The Courts Garden", slug: "wiltshire/the-courts-garden" },
-      { region: "South West", location: "Wiltshire", sub: "near Bradford-on-Avon", name: "Great Chalfield Manor", category: "Historic Property", wiki: "Great Chalfield Manor", slug: "wiltshire/great-chalfield-manor" },
-      { region: "South West", location: "Wiltshire", sub: "near Bradford-on-Avon", name: "Westwood Manor", category: "Historic Property", wiki: "Westwood Manor", slug: "wiltshire/westwood-manor" },
-      { region: "South West", location: "Wiltshire", sub: "near Amesbury", name: "Stonehenge Landscape", category: "Prehistoric", wiki: "Stonehenge", slug: "wiltshire/stonehenge-landscape" },
-      { region: "South West", location: "Wiltshire", sub: "near Calne", name: "Cherhill White Horse", category: "Countryside", wiki: "Cherhill White Horse", slug: "wiltshire/cherhill-white-horse" },
-      { region: "South West", location: "Wiltshire", sub: "near Warminster", name: "Cley Hill", category: "Countryside", wiki: "Cley Hill", slug: "wiltshire/cley-hill" },
+      { region: "South West", location: "Wiltshire", name: "Stourhead", category: "Garden", wiki: "Stourhead", slug: "wiltshire/stourhead" },
+      { region: "South West", location: "Wiltshire", name: "Lacock", category: "Historic House", wiki: "Lacock Abbey", slug: "wiltshire/lacock-abbey-fox-talbot-museum-and-village" },
+      { region: "South West", location: "Wiltshire", name: "Avebury", category: "Prehistoric", wiki: "Avebury", slug: "wiltshire/avebury" },
+      { region: "South West", location: "Wiltshire", name: "Mompesson House", category: "Historic House", wiki: "Mompesson House", slug: "wiltshire/mompesson-house" },
+      { region: "South West", location: "Wiltshire", name: "The Courts Garden", category: "Garden", wiki: "The Courts Garden", slug: "wiltshire/the-courts-garden" },
+      { region: "South West", location: "Wiltshire", name: "Great Chalfield Manor", category: "Historic Property", wiki: "Great Chalfield Manor", slug: "wiltshire/great-chalfield-manor" },
+      { region: "South West", location: "Wiltshire", name: "Westwood Manor", category: "Historic Property", wiki: "Westwood Manor", slug: "wiltshire/westwood-manor" },
+      { region: "South West", location: "Wiltshire", name: "Stonehenge Landscape", category: "Prehistoric", wiki: "Stonehenge", slug: "wiltshire/stonehenge-landscape" },
+      { region: "South West", location: "Wiltshire", name: "Cherhill White Horse", category: "Countryside", wiki: "Cherhill White Horse", slug: "wiltshire/cherhill-white-horse" },
+      { region: "South West", location: "Wiltshire", name: "Cley Hill", category: "Countryside", wiki: "Cley Hill", slug: "wiltshire/cley-hill" },
 
       // === THE NORTH ===
       // Cumbria & Lake District
-      { region: "The North", location: "Cumbria & Lake District", sub: "near Ambleside", name: "Wray", category: "Historic House", wiki: "Wray Castle", slug: "lake-district/wray" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "near Hawkshead", name: "Hill Top", category: "Historic Property", wiki: "Hill Top, Cumbria", slug: "lake-district/hill-top" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "near Kendal", name: "Sizergh", category: "Historic House", wiki: "Sizergh Castle", slug: "lake-district/sizergh" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Windermere", name: "Fell Foot", category: "Countryside", wiki: "Fell Foot Park", slug: "lake-district/fell-foot" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "near Ullswater", name: "Aira Force and Ullswater", category: "Countryside", wiki: "Aira Force", slug: "lake-district/aira-force-and-ullswater" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "near Penrith", name: "Acorn Bank", category: "Garden", wiki: "Acorn Bank", slug: "lake-district/acorn-bank" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Cockermouth", name: "Wordsworth House and Garden", category: "Historic Property", wiki: "Wordsworth House", slug: "lake-district/wordsworth-house-and-garden" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Grasmere", name: "Allan Bank", category: "Historic House", wiki: "Allan Bank", slug: "lake-district/allan-bank-and-grasmere" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "near Windermere", name: "Townend", category: "Historic House", wiki: "Townend", slug: "lake-district/townend" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Coniston", name: "Tarn Hows and Coniston", category: "Countryside", wiki: "Tarn Hows", slug: "lake-district/tarn-hows-and-coniston" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Windermere", name: "Claife Viewing Station", category: "Historic Property", wiki: "Claife Viewing Station", slug: "lake-district/claife-viewing-station-and-windermere-west-shore" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Keswick", name: "Borrowdale and Derwent Water", category: "Countryside", wiki: "Borrowdale", slug: "lake-district/borrowdale-and-derwent-water" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Coniston Water", name: "Steam Yacht Gondola", category: "Family", wiki: "SY Gondola", slug: "lake-district/steam-yacht-gondola" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Ambleside", name: "Bridge House", category: "Historic Property", wiki: "Bridge House, Ambleside", slug: "lake-district/bridge-house" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Hawkshead", name: "Beatrix Potter Gallery", category: "Museum", wiki: "Beatrix Potter Gallery", slug: "lake-district/beatrix-potter-gallery-and-hawkshead" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Wasdale", name: "Wasdale, Scafell Pike and Wastwater", category: "Countryside", wiki: "Wast Water", slug: "lake-district/wasdale" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Ennerdale", name: "Ennerdale", category: "Countryside", wiki: "Ennerdale Water", slug: "lake-district/ennerdale" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Langdale", name: "Stickle Tarn & Great Langdale", category: "Countryside", wiki: "Stickle Tarn", slug: "lake-district/great-langdale" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Buttermere", name: "Buttermere, Crummock Water & Loweswater", category: "Countryside", wiki: "Buttermere", slug: "lake-district/buttermere-valley" },
-      { region: "The North", location: "Cumbria & Lake District", sub: "Dalton-in-Furness", name: "Dalton Castle", category: "Castle", wiki: "Dalton Castle", slug: "lake-district/dalton-castle" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Wray", category: "Historic House", wiki: "Wray Castle", slug: "lake-district/wray" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Hill Top", category: "Historic Property", wiki: "Hill Top, Cumbria", slug: "lake-district/hill-top" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Sizergh", category: "Historic House", wiki: "Sizergh Castle", slug: "lake-district/sizergh" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Fell Foot", category: "Countryside", wiki: "Fell Foot Park", slug: "lake-district/fell-foot" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Aira Force and Ullswater", category: "Countryside", wiki: "Aira Force", slug: "lake-district/aira-force-and-ullswater" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Acorn Bank", category: "Garden", wiki: "Acorn Bank", slug: "lake-district/acorn-bank" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Wordsworth House and Garden", category: "Historic Property", wiki: "Wordsworth House", slug: "lake-district/wordsworth-house-and-garden" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Allan Bank", category: "Historic House", wiki: "Allan Bank", slug: "lake-district/allan-bank-and-grasmere" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Townend", category: "Historic House", wiki: "Townend", slug: "lake-district/townend" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Tarn Hows and Coniston", category: "Countryside", wiki: "Tarn Hows", slug: "lake-district/tarn-hows-and-coniston" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Claife Viewing Station", category: "Historic Property", wiki: "Claife Viewing Station", slug: "lake-district/claife-viewing-station-and-windermere-west-shore" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Borrowdale and Derwent Water", category: "Countryside", wiki: "Borrowdale", slug: "lake-district/borrowdale-and-derwent-water" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Steam Yacht Gondola", category: "Family", wiki: "SY Gondola", slug: "lake-district/steam-yacht-gondola" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Bridge House", category: "Historic Property", wiki: "Bridge House, Ambleside", slug: "lake-district/bridge-house" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Beatrix Potter Gallery", category: "Museum", wiki: "Beatrix Potter Gallery", slug: "lake-district/beatrix-potter-gallery-and-hawkshead" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Wasdale, Scafell Pike and Wastwater", category: "Countryside", wiki: "Wast Water", slug: "lake-district/wasdale" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Ennerdale", category: "Countryside", wiki: "Ennerdale Water", slug: "lake-district/ennerdale" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Stickle Tarn & Great Langdale", category: "Countryside", wiki: "Stickle Tarn", slug: "lake-district/great-langdale" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Buttermere, Crummock Water & Loweswater", category: "Countryside", wiki: "Buttermere", slug: "lake-district/buttermere-valley" },
+      { region: "The North", location: "Cumbria & Lake District", name: "Dalton Castle", category: "Castle", wiki: "Dalton Castle", slug: "lake-district/dalton-castle" },
 
       // Cheshire & Greater Manchester
-      { region: "The North", location: "Cheshire & Greater Manchester", sub: "near Altrincham", name: "Dunham Massey", category: "Historic House", wiki: "Dunham Massey", slug: "cheshire-greater-manchester/dunham-massey" },
-      { region: "The North", location: "Cheshire & Greater Manchester", sub: "near Disley", name: "Lyme", category: "Historic House", wiki: "Lyme Park", slug: "cheshire-greater-manchester/lyme" },
-      { region: "The North", location: "Cheshire & Greater Manchester", sub: "Styal", name: "Quarry Bank", category: "Historic Property", wiki: "Quarry Bank Mill", slug: "cheshire-greater-manchester/quarry-bank" },
-      { region: "The North", location: "Cheshire & Greater Manchester", sub: "near Congleton", name: "Little Moreton Hall", category: "Historic House", wiki: "Little Moreton Hall", slug: "cheshire-greater-manchester/little-moreton-hall" },
-      { region: "The North", location: "Cheshire & Greater Manchester", sub: "Knutsford", name: "Tatton Park", category: "Historic House", wiki: "Tatton Park", slug: "cheshire-greater-manchester/tatton-park" },
-      { region: "The North", location: "Cheshire & Greater Manchester", sub: "near Macclesfield", name: "Hare Hill", category: "Garden", wiki: "Hare Hill", slug: "cheshire-greater-manchester/hare-hill" },
-      { region: "The North", location: "Cheshire & Greater Manchester", sub: "Alderley Edge", name: "Alderley Edge", category: "Countryside", wiki: "Alderley Edge", slug: "cheshire-greater-manchester/alderley-edge-and-cheshire-countryside" },
-      { region: "The North", location: "Cheshire & Greater Manchester", sub: "Nether Alderley", name: "Nether Alderley Mill", category: "Historic Property", wiki: "Nether Alderley Mill", slug: "cheshire-greater-manchester/nether-alderley-mill" },
+      { region: "The North", location: "Cheshire & Greater Manchester", name: "Dunham Massey", category: "Historic House", wiki: "Dunham Massey", slug: "cheshire-greater-manchester/dunham-massey" },
+      { region: "The North", location: "Cheshire & Greater Manchester", name: "Lyme", category: "Historic House", wiki: "Lyme Park", slug: "cheshire-greater-manchester/lyme" },
+      { region: "The North", location: "Cheshire & Greater Manchester", name: "Quarry Bank", category: "Historic Property", wiki: "Quarry Bank Mill", slug: "cheshire-greater-manchester/quarry-bank" },
+      { region: "The North", location: "Cheshire & Greater Manchester", name: "Little Moreton Hall", category: "Historic House", wiki: "Little Moreton Hall", slug: "cheshire-greater-manchester/little-moreton-hall" },
+      { region: "The North", location: "Cheshire & Greater Manchester", name: "Tatton Park", category: "Historic House", wiki: "Tatton Park", slug: "cheshire-greater-manchester/tatton-park" },
+      { region: "The North", location: "Cheshire & Greater Manchester", name: "Hare Hill", category: "Garden", wiki: "Hare Hill", slug: "cheshire-greater-manchester/hare-hill" },
+      { region: "The North", location: "Cheshire & Greater Manchester", name: "Alderley Edge", category: "Countryside", wiki: "Alderley Edge", slug: "cheshire-greater-manchester/alderley-edge-and-cheshire-countryside" },
+      { region: "The North", location: "Cheshire & Greater Manchester", name: "Nether Alderley Mill", category: "Historic Property", wiki: "Nether Alderley Mill", slug: "cheshire-greater-manchester/nether-alderley-mill" },
 
       // Lancashire & Merseyside
-      { region: "The North", location: "Lancashire & Merseyside", sub: "Liverpool", name: "Speke Hall", category: "Historic House", wiki: "Speke Hall", slug: "liverpool/speke-hall" },
-      { region: "The North", location: "Lancashire & Merseyside", sub: "Liverpool", name: "The Beatles' Childhood Homes", category: "Historic Property", wiki: "20 Forthlin Road", slug: "liverpool/the-beatles-childhood-homes" },
-      { region: "The North", location: "Lancashire & Merseyside", sub: "Liverpool", name: "The Hardmans' House", category: "Historic Property", wiki: "The Hardmans' House", slug: "liverpool/the-hardmans-house" },
-      { region: "The North", location: "Lancashire & Merseyside", sub: "near Ormskirk", name: "Rufford Old Hall", category: "Historic Property", wiki: "Rufford Old Hall", slug: "lancashire/rufford-old-hall" },
-      { region: "The North", location: "Lancashire & Merseyside", sub: "near Burnley", name: "Gawthorpe Hall", category: "Historic House", wiki: "Gawthorpe Hall", slug: "lancashire/gawthorpe-hall" },
-      { region: "The North", location: "Lancashire & Merseyside", sub: "Silverdale", name: "Arnside and Silverdale", category: "Countryside", wiki: "Arnside and Silverdale", slug: "lancashire/arnside-and-silverdale" },
+      { region: "The North", location: "Lancashire & Merseyside", name: "Speke Hall", category: "Historic House", wiki: "Speke Hall", slug: "liverpool/speke-hall" },
+      { region: "The North", location: "Lancashire & Merseyside", name: "The Beatles' Childhood Homes", category: "Historic Property", wiki: "20 Forthlin Road", slug: "liverpool/the-beatles-childhood-homes" },
+      { region: "The North", location: "Lancashire & Merseyside", name: "The Hardmans' House", category: "Historic Property", wiki: "The Hardmans' House", slug: "liverpool/the-hardmans-house" },
+      { region: "The North", location: "Lancashire & Merseyside", name: "Rufford Old Hall", category: "Historic Property", wiki: "Rufford Old Hall", slug: "lancashire/rufford-old-hall" },
+      { region: "The North", location: "Lancashire & Merseyside", name: "Gawthorpe Hall", category: "Historic House", wiki: "Gawthorpe Hall", slug: "lancashire/gawthorpe-hall" },
+      { region: "The North", location: "Lancashire & Merseyside", name: "Arnside and Silverdale", category: "Countryside", wiki: "Arnside and Silverdale", slug: "lancashire/arnside-and-silverdale" },
 
       // Yorkshire
-      { region: "The North", location: "Yorkshire", sub: "near Ripon", name: "Fountains Abbey and Studley Royal", category: "Abbey", wiki: "Fountains Abbey", slug: "yorkshire/fountains-abbey-and-studley-royal-water-garden" },
-      { region: "The North", location: "Yorkshire", sub: "near Wakefield", name: "Nostell", category: "Historic House", wiki: "Nostell Priory", slug: "yorkshire/nostell" },
-      { region: "The North", location: "Yorkshire", sub: "near York", name: "Beningbrough Hall, Gallery and Gardens", category: "Historic House", wiki: "Beningbrough Hall", slug: "yorkshire/beningbrough" },
-      { region: "The North", location: "Yorkshire", sub: "near Helmsley", name: "Rievaulx Terrace", category: "Garden", wiki: "Rievaulx Terrace & Temples", slug: "yorkshire/rievaulx-terrace" },
-      { region: "The North", location: "Yorkshire", sub: "near Harrogate", name: "Brimham Rocks", category: "Countryside", wiki: "Brimham Rocks", slug: "yorkshire/brimham-rocks" },
-      { region: "The North", location: "Yorkshire", sub: "near York", name: "Nunnington Hall", category: "Historic Property", wiki: "Nunnington Hall", slug: "yorkshire/nunnington-hall" },
-      { region: "The North", location: "Yorkshire", sub: "near Keighley", name: "East Riddlesden Hall", category: "Historic House", wiki: "East Riddlesden Hall", slug: "yorkshire/east-riddlesden-hall" },
-      { region: "The North", location: "Yorkshire", sub: "York", name: "Treasurer's House, York", category: "Historic Property", wiki: "Treasurer's House, York", slug: "yorkshire/treasurers-house-york" },
-      { region: "The North", location: "Yorkshire", sub: "York", name: "Goddards", category: "Historic House", wiki: "Goddards House and Garden", slug: "yorkshire/goddards" },
-      { region: "The North", location: "Yorkshire", sub: "near Hebden Bridge", name: "Hardcastle Crags and Gibson Mill", category: "Countryside", wiki: "Hardcastle Crags", slug: "yorkshire/hardcastle-crags" },
-      { region: "The North", location: "Yorkshire", sub: "near Guisborough", name: "Roseberry Topping", category: "Countryside", wiki: "Roseberry Topping", slug: "yorkshire/roseberry-topping" },
-      { region: "The North", location: "Yorkshire", sub: "near Pickering", name: "Bridestones, Crosscliff and Blakey Topping", category: "Countryside", wiki: "Bridestones", slug: "yorkshire/bridestones-crosscliff-and-blakey-topping" },
-      { region: "The North", location: "Yorkshire", sub: "Robin Hood's Bay", name: "Robin Hood's Bay and Old Coastguard Station", category: "Countryside", wiki: "Robin Hood's Bay", slug: "yorkshire/robin-hoods-bay" },
-      { region: "The North", location: "Yorkshire", sub: "Hull", name: "Maister House", category: "Historic Property", wiki: "Maister House", slug: "yorkshire/maister-house" },
+      { region: "The North", location: "Yorkshire", name: "Fountains Abbey and Studley Royal", category: "Abbey", wiki: "Fountains Abbey", slug: "yorkshire/fountains-abbey-and-studley-royal-water-garden" },
+      { region: "The North", location: "Yorkshire", name: "Nostell", category: "Historic House", wiki: "Nostell Priory", slug: "yorkshire/nostell" },
+      { region: "The North", location: "Yorkshire", name: "Beningbrough Hall, Gallery and Gardens", category: "Historic House", wiki: "Beningbrough Hall", slug: "yorkshire/beningbrough" },
+      { region: "The North", location: "Yorkshire", name: "Rievaulx Terrace", category: "Garden", wiki: "Rievaulx Terrace & Temples", slug: "yorkshire/rievaulx-terrace" },
+      { region: "The North", location: "Yorkshire", name: "Brimham Rocks", category: "Countryside", wiki: "Brimham Rocks", slug: "yorkshire/brimham-rocks" },
+      { region: "The North", location: "Yorkshire", name: "Nunnington Hall", category: "Historic Property", wiki: "Nunnington Hall", slug: "yorkshire/nunnington-hall" },
+      { region: "The North", location: "Yorkshire", name: "East Riddlesden Hall", category: "Historic House", wiki: "East Riddlesden Hall", slug: "yorkshire/east-riddlesden-hall" },
+      { region: "The North", location: "Yorkshire", name: "Treasurer's House, York", category: "Historic Property", wiki: "Treasurer's House, York", slug: "yorkshire/treasurers-house-york" },
+      { region: "The North", location: "Yorkshire", name: "Goddards", category: "Historic House", wiki: "Goddards House and Garden", slug: "yorkshire/goddards" },
+      { region: "The North", location: "Yorkshire", name: "Hardcastle Crags and Gibson Mill", category: "Countryside", wiki: "Hardcastle Crags", slug: "yorkshire/hardcastle-crags" },
+      { region: "The North", location: "Yorkshire", name: "Roseberry Topping", category: "Countryside", wiki: "Roseberry Topping", slug: "yorkshire/roseberry-topping" },
+      { region: "The North", location: "Yorkshire", name: "Bridestones, Crosscliff and Blakey Topping", category: "Countryside", wiki: "Bridestones", slug: "yorkshire/bridestones-crosscliff-and-blakey-topping" },
+      { region: "The North", location: "Yorkshire", name: "Robin Hood's Bay and Old Coastguard Station", category: "Countryside", wiki: "Robin Hood's Bay", slug: "yorkshire/robin-hoods-bay" },
+      { region: "The North", location: "Yorkshire", name: "Maister House", category: "Historic Property", wiki: "Maister House", slug: "yorkshire/maister-house" },
 
       // Northumberland & North East
-      { region: "The North", location: "Northumberland & North East", sub: "near Rothbury", name: "Cragside", category: "Historic House", wiki: "Cragside", slug: "northumberland/cragside" },
-      { region: "The North", location: "Northumberland & North East", sub: "near Morpeth", name: "Wallington", category: "Historic House", wiki: "Wallington, Northumberland", slug: "northumberland/wallington" },
-      { region: "The North", location: "Northumberland & North East", sub: "Holy Island", name: "Lindisfarne Castle", category: "Castle", wiki: "Lindisfarne Castle", slug: "northumberland/lindisfarne-castle" },
-      { region: "The North", location: "Northumberland & North East", sub: "near Alnwick", name: "Dunstanburgh Castle", category: "Castle", wiki: "Dunstanburgh Castle", slug: "northumberland/dunstanburgh-castle" },
-      { region: "The North", location: "Northumberland & North East", sub: "near Whitley Bay", name: "Seaton Delaval Hall", category: "Historic House", wiki: "Seaton Delaval Hall", slug: "northumberland/seaton-delaval-hall" },
-      { region: "The North", location: "Northumberland & North East", sub: "near Bardon Mill", name: "Hadrian's Wall and Housesteads Fort", category: "Roman", wiki: "Housesteads Roman Fort", slug: "northumberland/housesteads-roman-fort-hadrians-wall" },
-      { region: "The North", location: "Northumberland & North East", sub: "Seahouses", name: "Farne Islands", category: "Countryside", wiki: "Farne Islands", slug: "northumberland/farne-islands" },
-      { region: "The North", location: "Northumberland & North East", sub: "near Gateshead", name: "Gibside", category: "Garden", wiki: "Gibside", slug: "north-east/gibside" },
-      { region: "The North", location: "Northumberland & North East", sub: "Sunderland", name: "Souter Lighthouse and The Leas", category: "Historic Property", wiki: "Souter Lighthouse", slug: "north-east/souter-lighthouse-and-the-leas" },
-      { region: "The North", location: "Northumberland & North East", sub: "Washington", name: "Washington Old Hall", category: "Historic Property", wiki: "Washington Old Hall", slug: "north-east/washington-old-hall" },
-      { region: "The North", location: "Northumberland & North East", sub: "Middlesbrough", name: "Ormesby Hall", category: "Historic Property", wiki: "Ormesby Hall", slug: "north-east/ormesby-hall" },
-      { region: "The North", location: "Northumberland & North East", sub: "near Hexham", name: "Allen Banks and Staward Gorge", category: "Countryside", wiki: "Allen Banks and Staward Gorge", slug: "northumberland/allen-banks-and-staward-gorge" },
-      { region: "The North", location: "Northumberland & North East", sub: "Wylam", name: "George Stephenson's Birthplace", category: "Historic Property", wiki: "George Stephenson's Birthplace", slug: "north-east/george-stephensons-birthplace" },
+      { region: "The North", location: "Northumberland & North East", name: "Cragside", category: "Historic House", wiki: "Cragside", slug: "northumberland/cragside" },
+      { region: "The North", location: "Northumberland & North East", name: "Wallington", category: "Historic House", wiki: "Wallington, Northumberland", slug: "northumberland/wallington" },
+      { region: "The North", location: "Northumberland & North East", name: "Lindisfarne Castle", category: "Castle", wiki: "Lindisfarne Castle", slug: "northumberland/lindisfarne-castle" },
+      { region: "The North", location: "Northumberland & North East", name: "Dunstanburgh Castle", category: "Castle", wiki: "Dunstanburgh Castle", slug: "northumberland/dunstanburgh-castle" },
+      { region: "The North", location: "Northumberland & North East", name: "Seaton Delaval Hall", category: "Historic House", wiki: "Seaton Delaval Hall", slug: "northumberland/seaton-delaval-hall" },
+      { region: "The North", location: "Northumberland & North East", name: "Hadrian's Wall and Housesteads Fort", category: "Roman", wiki: "Housesteads Roman Fort", slug: "northumberland/housesteads-roman-fort-hadrians-wall" },
+      { region: "The North", location: "Northumberland & North East", name: "Farne Islands", category: "Countryside", wiki: "Farne Islands", slug: "northumberland/farne-islands" },
+      { region: "The North", location: "Northumberland & North East", name: "Gibside", category: "Garden", wiki: "Gibside", slug: "north-east/gibside" },
+      { region: "The North", location: "Northumberland & North East", name: "Souter Lighthouse and The Leas", category: "Historic Property", wiki: "Souter Lighthouse", slug: "north-east/souter-lighthouse-and-the-leas" },
+      { region: "The North", location: "Northumberland & North East", name: "Washington Old Hall", category: "Historic Property", wiki: "Washington Old Hall", slug: "north-east/washington-old-hall" },
+      { region: "The North", location: "Northumberland & North East", name: "Ormesby Hall", category: "Historic Property", wiki: "Ormesby Hall", slug: "north-east/ormesby-hall" },
+      { region: "The North", location: "Northumberland & North East", name: "Allen Banks and Staward Gorge", category: "Countryside", wiki: "Allen Banks and Staward Gorge", slug: "northumberland/allen-banks-and-staward-gorge" },
+      { region: "The North", location: "Northumberland & North East", name: "George Stephenson's Birthplace", category: "Historic Property", wiki: "George Stephenson's Birthplace", slug: "north-east/george-stephensons-birthplace" },
 
       // === WALES / CYMRU ===
       // North Wales
-      { region: "Wales", location: "North Wales", sub: "near Llandudno", name: "Bodnant Garden", category: "Garden", wiki: "Bodnant Garden", slug: "wales/bodnant-garden" },
-      { region: "Wales", location: "North Wales", sub: "Bangor", name: "Penrhyn Castle and Garden", category: "Castle", wiki: "Penrhyn Castle", slug: "wales/penrhyn-castle-and-garden" },
-      { region: "Wales", location: "North Wales", sub: "Anglesey", name: "Plas Newydd House and Gardens", category: "Historic House", wiki: "Plas Newydd, Anglesey", slug: "wales/plas-newydd-house-and-gardens" },
-      { region: "Wales", location: "North Wales", sub: "near Wrexham", name: "Chirk Castle", category: "Castle", wiki: "Chirk Castle", slug: "wales/chirk-castle" },
-      { region: "Wales", location: "North Wales", sub: "Wrexham", name: "Erddig", category: "Historic House", wiki: "Erddig", slug: "wales/erddig" },
-      { region: "Wales", location: "North Wales", sub: "Conwy", name: "Aberconwy House", category: "Historic House", wiki: "Aberconwy House", slug: "wales/aberconwy-house" },
-      { region: "Wales", location: "North Wales", sub: "Conwy", name: "Conwy Suspension Bridge", category: "Historic Property", wiki: "Conwy Suspension Bridge", slug: "wales/conwy-suspension-bridge" },
-      { region: "Wales", location: "North Wales", sub: "Eryri (Snowdonia)", name: "Carneddau and Glyderau", category: "Countryside", wiki: "Glyderau", slug: "wales/carneddau-and-glyderau" },
-      { region: "Wales", location: "North Wales", sub: "Eryri (Snowdonia)", name: "Cwm Idwal", category: "Countryside", wiki: "Cwm Idwal", slug: "wales/cwm-idwal" },
-      { region: "Wales", location: "North Wales", sub: "Beddgelert", name: "Craflwyn and Beddgelert", category: "Countryside", wiki: "Beddgelert", slug: "wales/craflwyn-and-beddgelert" },
-      { region: "Wales", location: "North Wales", sub: "Llŷn Peninsula", name: "Plas-yn-Rhiw", category: "Historic House", wiki: "Plas yn Rhiw", slug: "wales/plas-yn-rhiw" },
-      { region: "Wales", location: "North Wales", sub: "Llŷn Peninsula", name: "Porth Oer (Whistling Sands)", category: "Countryside", wiki: "Porth Oer", slug: "wales/porth-oer" },
-      { region: "Wales", location: "North Wales", sub: "near Betws-y-Coed", name: "Tŷ Mawr Wybrnant", category: "Historic House", wiki: "Tŷ Mawr Wybrnant", slug: "wales/ty-mawr-wybrnant" },
+      { region: "Wales", location: "North Wales", name: "Bodnant Garden", category: "Garden", wiki: "Bodnant Garden", slug: "wales/bodnant-garden" },
+      { region: "Wales", location: "North Wales", name: "Penrhyn Castle and Garden", category: "Castle", wiki: "Penrhyn Castle", slug: "wales/penrhyn-castle-and-garden" },
+      { region: "Wales", location: "North Wales", name: "Plas Newydd House and Gardens", category: "Historic House", wiki: "Plas Newydd, Anglesey", slug: "wales/plas-newydd-house-and-gardens" },
+      { region: "Wales", location: "North Wales", name: "Chirk Castle", category: "Castle", wiki: "Chirk Castle", slug: "wales/chirk-castle" },
+      { region: "Wales", location: "North Wales", name: "Erddig", category: "Historic House", wiki: "Erddig", slug: "wales/erddig" },
+      { region: "Wales", location: "North Wales", name: "Aberconwy House", category: "Historic House", wiki: "Aberconwy House", slug: "wales/aberconwy-house" },
+      { region: "Wales", location: "North Wales", name: "Conwy Suspension Bridge", category: "Historic Property", wiki: "Conwy Suspension Bridge", slug: "wales/conwy-suspension-bridge" },
+      { region: "Wales", location: "North Wales", name: "Carneddau and Glyderau", category: "Countryside", wiki: "Glyderau", slug: "wales/carneddau-and-glyderau" },
+      { region: "Wales", location: "North Wales", name: "Cwm Idwal", category: "Countryside", wiki: "Cwm Idwal", slug: "wales/cwm-idwal" },
+      { region: "Wales", location: "North Wales", name: "Craflwyn and Beddgelert", category: "Countryside", wiki: "Beddgelert", slug: "wales/craflwyn-and-beddgelert" },
+      { region: "Wales", location: "North Wales", name: "Plas-yn-Rhiw", category: "Historic House", wiki: "Plas yn Rhiw", slug: "wales/plas-yn-rhiw" },
+      { region: "Wales", location: "North Wales", name: "Porth Oer (Whistling Sands)", category: "Countryside", wiki: "Porth Oer", slug: "wales/porth-oer" },
+      { region: "Wales", location: "North Wales", name: "Tŷ Mawr Wybrnant", category: "Historic House", wiki: "Tŷ Mawr Wybrnant", slug: "wales/ty-mawr-wybrnant" },
 
       // Mid & South Wales
-      { region: "Wales", location: "Mid Wales", sub: "Welshpool", name: "Powis Castle and Garden", category: "Castle", wiki: "Powis Castle", slug: "wales/powis-castle-and-garden" },
-      { region: "Wales", location: "Mid Wales", sub: "Brecon Beacons", name: "Pen y Fan and Brecon Beacons", category: "Countryside", wiki: "Pen y Fan", slug: "wales/brecon-beacons" },
+      { region: "Wales", location: "Mid Wales", name: "Powis Castle and Garden", category: "Castle", wiki: "Powis Castle", slug: "wales/powis-castle-and-garden" },
+      { region: "Wales", location: "Mid Wales", name: "Pen y Fan and Brecon Beacons", category: "Countryside", wiki: "Pen y Fan", slug: "wales/brecon-beacons" },
 
-      { region: "Wales", location: "South Wales", sub: "Newport", name: "Tredegar House", category: "Historic House", wiki: "Tredegar House", slug: "wales/tredegar-house" },
-      { region: "Wales", location: "South Wales", sub: "near Cardiff", name: "Dyffryn Gardens", category: "Garden", wiki: "Dyffryn Gardens", slug: "wales/dyffryn-gardens" },
-      { region: "Wales", location: "South Wales", sub: "Gower Peninsula", name: "Rhossili and South Gower Coast", category: "Countryside", wiki: "Rhossili", slug: "wales/rhossili-and-south-gower-coast" },
-      { region: "Wales", location: "South Wales", sub: "Neath", name: "Aberdulais", category: "Historic Property", wiki: "Aberdulais Falls", slug: "wales/aberdulais" },
-      { region: "Wales", location: "South Wales", sub: "Abergavenny", name: "Sugar Loaf and Usk Valley", category: "Countryside", wiki: "Sugar Loaf, Monmouthshire", slug: "wales/sugar-loaf-and-usk-valley" },
-      { region: "Wales", location: "South Wales", sub: "near Monmouth", name: "Skenfrith Castle", category: "Castle", wiki: "Skenfrith Castle", slug: "wales/skenfrith-castle" },
+      { region: "Wales", location: "South Wales", name: "Tredegar House", category: "Historic House", wiki: "Tredegar House", slug: "wales/tredegar-house" },
+      { region: "Wales", location: "South Wales", name: "Dyffryn Gardens", category: "Garden", wiki: "Dyffryn Gardens", slug: "wales/dyffryn-gardens" },
+      { region: "Wales", location: "South Wales", name: "Rhossili and South Gower Coast", category: "Countryside", wiki: "Rhossili", slug: "wales/rhossili-and-south-gower-coast" },
+      { region: "Wales", location: "South Wales", name: "Aberdulais", category: "Historic Property", wiki: "Aberdulais Falls", slug: "wales/aberdulais" },
+      { region: "Wales", location: "South Wales", name: "Sugar Loaf and Usk Valley", category: "Countryside", wiki: "Sugar Loaf, Monmouthshire", slug: "wales/sugar-loaf-and-usk-valley" },
+      { region: "Wales", location: "South Wales", name: "Skenfrith Castle", category: "Castle", wiki: "Skenfrith Castle", slug: "wales/skenfrith-castle" },
 
       // West Wales
-      { region: "Wales", location: "West Wales", sub: "Llandeilo", name: "Dinefwr", category: "Historic House", wiki: "Dinefwr Castle", slug: "wales/dinefwr" },
-      { region: "Wales", location: "West Wales", sub: "near Aberaeron", name: "Llanerchaeron", category: "Historic House", wiki: "Llanerchaeron", slug: "wales/llanerchaeron" },
-      { region: "Wales", location: "West Wales", sub: "near Pumsaint", name: "Dolaucothi Gold Mines", category: "Roman", wiki: "Dolaucothi Gold Mines", slug: "wales/dolaucothi" },
-      { region: "Wales", location: "West Wales", sub: "Pembrokeshire", name: "Stackpole and Barafundle Bay", category: "Garden", wiki: "Stackpole Estate", slug: "wales/stackpole" },
-      { region: "Wales", location: "West Wales", sub: "near Amroth", name: "Colby Woodland Garden", category: "Garden", wiki: "Colby Woodland Garden", slug: "wales/colby-woodland-garden" },
-      { region: "Wales", location: "West Wales", sub: "Tenby", name: "Tudor Merchant's House", category: "Historic House", wiki: "Tudor Merchant's House", slug: "wales/tudor-merchants-house" },
-      { region: "Wales", location: "West Wales", sub: "near Cardigan", name: "Cilgerran Castle", category: "Castle", wiki: "Cilgerran Castle", slug: "wales/cilgerran-castle" },
-      { region: "Wales", location: "West Wales", sub: "near Cardigan", name: "Mwnt", category: "Countryside", wiki: "Mwnt", slug: "wales/mwnt" },
-      { region: "Wales", location: "West Wales", sub: "St Davids", name: "St David's Peninsula & Solva Coast", category: "Countryside", wiki: "St Davids", slug: "wales/st-davids-peninsula" }
+      { region: "Wales", location: "West Wales", name: "Dinefwr", category: "Historic House", wiki: "Dinefwr Castle", slug: "wales/dinefwr" },
+      { region: "Wales", location: "West Wales", name: "Llanerchaeron", category: "Historic House", wiki: "Llanerchaeron", slug: "wales/llanerchaeron" },
+      { region: "Wales", location: "West Wales", name: "Dolaucothi Gold Mines", category: "Roman", wiki: "Dolaucothi Gold Mines", slug: "wales/dolaucothi" },
+      { region: "Wales", location: "West Wales", name: "Stackpole and Barafundle Bay", category: "Garden", wiki: "Stackpole Estate", slug: "wales/stackpole" },
+      { region: "Wales", location: "West Wales", name: "Colby Woodland Garden", category: "Garden", wiki: "Colby Woodland Garden", slug: "wales/colby-woodland-garden" },
+      { region: "Wales", location: "West Wales", name: "Tudor Merchant's House", category: "Historic House", wiki: "Tudor Merchant's House", slug: "wales/tudor-merchants-house" },
+      { region: "Wales", location: "West Wales", name: "Cilgerran Castle", category: "Castle", wiki: "Cilgerran Castle", slug: "wales/cilgerran-castle" },
+      { region: "Wales", location: "West Wales", name: "Mwnt", category: "Countryside", wiki: "Mwnt", slug: "wales/mwnt" },
+      { region: "Wales", location: "West Wales", name: "St David's Peninsula & Solva Coast", category: "Countryside", wiki: "St Davids", slug: "wales/st-davids-peninsula" }
     ];
 
     function generateId(site) {
@@ -1112,15 +1196,33 @@
       } else {
         userData[id].status = newStatus;
         if (newStatus === "visited") {
-          const d = new Date();
-          const year = d.getFullYear();
-          const month = String(d.getMonth() + 1).padStart(2, '0');
-          const day = String(d.getDate()).padStart(2, '0');
-          userData[id].date = `${year}-${month}-${day}`;
+          if (!userData[id].date) {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            userData[id].date = `${year}-${month}-${day}`;
+          }
         }
       }
       saveState();
       renderSites();
+    }
+
+    function updateVisitedDate(id, newDate) {
+      if (!userData[id]) userData[id] = {};
+      userData[id].date = newDate;
+      saveState();
+      const currentSort = document.getElementById("sortOrder").value;
+      if (currentSort.includes("date")) {
+        renderSites();
+      }
+    }
+
+    function updateUserNotes(id, text) {
+      if (!userData[id]) userData[id] = {};
+      userData[id].notes = text;
+      saveState();
     }
 
     // ----------------------------------------------------
@@ -1213,7 +1315,7 @@
     // ----------------------------------------------------
     // 5. BATCH IMAGE LOADER & PERSISTENT CACHE
     // ----------------------------------------------------
-    const PHOTO_CACHE_KEY = "nt_property_photos_v7";
+    const PHOTO_CACHE_KEY = "nt_property_photos_v8";
     let photoCache = {};
     try {
       const stored = localStorage.getItem(PHOTO_CACHE_KEY);
@@ -1284,7 +1386,61 @@
     }
 
     // ----------------------------------------------------
-    // 6. RENDERING & UI
+    // 6. CARD RENDERING HTML HELPER
+    // ----------------------------------------------------
+    function createCardHTML(site) {
+      const u = userData[site.id] || {};
+      const status = u.status || "";
+      const isVisited = status === "visited";
+      const isWishlist = status === "wishlist";
+      const cachedImg = photoCache[site.id];
+      const visitedDate = u.date || "";
+      const notesText = u.notes || "";
+
+      return `
+        <div class="site-card ${status}" data-id="${site.id}">
+          <a href="${site.ntUrl}" target="_blank" rel="noopener noreferrer" class="site-thumb-link" data-placeholder="${site.name}" title="Click to view on National Trust website">
+            <img id="img_${site.id}" class="site-thumb ${cachedImg ? 'loaded' : ''}" src="${cachedImg || ''}" alt="${site.name}" loading="lazy">
+            <span class="site-thumb-badge">↗ Open NT Page</span>
+          </a>
+          <div class="site-card-body">
+            <div>
+              <div class="site-name">${site.name}</div>
+              <div class="site-meta">
+                <span class="site-category">${site.category}</span>
+                <span class="site-location-badge">📍 ${site.location}</span>
+              </div>
+
+              ${isVisited ? `
+                <div class="date-editor-box">
+                  <label for="date_${site.id}">Visited on:</label>
+                  <input type="date" id="date_${site.id}" class="date-input" value="${visitedDate}" data-id="${site.id}">
+                </div>
+              ` : ''}
+
+              <details class="notes-details">
+                <summary class="notes-summary">
+                  <span>📝</span> ${notesText ? '<strong>View / Edit Note</strong>' : 'Add Note'}
+                </summary>
+                <textarea class="notes-textarea" placeholder="Add your memories, travel tips or notes..." data-id="${site.id}">${notesText}</textarea>
+              </details>
+            </div>
+
+            <div class="site-actions">
+              <button class="status-btn ${isVisited ? 'active-visited' : ''}" data-action="visited" data-id="${site.id}">
+                ${isVisited ? '✓ Visited' : 'Mark Visited'}
+              </button>
+              <button class="status-btn ${isWishlist ? 'active-wishlist' : ''}" data-action="wishlist" data-id="${site.id}">
+                ${isWishlist ? '★ Wishlist' : 'Wishlist'}
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ----------------------------------------------------
+    // 7. RENDERING & UI
     // ----------------------------------------------------
     function updateStats() {
       const total = sites.length;
@@ -1344,8 +1500,9 @@
       const statusFilter = document.getElementById("filterStatus").value;
       const catFilter = document.getElementById("filterCategory").value;
       const locFilter = document.getElementById("filterLocation").value;
+      const sortOrder = document.getElementById("sortOrder").value;
 
-      const filtered = sites.filter(site => {
+      let filtered = sites.filter(site => {
         const u = userData[site.id] || {};
         const currentStatus = u.status || "unvisited";
 
@@ -1357,9 +1514,9 @@
           const matchName = site.name.toLowerCase().includes(q);
           const matchLoc = site.location.toLowerCase().includes(q);
           const matchReg = site.region.toLowerCase().includes(q);
-          const matchSub = (site.sub || "").toLowerCase().includes(q);
           const matchCat = site.category.toLowerCase().includes(q);
-          if (!matchName && !matchLoc && !matchReg && !matchSub && !matchCat) return false;
+          const matchNotes = (u.notes || "").toLowerCase().includes(q);
+          if (!matchName && !matchLoc && !matchReg && !matchCat && !matchNotes) return false;
         }
         return true;
       });
@@ -1372,95 +1529,96 @@
       }
       noMatches.classList.add("hidden");
 
-      const grouped = {};
-      filtered.forEach(s => {
-        const groupTitle = `${s.location} — ${s.region}`;
-        if (!grouped[groupTitle]) grouped[groupTitle] = [];
-        grouped[groupTitle].push(s);
-      });
+      if (sortOrder === "location") {
+        // Group by Region & Location in Accordion
+        const grouped = {};
+        filtered.forEach(s => {
+          const groupTitle = `${s.location} — ${s.region}`;
+          if (!grouped[groupTitle]) grouped[groupTitle] = [];
+          grouped[groupTitle].push(s);
+        });
 
-      const sortedGroupTitles = Object.keys(grouped).sort();
+        const sortedGroupTitles = Object.keys(grouped).sort();
 
-      sortedGroupTitles.forEach(groupTitle => {
-        const groupSites = grouped[groupTitle];
-        
-        const groupEl = document.createElement("div");
-        groupEl.className = "location-group";
+        sortedGroupTitles.forEach(groupTitle => {
+          const groupSites = grouped[groupTitle];
+          
+          const groupEl = document.createElement("div");
+          groupEl.className = "location-group";
 
-        const headerEl = document.createElement("div");
-        headerEl.className = "location-header open";
+          const headerEl = document.createElement("div");
+          headerEl.className = "location-header open";
 
-        const visitedInGroup = groupSites.filter(s => (userData[s.id] || {}).status === "visited").length;
+          const visitedInGroup = groupSites.filter(s => (userData[s.id] || {}).status === "visited").length;
 
-        headerEl.innerHTML = `
-          <div class="location-title">
-            <span class="location-name">${groupTitle}</span>
-            <span class="location-counter">${visitedInGroup} / ${groupSites.length} visited</span>
-          </div>
-          <span class="chevron">▼</span>
-        `;
-
-        const contentEl = document.createElement("div");
-        contentEl.className = "location-content";
-
-        groupSites.forEach(site => {
-          const u = userData[site.id] || {};
-          const status = u.status || "";
-
-          const card = document.createElement("div");
-          card.className = `site-card ${status}`;
-
-          const isVisited = status === "visited";
-          const isWishlist = status === "wishlist";
-          const cachedImg = photoCache[site.id];
-
-          card.innerHTML = `
-            <div class="site-thumb-wrap" data-placeholder="${site.name}">
-              <img id="img_${site.id}" class="site-thumb ${cachedImg ? 'loaded' : ''}" src="${cachedImg || ''}" alt="${site.name}" loading="lazy">
+          headerEl.innerHTML = `
+            <div class="location-title">
+              <span class="location-name">${groupTitle}</span>
+              <span class="location-counter">${visitedInGroup} / ${groupSites.length} visited</span>
             </div>
-            <div class="site-card-body">
-              <div>
-                <div class="site-name">${site.name}</div>
-                <div class="site-meta">
-                  <span class="site-category">${site.category}</span>
-                  ${site.sub ? `<span class="site-sublocation">📍 ${site.sub}</span>` : ""}
-                </div>
-                <div>
-                  <a href="${site.ntUrl}" target="_blank" rel="noopener noreferrer" class="nt-button">
-                    🌐 View on National Trust &rarr;
-                  </a>
-                </div>
-                ${isVisited && u.date ? `<div class="site-date-badge">✓ Visited: ${u.date}</div>` : ""}
-              </div>
-              <div class="site-actions">
-                <button class="status-btn ${isVisited ? 'active-visited' : ''}" data-action="visited" data-id="${site.id}">
-                  ${isVisited ? '✓ Visited' : 'Mark Visited'}
-                </button>
-                <button class="status-btn ${isWishlist ? 'active-wishlist' : ''}" data-action="wishlist" data-id="${site.id}">
-                  ${isWishlist ? '★ Wishlist' : 'Wishlist'}
-                </button>
-              </div>
-            </div>
+            <span class="chevron">▼</span>
           `;
 
-          contentEl.appendChild(card);
+          const contentEl = document.createElement("div");
+          contentEl.className = "location-content";
+
+          groupSites.forEach(site => {
+            contentEl.insertAdjacentHTML("beforeend", createCardHTML(site));
+          });
+
+          headerEl.addEventListener("click", () => {
+            headerEl.classList.toggle("open");
+            contentEl.classList.toggle("hidden");
+          });
+
+          groupEl.appendChild(headerEl);
+          groupEl.appendChild(contentEl);
+          container.appendChild(groupEl);
         });
 
-        headerEl.addEventListener("click", () => {
-          headerEl.classList.toggle("open");
-          contentEl.classList.toggle("hidden");
+      } else {
+        // Flat layout sorted by Name or Date Visited
+        if (sortOrder === "name_asc") {
+          filtered.sort((a, b) => a.name.localeCompare(b.name));
+        } else if (sortOrder === "name_desc") {
+          filtered.sort((a, b) => b.name.localeCompare(a.name));
+        } else if (sortOrder === "date_desc") {
+          filtered.sort((a, b) => {
+            const dateA = (userData[a.id] || {}).date || "";
+            const dateB = (userData[b.id] || {}).date || "";
+            if (!dateA && !dateB) return a.name.localeCompare(b.name);
+            if (!dateA) return 1;
+            if (!dateB) return -1;
+            return dateB.localeCompare(dateA);
+          });
+        } else if (sortOrder === "date_asc") {
+          filtered.sort((a, b) => {
+            const dateA = (userData[a.id] || {}).date || "";
+            const dateB = (userData[b.id] || {}).date || "";
+            if (!dateA && !dateB) return a.name.localeCompare(b.name);
+            if (!dateA) return 1;
+            if (!dateB) return -1;
+            return dateA.localeCompare(dateB);
+          });
+        }
+
+        const flatContainer = document.createElement("div");
+        flatContainer.className = "flat-list-content";
+
+        filtered.forEach(site => {
+          flatContainer.insertAdjacentHTML("beforeend", createCardHTML(site));
         });
 
-        groupEl.appendChild(headerEl);
-        groupEl.appendChild(contentEl);
-        container.appendChild(groupEl);
-      });
+        container.appendChild(flatContainer);
+      }
 
       loadAllPropertyPhotos();
     }
 
-    // Card Button Delegation
-    document.getElementById("siteListContainer").addEventListener("click", (e) => {
+    // Card Event Delegation (Buttons, Date Picker, Notes)
+    const siteListContainer = document.getElementById("siteListContainer");
+
+    siteListContainer.addEventListener("click", (e) => {
       const btn = e.target.closest(".status-btn");
       if (!btn) return;
       const action = btn.dataset.action;
@@ -1468,11 +1626,28 @@
       setStatus(id, action);
     });
 
-    // Filtering listeners
+    siteListContainer.addEventListener("change", (e) => {
+      if (e.target.classList.contains("date-input")) {
+        const id = e.target.dataset.id;
+        const newDate = e.target.value;
+        updateVisitedDate(id, newDate);
+      }
+    });
+
+    siteListContainer.addEventListener("input", (e) => {
+      if (e.target.classList.contains("notes-textarea")) {
+        const id = e.target.dataset.id;
+        const text = e.target.value;
+        updateUserNotes(id, text);
+      }
+    });
+
+    // Filtering & Sorting listeners
     document.getElementById("search").addEventListener("input", renderSites);
     document.getElementById("filterStatus").addEventListener("change", renderSites);
     document.getElementById("filterCategory").addEventListener("change", renderSites);
     document.getElementById("filterLocation").addEventListener("change", renderSites);
+    document.getElementById("sortOrder").addEventListener("change", renderSites);
 
     // Export & Import Handlers
     document.getElementById("exportBtn").addEventListener("click", () => {
